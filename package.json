@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "tag": "git tag v$(node -p \"require('./package.json').version\") && git push origin --tags",
+    "tag": "git tag v`node -p \"require('./package.json').version\"` && git push origin --tags",
     "release": "npm version patch && npm run tag"
   },
   "dependencies": {
