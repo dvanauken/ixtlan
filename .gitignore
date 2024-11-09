@@ -1,0 +1,68 @@
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node modules and logs
+/node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# IDEs and editors
+.idea/
+/.project
+.classpath
+.c9/
+/.settings/
+*.launch
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json      # Optional: Share common workspace settings
+!.vscode/extensions.json    # Optional: Share recommended extensions
+
+# Ignore user-specific files
+.vscode/launch.json         # Debug configurations (usually user-specific)
+.vscode/tasks.json          # Build tasks (often user/environment-specific)
+
+# History files (from various plugins)
+.history/
+
+# Angular and TypeScript specific
+.angular/
+.angular/cache
+.sass-cache/
+coverage/
+build/
+libpeerconnection.log
+testem.log
+typings/
+*.js
+*.d.ts
+*.js.map
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Temporary or backup files
+*.tmp
+*.bak
+*.swp
+*.swo
+*.~lock.*
+
+# GitHub
+.github/
+
+# Miscellaneous
+connect.lock
