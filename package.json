@@ -1,6 +1,6 @@
 {
   "name": "ixtlan",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,7 +9,6 @@
     "test": "ng test",
     "tag": "node -e \"const version = require('./package.json').version; require('child_process').execSync(`git tag v${version} && git push origin --tags`, { stdio: 'inherit' })\"",
     "release": "npm version patch && git push && git push origin --tags"
-
   },
   "dependencies": {
     "@angular/animations": "^16.2.0",
