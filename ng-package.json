@@ -1,0 +1,18 @@
+{
+    "$schema": "./node_modules/ng-packagr/ng-package.schema.json",
+    "dest": "dist/ixtlan",
+    "lib": {
+      "entryFile": "src/public-api.ts"
+    },
+    "allowedNonPeerDependencies": [
+      "@angular/animations",
+      "@angular/compiler",
+      "@angular/core",
+      "@angular/common",
+      "@angular/platform-browser",
+      "@angular/platform-browser-dynamic",
+      "@angular/forms",
+      "@angular/compiler-cli",
+      "@angular/router"
+    ]
+  }

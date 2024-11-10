@@ -6,11 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "tag": "node -e \"const version = require('./package.json').version; require('child_process').execSync(`git tag v${version} && git push origin --tags`, { stdio: 'inherit' })\"",
-    "release": "npm version patch && git push && git push origin --tags"
+    "test": "ng test"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@angular/animations": "^16.2.0",
     "@angular/common": "^16.2.0",
     "@angular/compiler": "^16.2.0",
@@ -18,14 +16,11 @@
     "@angular/forms": "^16.2.0",
     "@angular/platform-browser": "^16.2.0",
     "@angular/platform-browser-dynamic": "^16.2.0",
-    "@angular/router": "^16.2.0",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.13.0"
+    "@angular/router": "^16.2.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^16.2.15",
-    "@angular/cli": "^16.2.15",
+    "@angular-devkit/build-angular": "^16.2.0",
+    "@angular/cli": "~16.2.0",
     "@angular/compiler-cli": "^16.2.0",
     "@types/jasmine": "~4.3.0",
     "jasmine-core": "~4.6.0",
@@ -34,6 +29,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "ng-packagr": "^16.2.0",
     "typescript": "~5.1.3"
   }
 }

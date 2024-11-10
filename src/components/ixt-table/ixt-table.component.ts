@@ -1,7 +1,7 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, Input, Output, EventEmitter } from '@angular/core';
-import { ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, Input, Output, EventEmitter, Inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TableConfig, TableColumnDef, PaginationConfig } from './ixt-table.interfaces';
+import { ChangeDetectorRef, inject } from '@angular/core';
 
 @Component({
   selector: 'ixt-table',
@@ -22,6 +22,7 @@ export class IxtTableComponent<T extends object> implements OnInit, AfterViewIni
   @Output() filterChange = new EventEmitter<{ column: keyof T, value: string }>();
 
   private resizeObserver!: ResizeObserver;
+  private cdr = inject(ChangeDetectorRef);
   selectedRows = new Set<T>();
   lastClickedRowIndex: number | null = null;
   editingRows = new Set<number>();
@@ -35,7 +36,7 @@ export class IxtTableComponent<T extends object> implements OnInit, AfterViewIni
     pageSizeOptions: [10, 25, 50, 100, -1]
   };
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.initTable();
