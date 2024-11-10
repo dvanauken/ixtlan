@@ -1,6 +1,6 @@
 {
   "name": "@dvanauken/ixtlan",
-  "version": "0.1.12",
+  "version": "0.1.13-alpha.0",
   "main": "dist/ixtlan/index.js",
   "scripts": {
     "ng": "ng",
