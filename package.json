@@ -48,8 +48,10 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/ixtlan/fesm2020/ixtlan.mjs",
-      "require": "./dist/ixtlan/bundles/ixtlan.umd.js"
+      "types": "./dist/ixtlan/index.d.ts",
+      "esm2022": "./dist/ixtlan/esm2022/ixtlan.mjs",
+      "esm": "./dist/ixtlan/esm2022/ixtlan.mjs",
+      "default": "./dist/ixtlan/fesm2022/ixtlan.mjs"
     }
   },
   "repository": {
@@ -58,5 +60,8 @@
   },
   "license": "Proprietary",
   "keywords": [],
-  "author": "dvanauken"
+  "author": "dvanauken",
+  "dependencies": {
+    "tslib": "^2.3.0"
+  }
 }
