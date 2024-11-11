@@ -3,9 +3,5 @@
   "dest": "./dist/ixtlan",
   "lib": {
     "entryFile": "src/public-api.ts"
-  },
-  "dependencies": {
-    "lodash": "*",
-    "papaparse": "*"
   }
 }
