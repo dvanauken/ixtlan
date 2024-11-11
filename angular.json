@@ -12,7 +12,11 @@
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "ng-package.json"
+            "project": "ng-package.json",
+            "allowedCommonJsDependencies": [
+              "lodash",
+              "papaparse"
+            ]
           },
           "configurations": {
             "production": {
