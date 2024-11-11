@@ -3,6 +3,5 @@
   "dest": "./dist/ixtlan",
   "lib": {
     "entryFile": "src/public-api.ts"
-  },
-  "name": "ixtlan"
+  }
 }
