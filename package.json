@@ -1,8 +1,8 @@
 {
   "name": "@dvanauken/ixtlan",
-  "version": "0.1.13-alpha.17",
-  "main": "./dist/ixtlan/fesm2022/dvanauken-ixtlan.mjs",
-  "module": "./dist/ixtlan/fesm2022/dvanauken-ixtlan.mjs",
+  "version": "0.2.0-alpha.1000",
+  "main": "./dist/ixtlan/fesm2022/ixtlan.mjs",
+  "module": "./dist/ixtlan/fesm2022/ixtlan.mjs",
   "typings": "./dist/ixtlan/index.d.ts",
   "scripts": {
     "ng": "ng",
