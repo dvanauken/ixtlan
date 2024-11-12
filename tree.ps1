@@ -3,7 +3,7 @@ param (
 )
 
 # List of folders to exclude
-$excludeFolders = @("node_modules", ".angular\cache", ".git", "dist", "angular", ".idea")
+$excludeFolders = @("node_modules", ".angular", ".git", "dist", ".idea")
 
 # Define the output file name using a timestamp
 $timestamp = (Get-Date).ToString("yyyyMMddHHmmss")
