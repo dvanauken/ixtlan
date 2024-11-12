@@ -1,6 +1,6 @@
 {
   "name": "@dvanauken/ixtlan",
-  "version": "0.1.13-alpha.11",
+  "version": "0.3.0-alpha.1000",
   "main": "./dist/ixtlan/fesm2022/ixtlan.mjs",
   "module": "./dist/ixtlan/fesm2022/ixtlan.mjs",
   "typings": "./dist/ixtlan/index.d.ts",
@@ -48,14 +48,6 @@
     "package.json",
     "LICENSE"
   ],
-  "exports": {
-    ".": {
-      "types": "./dist/ixtlan/index.d.ts",
-      "esm2022": "./dist/ixtlan/esm2022/ixtlan.mjs",
-      "esm": "./dist/ixtlan/esm2022/ixtlan.mjs",
-      "default": "./dist/ixtlan/fesm2022/ixtlan.mjs"
-    }
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/dvanauken/ixtlan.git"
