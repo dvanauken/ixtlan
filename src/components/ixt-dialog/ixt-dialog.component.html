@@ -1,0 +1,36 @@
+// ixt-dialog.component.html
+<div class="dialog-overlay" [class.modal]="config.isModal" *ngIf="visible">
+  <div class="dialog-container" [@dialogAnimation]
+       [ngClass]="config.customClass"
+       [style.width]="config.width"
+       [style.height]="config.height">
+
+    <div class="dialog-header" [ngClass]="config.type">
+      <mat-icon>{{getIcon()}}</mat-icon>
+      <h2>{{config.title}}</h2>
+      <button mat-icon-button *ngIf="!config.isModal" (click)="onButtonClick(DialogButton.CANCEL)">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="dialog-content">
+      {{config.message}}
+    </div>
+
+    <div class="dialog-actions">
+      <button mat-button *ngIf="hasButton(DialogButton.OK)"
+              (click)="onButtonClick(DialogButton.OK)">OK</button>
+      <button mat-button *ngIf="hasButton(DialogButton.CANCEL)"
+              (click)="onButtonClick(DialogButton.CANCEL)">Cancel</button>
+      <button mat-button *ngIf="hasButton(DialogButton.YES)"
+              (click)="onButtonClick(DialogButton.YES)">Yes</button>
+      <button mat-button *ngIf="hasButton(DialogButton.NO)"
+              (click)="onButtonClick(DialogButton.NO)">No</button>
+      <button mat-button *ngIf="hasButton(DialogButton.RETRY)"
+              (click)="onButtonClick(DialogButton.RETRY)">Retry</button>
+      <button mat-button *ngIf="hasButton(DialogButton.ABORT)"
+              (click)="onButtonClick(DialogButton.ABORT)">Abort</button>
+    </div>
+  </div>
+</div>
+

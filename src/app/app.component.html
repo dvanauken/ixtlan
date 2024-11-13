@@ -1,28 +1,43 @@
-  <ixt-tabset>
-    <ixt-tab title="Tab 1">
-      Content for Tab 1
+<!-- app.component.html -->
+<ixt-holy-grail>
+  <div H>Header</div>
+  <div L>Left</div>
 
-      <ixt-table
-        [data]="employeeData"
-        [config]="employeeConfig">
-      </ixt-table>
-    </ixt-tab>
+  <div C>
+    <ixt-tabset>
+      <ixt-tab title="Tab 1">
+        Content for Tab 1
 
-    <ixt-tab title="Tab 2">
-      <ixt-table
-        [data]="salesData"
-        [config]="salesConfig">
-      </ixt-table>
-    </ixt-tab>
+        <ixt-table
+          [data]="employeeData"
+          [config]="employeeConfig">
+        </ixt-table>
+      </ixt-tab>
 
-    <ixt-tab title="Tab 3">
-      <ixt-table
-        [data]="inventoryData"
-        [config]="inventoryConfig">
-      </ixt-table>
-    </ixt-tab>
+      <ixt-tab title="Tab 2">
+        <ixt-table
+          [data]="salesData"
+          [config]="salesConfig">
+        </ixt-table>
+      </ixt-tab>
 
-    <ixt-tab title="Tab 4">
-      Content for Tab 4
-    </ixt-tab>
-  </ixt-tabset>
+      <ixt-tab title="Tab 3">
+        <ixt-table
+          [data]="inventoryData"
+          [config]="inventoryConfig">
+        </ixt-table>
+      </ixt-tab>
+
+      <ixt-tab title="Tab 4">
+        Content for Tab 4
+      </ixt-tab>
+    </ixt-tabset>
+  </div>
+
+  <div R>Right</div>
+  <div F>Footer</div>
+</ixt-holy-grail>
+
+
+//const result = await Dialog.confirm("Are you sure?", Dialog.YES | Dialog.NO);
+
