@@ -1,22 +1,7 @@
 # PowerShell script to generate Angular components for the specified directories
 $basePath = "src/components"
 $components = @(
-    "ixt-bread-crumb",
-    "ixt-button",
-    "ixt-calendar",
-    "ixt-dialog",
-    "ixt-form",
-    "ixt-geo-map",
-    "ixt-image",
-    "ixt-input",
-    "ixt-menu",
-    "ixt-panel",
-    "ixt-progress",
-    "ixt-select",
-    "ixt-table-tree",
-    "ixt-text",
-    "ixt-text-editor",
-    "ixt-tree"
+    "ixt-layer-manager"
 )
 
 foreach ($component in $components) {

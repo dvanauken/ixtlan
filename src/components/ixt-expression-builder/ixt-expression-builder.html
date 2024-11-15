@@ -1,0 +1,76 @@
+
+<!-- ixt-expression-builder.component.html -->
+<div class="expression-builder">
+  <!-- Root group container -->
+  <div class="group-container">
+    <!-- Group operator (AND/OR) at root level -->
+    <select [(ngModel)]="rootGroup.operator" class="group-operator">
+      <option value="and">AND</option>
+      <option value="or">OR</option>
+    </select>
+
+    <!-- Expressions container -->
+    <div class="expressions-list">
+      <div *ngFor="let node of rootGroup.children; let i = index" class="expression-row">
+        <!-- If it's a single expression -->
+        <div *ngIf="node.type === 'expression'" class="expression-container">
+          <!-- Field dropdown -->
+          <select [(ngModel)]="node.field" class="field-select">
+            <option value="">Select Field</option>
+            <option *ngFor="let field of fields" [value]="field.id">
+              {{field.label}}
+            </option>
+          </select>
+
+          <!-- Operator dropdown -->
+          <select [(ngModel)]="node.operator" class="operator-select">
+            <option value="">Select Operator</option>
+            <option *ngFor="let op of getOperators(node.field)" [value]="op.id">
+              {{op.label}}
+            </option>
+          </select>
+
+          <!-- Value input -->
+          <ng-container [ngSwitch]="getOperatorType(node.operator)">
+            <!-- Single value input -->
+            <input *ngSwitchCase="'single'"
+                   type="text"
+                   [(ngModel)]="node.value"
+                   class="value-input">
+
+            <!-- Multiple values input (for IN/NOT IN) -->
+            <div *ngSwitchCase="'multiple'" class="multi-value-container">
+              <div *ngFor="let val of node.values; let j = index" class="multi-value-item">
+                <input type="text" [(ngModel)]="node.values[j]">
+                <button (click)="removeValue(node, j)" class="remove-value">×</button>
+              </div>
+              <button (click)="addValue(node)" class="add-value">+ Add Value</button>
+            </div>
+          </ng-container>
+
+          <!-- Remove expression button -->
+          <button (click)="removeExpression(i)" class="remove-btn">×</button>
+        </div>
+
+        <!-- If it's a nested group -->
+        <div *ngIf="node.type === 'group'" class="nested-group">
+          <ixt-expression-builder
+            [group]="node"
+            [level]="level + 1"
+            (groupChange)="onChildGroupChange(i, $event)">
+          </ixt-expression-builder>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="action-buttons">
+      <button (click)="addExpression()" class="add-btn">
+        Add Expression
+      </button>
+      <button (click)="addGroup()" class="add-btn">
+        Add Group
+      </button>
+    </div>
+  </div>
+</div>

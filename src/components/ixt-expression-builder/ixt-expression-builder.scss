@@ -1,0 +1,68 @@
+
+/* ixt-expression-builder.component.scss */
+.expression-builder {
+  padding: 1rem;
+
+  .group-container {
+    border-left: 2px solid #ccc;
+    margin-left: 1rem;
+    padding-left: 1rem;
+
+    &:first-child {
+      border-left: none;
+      margin-left: 0;
+    }
+  }
+
+  .expression-row {
+    margin: 0.5rem 0;
+  }
+
+  .expression-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    select, input {
+      padding: 0.25rem 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  }
+
+  .multi-value-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .multi-value-item {
+      display: flex;
+      gap: 0.25rem;
+    }
+  }
+
+  .action-buttons {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  button {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+
+    &:hover {
+      background: #f0f0f0;
+    }
+  }
+
+  .remove-btn {
+    padding: 0.25rem 0.5rem;
+    color: red;
+    border: none;
+    background: transparent;
+  }
+}

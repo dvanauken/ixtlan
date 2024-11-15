@@ -20,7 +20,13 @@ import { animate, style, transition, trigger } from '@angular/animations';
   ]
 })
 export class IxtDialogComponent implements OnInit {
-  @Input() config!: DialogConfig;
+  @Input() config: DialogConfig = {
+      title: '',
+      message: '',
+      type: DialogType.INFO,
+      buttons: DialogButton.OK,
+      isModal: false
+  };
   @Output() close = new EventEmitter<DialogResult>();
 
   DialogType = DialogType;
@@ -29,7 +35,7 @@ export class IxtDialogComponent implements OnInit {
   visible = false;
 
   ngOnInit() {
-    this.visible = true;
+    this.visible = false;
   }
 
   getIcon(): string {

@@ -1,13 +1,16 @@
-<!-- app.component.html -->
-<ixt-holy-grail>
-  <div H>Header</div>
-  <div L>Left</div>
+<div class="layout">
+  <header>Header</header>
 
-  <div C>
+  <ixt-tree
+    [nodes]="treeData"
+    (nodeExpanded)="onNodeExpanded($event)"
+    (nodeCollapsed)="onNodeCollapsed($event)"
+    (nodeSelected)="onNodeSelected($event)">
+  </ixt-tree>
+
+  <main>
     <ixt-tabset>
       <ixt-tab title="Tab 1">
-        Content for Tab 1
-
         <ixt-table
           [data]="employeeData"
           [config]="employeeConfig">
@@ -28,16 +31,59 @@
         </ixt-table>
       </ixt-tab>
 
-      <ixt-tab title="Tab 4">
-        Content for Tab 4
+      <ixt-tab title="Employee Form">
+        <form class="form-grid">
+          <h3>Personal Information</h3>
+
+          <div class="field">
+            <label>First Name</label>
+            <input type="text">
+          </div>
+
+          <div class="field">
+            <label>Last Name</label>
+            <input type="text">
+          </div>
+
+          <div class="field">
+            <label>Email</label>
+            <input type="email">
+          </div>
+
+          <h3>Employment Details</h3>
+
+          <div class="field">
+            <label>Department</label>
+            <input type="text">
+          </div>
+
+          <div class="field">
+            <label>Position</label>
+            <input type="text">
+          </div>
+
+          <div class="field">
+            <label>Start Date</label>
+            <input type="date">
+          </div>
+
+          <div class="actions">
+            <button type="button" (click)="onSave($event)">Save</button>
+            <button type="button">Cancel</button>
+          </div>
+        </form>
       </ixt-tab>
     </ixt-tabset>
-  </div>
+  </main>
 
-  <div R>Right</div>
-  <div F>Footer</div>
-</ixt-holy-grail>
+  <aside>
+    <ixt-layer-manager
+      [layers]="mapLayers"
+      (layerChange)="onLayerChange($event)"
+      (layerOrderChange)="onLayerOrderChange($event)">
+    </ixt-layer-manager>
+  </aside>
+  <footer>Footer</footer>
+</div>
 
-
-//const result = await Dialog.confirm("Are you sure?", Dialog.YES | Dialog.NO);
-
+<ixt-dialog></ixt-dialog>
