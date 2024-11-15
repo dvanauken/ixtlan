@@ -1,0 +1,23 @@
+<div class="ixt-autocomplete-container">
+    <input
+      [formControl]="inputControl"
+      [placeholder]="placeholder"
+      (blur)="onBlur()"
+      class="ixt-autocomplete-input"
+      type="text"
+      autocomplete="off"
+    >
+    
+    <div 
+      *ngIf="showDropdown && filteredOptions.length > 0" 
+      class="ixt-autocomplete-dropdown"
+    >
+      <div
+        *ngFor="let option of filteredOptions"
+        (mousedown)="selectOption(option)"
+        class="ixt-autocomplete-option"
+      >
+        {{ option.label }}
+      </div>
+    </div>
+  </div>

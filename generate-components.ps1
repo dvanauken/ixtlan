@@ -1,7 +1,7 @@
 # PowerShell script to generate Angular components for the specified directories
 $basePath = "src/components"
 $components = @(
-    "ixt-layer-manager"
+    "ixt-auto-complete"
 )
 
 foreach ($component in $components) {

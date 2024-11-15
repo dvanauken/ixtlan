@@ -97,9 +97,21 @@
       </ixt-tab>
 
 
+      <ixt-tab title="Auto Complete">
+
+        <h2>Map Projection Selector</h2>
+        <div class="autocomplete-wrapper">
+          <ixt-auto-complete
+            [options]="projectionOptions"
+            placeholder="Search projection..."
+            (valueChange)="onValueChange($event)"
+          ></ixt-auto-complete>
+        </div>
+
+      </ixt-tab>
 
 
-      </ixt-tabset>
+    </ixt-tabset>
 
 
 

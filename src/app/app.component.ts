@@ -5,6 +5,7 @@ import { IxtDialogComponent, DialogType, DialogButton, DialogResult } from '../c
 import { Layer } from '../components/ixt-layer-manager/ixt-layer-manager.component';
 import { TreeNode } from '../components/ixt-tree/ixt-tree.component';
 import { Expression, ExpressionGroup } from '../components/ixt-expression-builder/ixt-expression-builder.interfaces';
+import { AutocompleteOption } from '../components/ixt-auto-complete/ixt-auto-complete.component';
 
 
 
@@ -100,6 +101,19 @@ export class AppComponent implements AfterViewInit {
      this.dialog.visible = false;
    }
  }
+
+ projectionOptions: AutocompleteOption[] = [
+  { value: "geoAlbers", label: "Albers" },
+  { value: "geoAlbersUsa", label: "Albers USA" },
+  { value: "geoAzimuthalEqualArea", label: "Azimuthal Equal Area" },
+  { value: "geoAzimuthalEquidistant", label: "Azimuthal Equidistant" },
+  { value: "geoConicConformal", label: "Conic Conformal" },
+  { value: "geoConicEqualArea", label: "Conic Equal Area" },
+  { value: "geoConicEquidistant", label: "Conic Equidistant" },
+  { value: "geoMercator", label: "Mercator" },
+  { value: "geoOrthographic", label: "Orthographic" }
+];
+
 
  employeeData = [
    { empId: 'E001', name: 'John Smith', department: 'IT', projects: 3, rating: 4.5 },
@@ -215,37 +229,39 @@ export class AppComponent implements AfterViewInit {
     this.expressionJsonLogic = this.convertToJsonLogic(group);
   }
 
-// app.component.ts - Add type to the parameter
-private convertToJsonLogic(group: ExpressionGroup): any {
-  if (group.children.length === 0) return {};
-  
-  const logic: any = {
-    [group.operator]: group.children.map((child: Expression | ExpressionGroup) => {
-      if (child.type === 'group') {
-        return this.convertToJsonLogic(child);
-      }
-      
-      if (child.type === 'expression') {
-        if (child.operator === 'in' || child.operator === 'not_in') {
+  private convertToJsonLogic(group: ExpressionGroup): any {
+    if (group.children.length === 0) return {};
+    
+    const logic: any = {
+      [group.operator]: group.children.map((child: Expression | ExpressionGroup) => {
+        if (child.type === 'group') {
+          return this.convertToJsonLogic(child);
+        }
+        
+        if (child.type === 'expression') {
+          if (child.operator === 'in' || child.operator === 'not_in') {
+            return {
+              [child.operator === 'in' ? 'in' : '!in']: [
+                { var: child.field },
+                child.values || []
+              ]
+            };
+          }
           return {
-            [child.operator === 'in' ? 'in' : '!in']: [
+            [child.operator]: [
               { var: child.field },
-              child.values || []
+              child.value
             ]
           };
         }
-        return {
-          [child.operator]: [
-            { var: child.field },
-            child.value
-          ]
-        };
-      }
-      return {};
-    })
-  };
-  
-  return logic;
-}
+        return {};
+      })
+    };
+    return logic;
+  }
+
+  onValueChange(selected: AutocompleteOption) {
+    console.log('Selected projection:', selected);
+  }
 
 }

@@ -10,6 +10,7 @@ import { IxtDialogModule } from '../components/ixt-dialog/ixt-dialog.module';
 import { IxtLayerManagerModule } from '../components/ixt-layer-manager/ixt-layer-manager.module'; // Add this
 import { IxtTreeModule } from '../components/ixt-tree/ixt-tree.module'; // Add this
 import { IxtExpressionBuilderModule } from '../components/ixt-expression-builder/ixt-expression-builder.module';
+import { IxtAutoCompleteModule } from '../components/ixt-auto-complete/ixt-auto-complete.module';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { IxtExpressionBuilderModule } from '../components/ixt-expression-builder
     IxtDialogModule,
     IxtLayerManagerModule,
     IxtTreeModule,
-    IxtExpressionBuilderModule  // Add this
+    IxtExpressionBuilderModule,
+    IxtAutoCompleteModule
   ],
   bootstrap: [AppComponent]
 })

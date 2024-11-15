@@ -1,0 +1,17 @@
+.ixt-autocomplete-input {
+    width: 100%;
+  }
+  
+  .ixt-autocomplete-dropdown {
+    margin-top: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  .ixt-autocomplete-option {
+    padding: 8px;
+    cursor: pointer;
+    
+    &:hover {
+      background: #f8f9fa;
+    }
+  }
