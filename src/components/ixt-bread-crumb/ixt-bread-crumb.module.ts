@@ -1,18 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IxtBreadCrumb } from './ixt-bread-crumb.component';
+import { RouterModule } from '@angular/router';
+import { IxtBreadCrumbComponent } from './ixt-bread-crumb.component';
+import { BreadcrumbService } from './ixt-bread-crumb.service';
 
 @NgModule({
-  declarations: [
-    IxtBreadCrumb
-  ],
-  imports: [
-    CommonModule,
-    FormsModule
-  ],
-  exports: [
-    IxtBreadCrumb
-  ]
+  declarations: [IxtBreadCrumbComponent],
+  imports: [CommonModule, RouterModule],
+  exports: [IxtBreadCrumbComponent],
+  providers: [BreadcrumbService]
 })
-export class IxtBreadCrumb { }
+export class IxtBreadCrumbModule { }
