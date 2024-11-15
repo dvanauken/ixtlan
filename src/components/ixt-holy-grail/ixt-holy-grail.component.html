@@ -1,0 +1,21 @@
+<div class="holy-grail-container" [style.grid-template-areas]="templateAreas">
+  <div class="holy-grail-header">
+    <ng-content select="[H]"></ng-content>
+  </div>
+
+  <div class="holy-grail-left">
+    <ng-content select="[L]"></ng-content>
+  </div>
+
+  <div class="holy-grail-center">
+    <ng-content select="[C]"></ng-content>
+  </div>
+
+  <div class="holy-grail-right">
+    <ng-content select="[R]"></ng-content>
+  </div>
+
+  <div class="holy-grail-footer">
+    <ng-content select="[F]"></ng-content>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<div class="button-row">
+  <button *ngFor="let tab of tabs; let idx = index"
+          [class.selected]="selectedIndex === idx"
+          (click)="selectTab(tab)">
+    {{ tab.title }}
+  </button>
+</div>
+<div class="content">
+  <div class="top-band">
+    <span>🔔</span>
+    <span>{{ notificationText }}</span>
+  </div>
+  <div *ngFor="let tab of tabs; let idx = index"
+       [id]="'tab' + (idx + 1)"
+       class="main-content"
+       [class.active]="selectedIndex === idx">
+    <ng-container *ngTemplateOutlet="tab.implicitContent"></ng-container>
+  </div>
+</div>

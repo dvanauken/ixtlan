@@ -1,0 +1,28 @@
+<ul class="tree-container">
+  <ng-container *ngFor="let node of nodes; trackBy: trackByFn">
+    <li class="tree-node" (click)="selectNode(node, $event)">
+      <div class="node-content">
+        <span class="icon-container" (click)="toggleNode(node, $event)">
+          <ng-container *ngIf="node.children && node.children.length > 0">
+            <span class="expand-icon" [class.expanded]="node.expanded">
+              {{node.expanded ? '▼' : '▶'}}
+            </span>
+          </ng-container>
+          <span class="node-icon">
+            {{(node.children && node.children.length > 0) ? '📁' : '📄'}}
+          </span>
+        </span>
+        <span class="node-label">{{node.label}}</span>
+      </div>
+      <ul *ngIf="node.expanded && node.children" class="tree-children">
+        <ixt-tree
+          [nodes]="node.children"
+          (nodeExpanded)="nodeExpanded.emit($event)"
+          (nodeCollapsed)="nodeCollapsed.emit($event)"
+          (nodeSelected)="nodeSelected.emit($event)">
+        </ixt-tree>
+      </ul>
+    </li>
+  </ng-container>
+</ul>
+

@@ -1,0 +1,89 @@
+<div class="layout">
+  <header>Header</header>
+
+  <ixt-tree
+    [nodes]="treeData"
+    (nodeExpanded)="onNodeExpanded($event)"
+    (nodeCollapsed)="onNodeCollapsed($event)"
+    (nodeSelected)="onNodeSelected($event)">
+  </ixt-tree>
+
+  <main>
+    <ixt-tabset>
+      <ixt-tab title="Tab 1">
+        <ixt-table
+          [data]="employeeData"
+          [config]="employeeConfig">
+        </ixt-table>
+      </ixt-tab>
+
+      <ixt-tab title="Tab 2">
+        <ixt-table
+          [data]="salesData"
+          [config]="salesConfig">
+        </ixt-table>
+      </ixt-tab>
+
+      <ixt-tab title="Tab 3">
+        <ixt-table
+          [data]="inventoryData"
+          [config]="inventoryConfig">
+        </ixt-table>
+      </ixt-tab>
+
+      <ixt-tab title="Employee Form">
+        <form class="form-grid">
+          <h3>Personal Information</h3>
+
+          <div class="field">
+            <label>First Name</label>
+            <input type="text">
+          </div>
+
+          <div class="field">
+            <label>Last Name</label>
+            <input type="text">
+          </div>
+
+          <div class="field">
+            <label>Email</label>
+            <input type="email">
+          </div>
+
+          <h3>Employment Details</h3>
+
+          <div class="field">
+            <label>Department</label>
+            <input type="text">
+          </div>
+
+          <div class="field">
+            <label>Position</label>
+            <input type="text">
+          </div>
+
+          <div class="field">
+            <label>Start Date</label>
+            <input type="date">
+          </div>
+
+          <div class="actions">
+            <button type="button" (click)="onSave($event)">Save</button>
+            <button type="button">Cancel</button>
+          </div>
+        </form>
+      </ixt-tab>
+    </ixt-tabset>
+  </main>
+
+  <aside>
+    <ixt-layer-manager
+      [layers]="mapLayers"
+      (layerChange)="onLayerChange($event)"
+      (layerOrderChange)="onLayerOrderChange($event)">
+    </ixt-layer-manager>
+  </aside>
+  <footer>Footer</footer>
+</div>
+
+<ixt-dialog></ixt-dialog>
