@@ -4,6 +4,9 @@ import { TableConfig } from '../components/ixt-table/ixt-table.interfaces';
 import { IxtDialogComponent, DialogType, DialogButton, DialogResult } from '../components/ixt-dialog';
 import { Layer } from '../components/ixt-layer-manager/ixt-layer-manager.component';
 import { TreeNode } from '../components/ixt-tree/ixt-tree.component';
+import { Expression, ExpressionGroup } from '../components/ixt-expression-builder/ixt-expression-builder.interfaces';
+
+
 
 
 @Component({
@@ -197,5 +200,52 @@ export class AppComponent implements AfterViewInit {
      // Implement your layer order update logic here
    }
 
+     // Add these properties
+  expressionGroup: ExpressionGroup = {
+    type: 'group',
+    operator: 'and',
+    children: []
+  };
+
+  expressionJsonLogic: any = {};
+
+  // Add this method
+  onExpressionGroupChange(group: ExpressionGroup): void {
+    this.expressionGroup = group;
+    this.expressionJsonLogic = this.convertToJsonLogic(group);
+  }
+
+// app.component.ts - Add type to the parameter
+private convertToJsonLogic(group: ExpressionGroup): any {
+  if (group.children.length === 0) return {};
+  
+  const logic: any = {
+    [group.operator]: group.children.map((child: Expression | ExpressionGroup) => {
+      if (child.type === 'group') {
+        return this.convertToJsonLogic(child);
+      }
+      
+      if (child.type === 'expression') {
+        if (child.operator === 'in' || child.operator === 'not_in') {
+          return {
+            [child.operator === 'in' ? 'in' : '!in']: [
+              { var: child.field },
+              child.values || []
+            ]
+          };
+        }
+        return {
+          [child.operator]: [
+            { var: child.field },
+            child.value
+          ]
+        };
+      }
+      return {};
+    })
+  };
+  
+  return logic;
+}
 
 }

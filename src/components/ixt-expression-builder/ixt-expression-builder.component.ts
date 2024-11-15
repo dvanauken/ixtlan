@@ -1,40 +1,11 @@
 // ixt-expression-builder.component.ts
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
-interface Field {
-  id: string;
-  label: string;
-  type: string;
-}
-
-interface Operator {
-  id: string;
-  label: string;
-  type: 'single' | 'multiple';
-}
-
-interface Expression {
-  type: 'expression';
-  field: string;
-  operator: string;
-  value?: string;
-  values?: string[];
-}
-
-interface ExpressionGroup {
-  type: 'group';
-  operator: 'and' | 'or';
-  children: (Expression | ExpressionGroup)[];
-}
+import { Field, Operator, Expression, ExpressionGroup } from './ixt-expression-builder.interfaces';
 
 @Component({
   selector: 'ixt-expression-builder',
   templateUrl: './ixt-expression-builder.component.html',
   styleUrls: ['./ixt-expression-builder.component.scss'],
-  standalone: true,
-  imports: [CommonModule, FormsModule]
 })
 export class IxtExpressionBuilderComponent implements OnInit {
   @Input() group: ExpressionGroup = {
@@ -67,21 +38,52 @@ export class IxtExpressionBuilderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Initialize if no group is provided
-    if (!this.group) {
+    if (!this.group || this.group.children.length === 0) {
       this.group = {
         type: 'group',
         operator: 'and',
-        children: []
+        children: [
+          {
+            type: 'expression',
+            field: 'al',
+            operator: 'eq',
+            value: 'AA',
+            values: []
+          },
+          {
+            type: 'group',
+            operator: 'or',
+            children: [
+              {
+                type: 'expression',
+                field: 'base',
+                operator: 'in',
+                value: '',
+                values: ['DFW', 'ORD', 'MIA']
+              },
+              {
+                type: 'expression',
+                field: 'ref',
+                operator: 'in',
+                value: '',
+                values: ['DFW', 'ORD', 'MIA']
+              }
+            ]
+          }
+        ]
       };
+      this.emitChange(); // Notify parent of the initial value
     }
   }
 
+  // Rest of your code remains the same...
   addExpression(): void {
     const newExpression: Expression = {
       type: 'expression',
       field: '',
       operator: '',
+      value: '',
+      values: []
     };
     this.group.children.push(newExpression);
     this.emitChange();
@@ -171,5 +173,13 @@ export class IxtExpressionBuilderComponent implements OnInit {
 
   private emitChange(): void {
     this.groupChange.emit(this.group);
+  }
+
+  updateValue(expression: Expression, index: number, value: string): void {
+    if (!expression.values) {
+      expression.values = [];
+    }
+    expression.values[index] = value;
+    this.emitChange();
   }
 }

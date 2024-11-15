@@ -3,5 +3,9 @@
   "dest": "./dist/ixtlan",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "allowedNonPeerDependencies": [
+    "tslib"
+  ]
 }
+

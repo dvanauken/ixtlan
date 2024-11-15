@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IxtCalendarComponent } from './ixt-calendar.component';
+import { IxtExpressionBuilderComponent } from './ixt-expression-builder.component';
 
 @NgModule({
   declarations: [
-    IxtCalendarComponent
+    IxtExpressionBuilderComponent
   ],
   imports: [
     CommonModule,
     FormsModule
   ],
   exports: [
-    IxtCalendarComponent
+    IxtExpressionBuilderComponent
   ]
 })
-export class IxtCalendarModule { }
+export class IxtExpressionBuilderModule { }

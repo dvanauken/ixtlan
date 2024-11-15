@@ -9,6 +9,8 @@ import { IxtHolyGrailModule } from '../components/ixt-holy-grail/ixt-holy-grail.
 import { IxtDialogModule } from '../components/ixt-dialog/ixt-dialog.module';
 import { IxtLayerManagerModule } from '../components/ixt-layer-manager/ixt-layer-manager.module'; // Add this
 import { IxtTreeModule } from '../components/ixt-tree/ixt-tree.module'; // Add this
+import { IxtExpressionBuilderModule } from '../components/ixt-expression-builder/ixt-expression-builder.module';
+
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,8 +22,8 @@ import { IxtTreeModule } from '../components/ixt-tree/ixt-tree.module'; // Add t
     IxtHolyGrailModule,
     IxtDialogModule,
     IxtLayerManagerModule,
-    IxtTreeModule
-
+    IxtTreeModule,
+    IxtExpressionBuilderModule  // Add this
   ],
   bootstrap: [AppComponent]
 })

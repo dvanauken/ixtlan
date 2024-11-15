@@ -73,7 +73,37 @@
           </div>
         </form>
       </ixt-tab>
-    </ixt-tabset>
+
+
+      <ixt-tab title="Expression Builder">
+        <div class="expression-tab-container">
+          <div class="tab-header">
+            <h3>Filter Expression Builder</h3>
+            <p>Build filter expressions for geomap features</p>
+          </div>
+      
+          <div class="builder-container">
+            <ixt-expression-builder
+              [group]="expressionGroup"
+              (groupChange)="onExpressionGroupChange($event)">
+            </ixt-expression-builder>
+      
+            <div class="preview-container">
+              <h4>Generated Filter:</h4>
+              <pre>{{expressionJsonLogic | json}}</pre>
+            </div>
+          </div>
+        </div>
+      </ixt-tab>
+
+
+
+
+      </ixt-tabset>
+
+
+
+
   </main>
 
   <aside>
