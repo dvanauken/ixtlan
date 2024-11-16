@@ -2,133 +2,96 @@
   <header>Header</header>
 
   <ixt-tree
-    [nodes]="treeData"
-    (nodeExpanded)="onNodeExpanded($event)"
-    (nodeCollapsed)="onNodeCollapsed($event)"
-    (nodeSelected)="onNodeSelected($event)">
+    [nodes]="treeProvider.treeData"
+    (nodeExpanded)="treeHandler.onNodeExpanded($event)"
+    (nodeCollapsed)="treeHandler.onNodeCollapsed($event)"
+    (nodeSelected)="treeHandler.onNodeSelected($event)">
   </ixt-tree>
 
   <main>
     <ixt-tabset>
       <ixt-tab title="Tab 1">
         <ixt-table
-          [data]="employeeData"
-          [config]="employeeConfig">
+          [data]="tableProvider.employeeData"
+          [config]="tableProvider.employeeConfig">
         </ixt-table>
       </ixt-tab>
 
       <ixt-tab title="Tab 2">
         <ixt-table
-          [data]="salesData"
-          [config]="salesConfig">
+          [data]="tableProvider.salesData"
+          [config]="tableProvider.salesConfig">
         </ixt-table>
       </ixt-tab>
 
       <ixt-tab title="Tab 3">
         <ixt-table
-          [data]="inventoryData"
-          [config]="inventoryConfig">
+          [data]="tableProvider.inventoryData"
+          [config]="tableProvider.inventoryConfig">
         </ixt-table>
       </ixt-tab>
+
 
       <ixt-tab title="Employee Form">
         <form class="form-grid">
           <h3>Personal Information</h3>
-
           <div class="field">
             <label>First Name</label>
-            <input type="text">
+            <input type="text" [(ngModel)]="formData.firstName" name="firstName">
           </div>
-
           <div class="field">
             <label>Last Name</label>
-            <input type="text">
+            <input type="text" [(ngModel)]="formData.lastName" name="lastName">
           </div>
-
           <div class="field">
             <label>Email</label>
-            <input type="email">
+            <input type="email" [(ngModel)]="formData.email" name="email">
           </div>
-
           <h3>Employment Details</h3>
-
           <div class="field">
             <label>Department</label>
-            <input type="text">
+            <input type="text" [(ngModel)]="formData.department" name="department">
           </div>
-
           <div class="field">
             <label>Position</label>
-            <input type="text">
+            <input type="text" [(ngModel)]="formData.position" name="position">
           </div>
-
           <div class="field">
             <label>Start Date</label>
-            <input type="date">
+            <input type="date" [(ngModel)]="formData.hireDate" name="hireDate">
           </div>
-
           <div class="actions">
-            <button type="button" (click)="onSave($event)">Save</button>
-            <button type="button">Cancel</button>
+            <button type="button" (click)="employeeFormHandler.submitForm()">Save</button>
+            <button type="button" (click)="employeeFormHandler.resetForm()">Cancel</button>
           </div>
         </form>
       </ixt-tab>
 
-
-      <ixt-tab title="Expression Builder">
-        <div class="expression-tab-container">
-          <div class="tab-header">
-            <h3>Filter Expression Builder</h3>
-            <p>Build filter expressions for geomap features</p>
-          </div>
-      
-          <div class="builder-container">
-            <ixt-expression-builder
-              [group]="expressionGroup"
-              (groupChange)="onExpressionGroupChange($event)">
-            </ixt-expression-builder>
-      
-            <div class="preview-container">
-              <h4>Generated Filter:</h4>
-              <pre>{{expressionJsonLogic | json}}</pre>
-            </div>
-          </div>
-        </div>
-      </ixt-tab>
-
-
       <ixt-tab title="Auto Complete">
-
         <h2>Map Projection Selector</h2>
         <div class="autocomplete-wrapper">
           <ixt-auto-complete
-            [options]="projectionOptions"
+            [options]="autocompleteProvider.projectionOptions"
             placeholder="Search projection..."
-            (valueChange)="onValueChange($event)"
+            (valueChange)="autocompleteHandler.onValueChange($event)"
           ></ixt-auto-complete>
         </div>
-
       </ixt-tab>
 
       <ixt-tab title="Calendar">
         <ixt-calendar></ixt-calendar>
       </ixt-tab>
-
-
     </ixt-tabset>
-
-
-
-
   </main>
 
   <aside>
     <ixt-layer-manager
-      [layers]="mapLayers"
-      (layerChange)="onLayerChange($event)"
-      (layerOrderChange)="onLayerOrderChange($event)">
+      [layers]="layerProvider.mapLayers"
+      (layerChange)="layerManager.onLayerChange($event)"
+      (layerOrderChange)="layerManager.onLayerOrderChange($event)">
     </ixt-layer-manager>
   </aside>
+
   <footer>Footer</footer>
 </div>
 
