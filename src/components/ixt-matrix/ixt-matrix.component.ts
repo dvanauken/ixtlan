@@ -22,15 +22,16 @@ export class IxtMatrixComponent implements OnInit {
     this.isTree = this.isTreeData(this.data);
   }
 
-  private hasChildren(node: MatrixNode): boolean {
-    return node?.children?.length > 0;
+  public hasChildren(node: MatrixNode): boolean {
+    return Array.isArray(node?.children) && node.children.length > 0;
   }
 
-  private isTreeData(data: MatrixNode[]): boolean {
+
+  public isTreeData(data: MatrixNode[]): boolean {
     return Array.isArray(data) && data.some(item => this.hasChildren(item));
   }
 
-  private getColumns(data: MatrixNode[]): string[] {
+  public getColumns(data: MatrixNode[]): string[] {
     if (!data?.length) return [];
     const firstRow = data[0];
     return Object.keys(firstRow).filter(key => key !== 'children');

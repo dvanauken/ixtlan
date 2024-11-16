@@ -18,50 +18,57 @@ import { IxtAutocompleteProvider } from './autocomplete/ixt-autocomplete.provide
 import { IxtAutocompleteHandler } from './autocomplete/ixt-autocomplete.handler';
 import { IxtEmployeeFormProvider } from './form/ixt-employee-form.provider';
 import { IxtEmployeeFormHandler } from './form/ixt-employee-form.handler';
+import { IxtMatrixProvider } from './matrix/ixt-matrix.provider';
 
 @Component({
- selector: 'app-root',
- templateUrl: './app.component.html',
- styleUrls: ['./app.component.scss'],
- providers: [
-   IxtTableProvider, 
-   IxtTableHandler,
-   IxtLayerProvider, 
-   IxtLayerManager,
-   IxtTreeProvider,
-   IxtTreeHandler,
-   IxtExpressionProvider,
-   IxtExpressionHelper,
-   IxtAutocompleteProvider,
-   IxtAutocompleteHandler,
-   IxtEmployeeFormProvider,
-   IxtEmployeeFormHandler
- ]
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  providers: [
+    IxtTableProvider,
+    IxtTableHandler,
+    IxtLayerProvider,
+    IxtLayerManager,
+    IxtTreeProvider,
+    IxtTreeHandler,
+    IxtExpressionProvider,
+    IxtExpressionHelper,
+    IxtAutocompleteProvider,
+    IxtAutocompleteHandler,
+    IxtEmployeeFormProvider,
+    IxtEmployeeFormHandler,
+    IxtMatrixProvider
+  ]
 })
 export class AppComponent implements AfterViewInit {
- @ViewChild(IxtDialogComponent) dialog!: IxtDialogComponent;
- formData = this.employeeFormProvider.getCurrentForm();
+  @ViewChild(IxtDialogComponent) dialog!: IxtDialogComponent;
+  formData = this.employeeFormProvider.getCurrentForm();
+
+  matrixTableData = this.matrixProvider.getTableData();
+  matrixTreeData = this.matrixProvider.getTreeData();
+  matrixTableTreeData = this.matrixProvider.getTableTreeData();
 
 
- constructor(
-   public tableProvider: IxtTableProvider,
-   public tableHandler: IxtTableHandler,
-   public layerProvider: IxtLayerProvider,  
-   public layerManager: IxtLayerManager,
-   public treeProvider: IxtTreeProvider,    
-   public treeHandler: IxtTreeHandler,
-   public expressionProvider: IxtExpressionProvider,
-   public expressionHelper: IxtExpressionHelper,
-   public autocompleteProvider: IxtAutocompleteProvider,
-   public autocompleteHandler: IxtAutocompleteHandler,
-   public employeeFormProvider: IxtEmployeeFormProvider,
-   public employeeFormHandler: IxtEmployeeFormHandler,
- ) {}
+  constructor(
+    public tableProvider: IxtTableProvider,
+    public tableHandler: IxtTableHandler,
+    public layerProvider: IxtLayerProvider,
+    public layerManager: IxtLayerManager,
+    public treeProvider: IxtTreeProvider,
+    public treeHandler: IxtTreeHandler,
+    public expressionProvider: IxtExpressionProvider,
+    public expressionHelper: IxtExpressionHelper,
+    public autocompleteProvider: IxtAutocompleteProvider,
+    public autocompleteHandler: IxtAutocompleteHandler,
+    public employeeFormProvider: IxtEmployeeFormProvider,
+    public employeeFormHandler: IxtEmployeeFormHandler,
+    public matrixProvider: IxtMatrixProvider
+  ) { }
 
- ngAfterViewInit() {
-   if (this.dialog) {
-     this.dialog.visible = false;
-   }
- }
+  ngAfterViewInit() {
+    if (this.dialog) {
+      this.dialog.visible = false;
+    }
+  }
 
 }
