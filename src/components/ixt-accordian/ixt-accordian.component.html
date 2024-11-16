@@ -1,0 +1,14 @@
+<!-- ixt-accordian.component.html -->
+<div class="ixt-accordion">
+    <div class="accordion-panel" *ngFor="let panel of panels; let i = index">
+      <div class="panel-header" (click)="togglePanel(i)">
+        <span class="panel-title">{{panel.title}}</span>
+        <span class="material-icons" [class.open]="panel.isOpen">
+          expand_more
+        </span>
+      </div>
+      <div class="panel-content" [@slideInOut]="panel.isOpen ? 'open' : 'closed'">
+        {{panel.content}}
+      </div>
+    </div>
+  </div>

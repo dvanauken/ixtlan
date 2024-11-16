@@ -1,0 +1,48 @@
+.calendar-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .calendar-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+
+  .weekday-header {
+    padding: 0.5rem;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .calendar-day {
+    aspect-ratio: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    min-height: 80px;
+  }
+
+  .weekend {
+    background-color: #f5f5f5;
+  }
+
+  .holiday {
+    background-color: #e8f4f8;
+  }
+
+  .holiday-name {
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  .date {
+    font-weight: bold;
+  }
+`]

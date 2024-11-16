@@ -1,0 +1,17 @@
+// ixt-panel.component.scss
+.ixt-panel {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 100%;
+    
+    &.bordered {
+      border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+    
+    &.elevated {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }

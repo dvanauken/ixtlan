@@ -11,6 +11,7 @@ import { IxtLayerManagerModule } from '../components/ixt-layer-manager/ixt-layer
 import { IxtTreeModule } from '../components/ixt-tree/ixt-tree.module'; // Add this
 import { IxtExpressionBuilderModule } from '../components/ixt-expression-builder/ixt-expression-builder.module';
 import { IxtAutoCompleteModule } from '../components/ixt-auto-complete/ixt-auto-complete.module';
+import { IxtCalendarModule } from './components/ixt-calendar/ixt-calendar.module';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { IxtAutoCompleteModule } from '../components/ixt-auto-complete/ixt-auto-
     IxtLayerManagerModule,
     IxtTreeModule,
     IxtExpressionBuilderModule,
-    IxtAutoCompleteModule
+    IxtAutoCompleteModule,
+    IxtCalendarModule
   ],
   bootstrap: [AppComponent]
 })

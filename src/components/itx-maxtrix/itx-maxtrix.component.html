@@ -1,0 +1,59 @@
+<div class="ixt-matrix" *ngIf="data?.length; else noData">
+    <div class="ixt-matrix__header">
+      <div *ngFor="let col of columns" 
+           class="ixt-matrix__cell" 
+           [class.ixt-matrix__cell--first]="col === columns[0]">
+        {{col}}
+      </div>
+    </div>
+  
+    <ng-container *ngIf="isTree; else flatTable">
+      <ng-container *ngTemplateOutlet="treeNode; context: { 
+        $implicit: data, 
+        level: 0 
+      }">
+      </ng-container>
+    </ng-container>
+  
+    <ng-template #flatTable>
+      <div *ngFor="let row of data" class="ixt-matrix__row">
+        <div *ngFor="let col of columns" 
+             class="ixt-matrix__cell"
+             [class.ixt-matrix__cell--first]="col === columns[0]">
+          {{row[col]}}
+        </div>
+      </div>
+    </ng-template>
+  </div>
+  
+  <ng-template #treeNode let-nodes let-level="level">
+    <ng-container *ngFor="let node of nodes; let i = index">
+      <div class="ixt-matrix__row">
+        <div *ngFor="let col of columns" 
+             class="ixt-matrix__cell"
+             [class.ixt-matrix__cell--first]="col === columns[0]"
+             [style.padding-left.px]="col === columns[0] ? level * 16 : null">
+          <ng-container *ngIf="col === columns[0]">
+            <button *ngIf="hasChildren(node)" 
+                    class="ixt-matrix__toggle"
+                    (click)="toggleNode(i)">
+              <i [class.expanded]="isExpanded(i)"></i>
+            </button>
+          </ng-container>
+          {{node[col]}}
+        </div>
+      </div>
+      
+      <ng-container *ngIf="hasChildren(node) && isExpanded(i)">
+        <ng-container *ngTemplateOutlet="treeNode; context: { 
+          $implicit: node.children, 
+          level: level + 1 
+        }">
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </ng-template>
+  
+  <ng-template #noData>
+    <div class="ixt-matrix__empty">No data available</div>
+  </ng-template>

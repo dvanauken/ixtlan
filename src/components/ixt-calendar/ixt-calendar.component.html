@@ -1,1 +1,34 @@
-<p>ixt-calendar works!</p>
+<div class="calendar-container">
+    <div class="calendar-controls">
+      <button (click)="previousMonth()">&lt;</button>
+      <select [formControl]="monthControl">
+        <option *ngFor="let month of months; let i = index" [value]="i">
+          {{month}}
+        </option>
+      </select>
+      <input 
+        type="number" 
+        [formControl]="yearControl"
+        [min]="0"
+        [max]="2100"
+        (blur)="validateYear()"
+      >
+      <button (click)="nextMonth()">&gt;</button>
+    </div>
+  
+    <div class="calendar-grid">
+      <div class="weekday-header" *ngFor="let day of weekDays">{{day}}</div>
+      <div 
+        *ngFor="let day of calendarDays" 
+        class="calendar-day"
+        [class.weekend]="day.isWeekend"
+        [class.holiday]="day.holidays.length > 0"
+      >
+        <div class="date">{{day.date.getDate()}}</div>
+        <div class="holiday-name" *ngFor="let holiday of day.holidays">
+          {{holiday.name}}
+        </div>
+      </div>
+    </div>
+  </div>
+  

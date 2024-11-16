@@ -1,7 +1,7 @@
 # PowerShell script to generate Angular components for the specified directories
 $basePath = "src/components"
 $components = @(
-    "ixt-auto-complete"
+    "itx-maxtrix"
 )
 
 foreach ($component in $components) {
