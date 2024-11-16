@@ -1,6 +1,10 @@
 // src/app/layer/ixt-layer.provider.ts
+import { Injectable } from '@angular/core';
 import { Layer } from '../../components/ixt-layer-manager/ixt-layer-manager.component';
 
+@Injectable({
+    providedIn: 'root'  // Makes it a singleton service available app-wide
+})
 export class IxtLayerProvider {
     mapLayers: Layer[] = [
         {

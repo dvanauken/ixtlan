@@ -1,6 +1,10 @@
 // src/app/tree/ixt-tree.handler.ts
+import { Injectable } from '@angular/core';
 import { TreeNode } from '../../components/ixt-tree/ixt-tree.component';
 
+@Injectable({
+    providedIn: 'root'
+})
 export class IxtTreeHandler {
     onNodeExpanded(node: TreeNode): void {
         console.log('Node expanded:', node);

@@ -1,6 +1,10 @@
 // src/app/table/ixt-table.handler.ts
+import { Injectable } from '@angular/core';
 import { TableConfig } from '../../components/ixt-table/ixt-table.interfaces';
 
+@Injectable({
+    providedIn: 'root'
+})
 export class IxtTableHandler {
     onSort(event: any) {
         console.log('Sort event:', event);

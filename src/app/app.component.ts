@@ -55,7 +55,7 @@ export class AppComponent implements AfterViewInit {
    public autocompleteProvider: IxtAutocompleteProvider,
    public autocompleteHandler: IxtAutocompleteHandler,
    public employeeFormProvider: IxtEmployeeFormProvider,
-   public employeeFormHandler: IxtEmployeeFormHandler
+   public employeeFormHandler: IxtEmployeeFormHandler,
  ) {}
 
  ngAfterViewInit() {

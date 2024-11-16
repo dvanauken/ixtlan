@@ -1,6 +1,10 @@
 // src/app/tree/ixt-tree.provider.ts
+import { Injectable } from '@angular/core';
 import { TreeNode } from '../../components/ixt-tree/ixt-tree.component';
 
+@Injectable({
+    providedIn: 'root'
+})
 export class IxtTreeProvider {
     treeData: TreeNode[] = [
         {
