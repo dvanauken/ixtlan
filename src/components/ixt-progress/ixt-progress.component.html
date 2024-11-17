@@ -1,1 +1,145 @@
-<p>ixt-progress works!</p>
+<ng-container *ngIf="config">
+    <!-- Modal backdrop -->
+    <div *ngIf="config.displayMode === 'MODAL'" 
+         class="progress-backdrop"
+         [class.dark-theme]="config.theme === 'dark'"
+         [class.light-theme]="config.theme === 'light'"
+         [@fadeInOut]>
+    </div>
+  
+    <!-- Main progress container -->
+    <div class="progress-container" 
+         [class.modal]="config.displayMode === 'MODAL'"
+         [class.embedded]="config.displayMode === 'EMBEDDED'"
+         [class.dark-theme]="config.theme === 'dark'"
+         [class.light-theme]="config.theme === 'light'"
+         [@slideInOut]>
+  
+      <!-- Header Section -->
+      <div class="progress-header">
+        <h3 *ngIf="config.title" class="progress-title">{{config.title}}</h3>
+        <button *ngIf="config.cancelable" 
+                (click)="cancel()"
+                class="cancel-button"
+                aria-label="Cancel operation">
+          ✕
+        </button>
+      </div>
+  
+      <!-- Description -->
+      <p *ngIf="config.description" class="progress-description">
+        {{config.description}}
+      </p>
+  
+      <!-- Main Progress Section -->
+      <div class="progress-content" [ngSwitch]="config.mode">
+        
+        <!-- Fixed Duration and Steps Based Progress -->
+        <ng-container *ngSwitchCase="'FIXED_DURATION'">
+          <div class="progress-bar-container">
+            <div class="progress-bar"
+                 [style.width.%]="(progressService.progress$ | async)?.progress || 0"
+                 [class.smoothed]="(config.mode === 'FIXED_DURATION' && config.smoothing)">
+            </div>
+          </div>
+        </ng-container>
+  
+        <!-- Steps Based Progress with Labels -->
+        <ng-container *ngSwitchCase="'STEPS_BASED'">
+          <div class="steps-container" *ngIf="config.showStepDetails">
+            <div class="step" 
+                 *ngFor="let label of config.stepLabels; let i = index"
+                 [class.completed]="(progressService.progress$ | async)?.currentStep > i"
+                 [class.active]="(progressService.progress$ | async)?.currentStep === i">
+              <div class="step-marker">{{i + 1}}</div>
+              <div class="step-label">{{label}}</div>
+            </div>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar"
+                 [style.width.%]="(progressService.progress$ | async)?.progress || 0">
+            </div>
+          </div>
+        </ng-container>
+  
+        <!-- Indeterminate Progress -->
+        <ng-container *ngSwitchCase="'INDETERMINATE'">
+          <div class="indeterminate-container">
+            <div [ngSwitch]="config.spinnerType">
+              <div *ngSwitchCase="'circular'" class="spinner-circular"></div>
+              <div *ngSwitchCase="'pulse'" class="spinner-pulse"></div>
+              <div *ngSwitchDefault class="spinner-linear"></div>
+            </div>
+            <div *ngIf="(progressService.progress$ | async)?.currentMessage"
+                 class="status-message"
+                 [@messageChange]>
+              {{(progressService.progress$ | async)?.currentMessage}}
+            </div>
+          </div>
+        </ng-container>
+  
+        <!-- Historical Progress -->
+        <ng-container *ngSwitchCase="'HISTORICAL'">
+          <div class="progress-bar-container">
+            <div class="progress-bar"
+                 [style.width.%]="(progressService.progress$ | async)?.progress || 0">
+            </div>
+          </div>
+        </ng-container>
+      </div>
+  
+      <!-- Progress Details Section -->
+      <div class="progress-details">
+        <!-- Percentage Display -->
+        <div *ngIf="config.showPercentage && (progressService.progress$ | async)?.progress !== -1" 
+             class="percentage">
+          {{(progressService.progress$ | async)?.progress | number:'1.0-0'}}%
+        </div>
+  
+        <!-- Time Information -->
+        <div class="time-info">
+          <!-- Elapsed Time -->
+          <span *ngIf="config.showElapsedTime" class="elapsed-time">
+            Elapsed: {{(progressService.progress$ | async)?.elapsedTime | duration}}
+          </span>
+  
+          <!-- Remaining Time -->
+          <span *ngIf="config.showTimeRemaining && 
+                       (progressService.progress$ | async)?.estimatedTimeRemaining !== null" 
+                class="remaining-time">
+            Remaining: {{(progressService.progress$ | async)?.estimatedTimeRemaining | duration}}
+          </span>
+        </div>
+      </div>
+  
+      <!-- Controls Section -->
+      <div class="progress-controls" *ngIf="config.pausable || config.cancelable">
+        <button *ngIf="config.pausable" 
+                (click)="(progressService.progress$ | async)?.status === 'PAUSED' ? resume() : pause()"
+                class="control-button"
+                [class.paused]="(progressService.progress$ | async)?.status === 'PAUSED'">
+          {{(progressService.progress$ | async)?.status === 'PAUSED' ? 'Resume' : 'Pause'}}
+        </button>
+        
+        <button *ngIf="config.cancelable" 
+                (click)="cancel()"
+                class="control-button cancel">
+          Cancel
+        </button>
+      </div>
+  
+      <!-- Error Display -->
+      <div *ngIf="(progressService.progress$ | async)?.status === 'ERROR'" 
+           class="error-container"
+           [@fadeInOut]>
+        <div class="error-message">
+          {{(progressService.progress$ | async)?.error?.message}}
+        </div>
+        <button *ngIf="config.errorRetryCount > 0"
+                (click)="initializeProgress()"
+                class="retry-button">
+          Retry
+        </button>
+      </div>
+    </div>
+  </ng-container>

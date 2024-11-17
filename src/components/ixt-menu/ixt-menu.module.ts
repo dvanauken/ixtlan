@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { IxtMenuComponent } from './ixt-menu.component';
+import { RouterModule } from '@angular/router';  // Added this import
 
 @NgModule({
   declarations: [
@@ -9,7 +9,7 @@ import { IxtMenuComponent } from './ixt-menu.component';
   ],
   imports: [
     CommonModule,
-    FormsModule
+    RouterModule    
   ],
   exports: [
     IxtMenuComponent

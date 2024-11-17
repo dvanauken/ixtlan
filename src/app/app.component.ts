@@ -3,6 +3,8 @@ import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { IxtDialogComponent, DialogType, DialogButton, DialogResult } from '../components/ixt-dialog';
 import { Layer } from '../components/ixt-layer-manager/ixt-layer-manager.component';
 import { TreeNode } from '../components/ixt-tree/ixt-tree.component';
+import { AccordionPanel } from '../components/ixt-accordian/ixt-accordian.component';
+
 import { Expression, ExpressionGroup } from '../components/ixt-expression-builder/ixt-expression-builder.interfaces';
 import { AutocompleteOption } from '../components/ixt-auto-complete/ixt-auto-complete.component';
 
@@ -19,6 +21,8 @@ import { IxtAutocompleteHandler } from './autocomplete/ixt-autocomplete.handler'
 import { IxtEmployeeFormProvider } from './form/ixt-employee-form.provider';
 import { IxtEmployeeFormHandler } from './form/ixt-employee-form.handler';
 import { IxtMatrixProvider } from './matrix/ixt-matrix.provider';
+import { MenuNode } from 'src/components/ixt-menu';
+import { IxtMenuProvider } from './menu/ixt-menu.provider';
 
 @Component({
   selector: 'app-root',
@@ -37,7 +41,8 @@ import { IxtMatrixProvider } from './matrix/ixt-matrix.provider';
     IxtAutocompleteHandler,
     IxtEmployeeFormProvider,
     IxtEmployeeFormHandler,
-    IxtMatrixProvider
+    IxtMatrixProvider,
+    IxtMenuProvider
   ]
 })
 export class AppComponent implements AfterViewInit {
@@ -47,6 +52,8 @@ export class AppComponent implements AfterViewInit {
   matrixTableData = this.matrixProvider.getTableData();
   matrixTreeData = this.matrixProvider.getTreeData();
   matrixTableTreeData = this.matrixProvider.getTableTreeData();
+
+
 
 
   constructor(
@@ -62,7 +69,9 @@ export class AppComponent implements AfterViewInit {
     public autocompleteHandler: IxtAutocompleteHandler,
     public employeeFormProvider: IxtEmployeeFormProvider,
     public employeeFormHandler: IxtEmployeeFormHandler,
-    public matrixProvider: IxtMatrixProvider
+    public matrixProvider: IxtMatrixProvider,
+    public menuProvider: IxtMenuProvider,
+
   ) { }
 
   ngAfterViewInit() {
@@ -70,5 +79,25 @@ export class AppComponent implements AfterViewInit {
       this.dialog.visible = false;
     }
   }
+
+
+  accordionPanels: AccordionPanel[] = [
+    {
+      title: 'Section 1',
+      content: 'Content for section 1',
+      isOpen: false
+    },
+    {
+      title: 'Section 2',
+      content: 'Content for section 2',
+      isOpen: false
+    },
+    {
+      title: 'Section 3',
+      content: 'Content for section 3',
+      isOpen: false
+    }
+  ];
+
 
 }

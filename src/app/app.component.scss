@@ -49,6 +49,15 @@ header, nav, main, aside, footer {
   border-radius: 4px;
 }
 
+header {
+  grid-area: header;
+  padding: 0;  // Remove padding to let menu fill header
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;  // White background for header
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);  // Subtle shadow
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

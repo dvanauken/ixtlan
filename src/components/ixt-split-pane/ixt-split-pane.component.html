@@ -1,29 +1,19 @@
-<div #container class="split-pane-container">
-    <div #leftPane class="left-pane">
-      <ng-content select="[leftPane]"></ng-content>
-    </div>
-    
-    <div #divider 
-         class="divider"
-         (mousedown)="onDragStart($event)">
-      <div class="collapse-buttons">
-        <button class="collapse-button left"
-                [class.hidden]="isLeftCollapsed"
-                (click)="collapseLeft()">◀</button>
-        <button class="collapse-button right"
-                [class.hidden]="isRightCollapsed"
-                (click)="collapseRight()">▶</button>
-      </div>
-    </div>
-    
-    <div class="right-pane">
-      <ng-content select="[rightPane]"></ng-content>
-    </div>
-    
-    <button *ngIf="isLeftCollapsed"
-            class="expand-button"
-            (click)="expandLeft()">▶</button>
-    <button *ngIf="isRightCollapsed"
-            class="expand-button right"
-            (click)="expandRight()">◀</button>
+<div class="split-pane-container" #container>
+  <div class="left-pane" #leftPane>
+    <ng-content select=".left-pane"></ng-content>
   </div>
+
+  <div class="divider" #divider (mousedown)="onDragStart($event)">
+    <div class="collapse-buttons">
+      <button class="collapse-button" (click)="collapseLeft()" [class.hidden]="isLeftCollapsed">◀</button>
+      <button class="collapse-button" (click)="collapseRight()" [class.hidden]="isRightCollapsed">▶</button>
+    </div>
+  </div>
+
+  <div class="right-pane">
+    <ng-content select=".right-pane"></ng-content>
+  </div>
+
+  <button *ngIf="isLeftCollapsed" class="expand-button" (click)="expandLeft()">▶</button>
+  <button *ngIf="isRightCollapsed" class="expand-button right" (click)="expandRight()">◀</button>
+</div>

@@ -14,6 +14,7 @@ import { IxtLayerManagerModule } from '../components/ixt-layer-manager/ixt-layer
 import { IxtTableModule } from '../components/ixt-table/ixt-table.module';
 import { IxtTabsetModule } from '../components/ixt-tabset/ixt-tabset.module';
 import { IxtTreeModule } from '../components/ixt-tree/ixt-tree.module';
+import { IxtMenuModule } from '../components/ixt-menu/ixt-menu.module';
 
 // Components
 import { AppComponent } from './app.component';
@@ -33,6 +34,9 @@ import { IxtTableProvider } from './table/ixt-table.provider';
 import { IxtTreeHandler } from './tree/ixt-tree.handler';
 import { IxtTreeProvider } from './tree/ixt-tree.provider';
 import { IxtMatrixModule } from 'src/components/ixt-matrix';
+import { IxtSplitPaneModule } from 'src/components/ixt-split-pane';
+import { IxtPanelModule } from 'src/components/ixt-panel';
+import { IxtAccordianModule } from 'src/components/ixt-accordian/accordian.module';
 
 
 @NgModule({
@@ -43,6 +47,7 @@ import { IxtMatrixModule } from 'src/components/ixt-matrix';
     BrowserAnimationsModule,
     BrowserModule,
     FormsModule,
+    IxtAccordianModule,  
     IxtAutoCompleteModule,
     IxtCalendarModule,
     IxtDialogModule,
@@ -53,6 +58,9 @@ import { IxtMatrixModule } from 'src/components/ixt-matrix';
     IxtTableModule,
     IxtTabsetModule,
     IxtTreeModule,
+    IxtSplitPaneModule,
+    IxtPanelModule,
+    IxtMenuModule
   ],
   providers: [
     IxtAutocompleteHandler,
