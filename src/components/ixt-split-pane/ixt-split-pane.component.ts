@@ -1,87 +1,102 @@
-import { Component, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+// split-pane.component.ts
+import { Component, ElementRef, HostListener, Input, ViewChild, AfterContentInit } from '@angular/core';
 
 @Component({
   selector: 'ixt-split-pane',
-  templateUrl: './ixt-split-pane.component.html',
-  styleUrls: ['./ixt-split-pane.component.scss']
-})
-export class IxtSplitPaneComponent implements AfterViewInit {
-  @Input() initialSplit = 50;  // Initial split percentage
-  @ViewChild('container') container!: ElementRef;
-  @ViewChild('leftPane') leftPane!: ElementRef;
-  @ViewChild('divider') divider!: ElementRef;
-  
-  isDragging = false;
-  isLeftCollapsed = false;
-  isRightCollapsed = false;
-  
-  private startX = 0;
-  private startWidth = 0;
-  private containerWidth = 0;
-  
-  ngAfterViewInit() {
-    this.setInitialSplit();
-    this.containerWidth = this.container.nativeElement.offsetWidth;
-  }
-  
-  setInitialSplit() {
-    const width = this.container.nativeElement.offsetWidth;
-    this.leftPane.nativeElement.style.width = `${this.initialSplit}%`;
-  }
-  
-  onDragStart(e: MouseEvent) {
-    this.isDragging = true;
-    this.startX = e.clientX;
-    this.startWidth = this.leftPane.nativeElement.offsetWidth;
-    
-    document.addEventListener('mousemove', this.onDrag.bind(this));
-    document.addEventListener('mouseup', this.onDragEnd.bind(this));
-  }
-  
-  onDrag(e: MouseEvent) {
-    if (!this.isDragging) return;
-    
-    const dx = e.clientX - this.startX;
-    const newWidth = this.startWidth + dx;
-    const percentage = (newWidth / this.containerWidth) * 100;
-    
-    // Check for collapse threshold (10%)
-    if (percentage < 10) {
-      this.collapseLeft();
-    } else if (percentage > 90) {
-      this.collapseRight();
-    } else {
-      this.leftPane.nativeElement.style.width = `${percentage}%`;
-      this.isLeftCollapsed = false;
-      this.isRightCollapsed = false;
+  template: `
+    <div class="split-container">
+      <div class="first-panel" [style.flexBasis.%]="firstPanelSize">
+        <ng-content select=".left-pane"></ng-content>
+      </div>
+
+      <div #divider
+           class="divider"
+           (mousedown)="startResize($event)">
+      </div>
+
+      <div class="second-panel" [style.flexBasis.%]="100 - firstPanelSize">
+        <ng-content select=".right-pane"></ng-content>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .split-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent;
+      border: 10px solid orange;
     }
+
+    .first-panel, .second-panel {
+      margin: 10px;
+      overflow: auto;
+      border: 4px solid purple;
+    }
+
+    .first-panel {
+      overflow: auto;
+      background: green;
+    }
+
+    .second-panel {
+      overflow: auto;
+      background: blue;
+    }
+
+
+    .divider {
+      width: 4px;
+      background: #ccc;
+      cursor: col-resize;
+    }
+
+    .divider:hover {
+      background: #999;
+    }
+  `]
+})
+export class IxtSplitPaneComponent implements AfterContentInit {
+  @Input() initialSplit = 50;
+  @ViewChild('divider') divider!: ElementRef;
+
+  firstPanelSize: number;
+  isDragging = false;
+  startPosition = 0;
+  startSize = 0;
+
+  constructor() {
+    this.firstPanelSize = this.initialSplit;
   }
-  
-  onDragEnd() {
+
+  ngAfterContentInit() {}
+
+  startResize(e: MouseEvent) {
+    this.isDragging = true;
+    this.startPosition = e.pageX;
+    this.startSize = this.firstPanelSize;
+
+    document.addEventListener('mousemove', this.resize.bind(this));
+    document.addEventListener('mouseup', this.stopResize.bind(this));
+  }
+
+  @HostListener('window:mousemove', ['$event'])
+  resize(e: MouseEvent) {
+    if (!this.isDragging) return;
+
+    const containerRect = this.divider.nativeElement.parentElement.getBoundingClientRect();
+    const difference = e.pageX - this.startPosition;
+
+    let newSize = this.startSize + (difference / containerRect.width * 100);
+    newSize = Math.max(0, Math.min(100, newSize));
+
+    this.firstPanelSize = newSize;
+  }
+
+  stopResize() {
     this.isDragging = false;
-    document.removeEventListener('mousemove', this.onDrag.bind(this));
-    document.removeEventListener('mouseup', this.onDragEnd.bind(this));
-  }
-  
-  collapseLeft() {
-    this.leftPane.nativeElement.style.width = '0%';
-    this.isLeftCollapsed = true;
-    this.isRightCollapsed = false;
-  }
-  
-  expandLeft() {
-    this.leftPane.nativeElement.style.width = '50%';
-    this.isLeftCollapsed = false;
-  }
-  
-  collapseRight() {
-    this.leftPane.nativeElement.style.width = '100%';
-    this.isRightCollapsed = true;
-    this.isLeftCollapsed = false;
-  }
-  
-  expandRight() {
-    this.leftPane.nativeElement.style.width = '50%';
-    this.isRightCollapsed = false;
+    document.removeEventListener('mousemove', this.resize.bind(this));
+    document.removeEventListener('mouseup', this.stopResize.bind(this));
   }
 }

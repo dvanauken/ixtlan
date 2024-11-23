@@ -31,6 +31,10 @@
 .content {
   border: 2px solid #007BFF;
   margin-top: -2px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 
   .top-band {
     background-color: #007BFF;
@@ -42,11 +46,14 @@
   }
 
   .main-content {
-    padding: 20px;
     display: none;
+    flex: 1;
+    min-height: 0;
 
     &.active {
-      display: block;
+      display: flex;
+      padding: 20px;
+      box-sizing: border-box;
     }
   }
 }
