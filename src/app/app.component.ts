@@ -23,6 +23,7 @@ import { IxtEmployeeFormHandler } from './form/ixt-employee-form.handler';
 import { IxtMatrixProvider } from './matrix/ixt-matrix.provider';
 import { MenuNode } from 'src/components/ixt-menu';
 import { IxtMenuProvider } from './menu/ixt-menu.provider';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -52,9 +53,7 @@ export class AppComponent implements AfterViewInit {
   matrixTableData = this.matrixProvider.getTableData();
   matrixTreeData = this.matrixProvider.getTreeData();
   matrixTableTreeData = this.matrixProvider.getTableTreeData();
-
-
-
+  matrixAirportData: any[] = [];
 
   constructor(
     public tableProvider: IxtTableProvider,
@@ -71,9 +70,14 @@ export class AppComponent implements AfterViewInit {
     public employeeFormHandler: IxtEmployeeFormHandler,
     public matrixProvider: IxtMatrixProvider,
     public menuProvider: IxtMenuProvider,
-
   ) { }
 
+  ngOnInit() {
+    this.matrixProvider.getAirportData().subscribe(data => {
+      this.matrixAirportData = data;
+    });
+  }
+  
   ngAfterViewInit() {
     if (this.dialog) {
       this.dialog.visible = false;

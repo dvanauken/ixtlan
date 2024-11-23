@@ -86,7 +86,7 @@
       <ixt-tab title="IxtMatrix">
         <ixt-tabset>
           <ixt-tab title="Standard Table">
-            <ixt-matrix [data]="matrixTableData"></ixt-matrix>
+            <ixt-matrix [data]="matrixAirportData" *ngIf="matrixAirportData.length"></ixt-matrix>
           </ixt-tab>
           <ixt-tab title="Tree">
             <ixt-matrix [data]="matrixTreeData"></ixt-matrix>

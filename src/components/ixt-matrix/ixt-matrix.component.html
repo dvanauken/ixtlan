@@ -1,59 +1,85 @@
 <div class="ixt-matrix" *ngIf="data?.length; else noData">
-    <div class="ixt-matrix__header">
-      <div *ngFor="let col of columns" 
-           class="ixt-matrix__cell" 
-           [class.ixt-matrix__cell--first]="col === columns[0]">
-        {{col}}
+  <div class="ixt-matrix__header">
+    <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
+      {{col}}
+    </div>
+  </div>
+
+  <!-- Standard Table View -->
+  <ng-container *ngIf="!isTree">
+    <div class="ixt-matrix__row" *ngFor="let row of paginatedData">
+      <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
+        {{row[col]}}
       </div>
     </div>
-  
-    <ng-container *ngIf="isTree; else flatTable">
-      <ng-container *ngTemplateOutlet="treeNode; context: { 
-        $implicit: data, 
-        level: 0 
-      }">
-      </ng-container>
-    </ng-container>
-  
-    <ng-template #flatTable>
-      <div *ngFor="let row of data" class="ixt-matrix__row">
-        <div *ngFor="let col of columns" 
-             class="ixt-matrix__cell"
-             [class.ixt-matrix__cell--first]="col === columns[0]">
-          {{row[col]}}
+
+    <!-- Pagination only for standard table -->
+    <div class="ixt-matrix__footer" *ngIf="showPagination">
+      <div class="ixt-matrix__pagination">
+        <div class="ixt-matrix__page-size">
+          <select [formControl]="pageSizeControl">
+            <option *ngFor="let size of pageSizes" [value]="size.value">{{size.label}}</option>
+          </select>
+          <span>Showing {{((currentPage - 1) * +pageSize) + 1}}-{{Math.min(currentPage * +pageSize, data.length)}} of {{data.length}}</span>
+        </div>
+
+        <div class="ixt-matrix__controls">
+          <button [disabled]="currentPage === 1" (click)="onPageChange(1)">
+            <span class="material-icons">first_page</span>
+          </button>
+          <button [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">
+            <span class="material-icons">navigate_before</span>
+          </button>
+
+          <button *ngFor="let page of visiblePages" 
+                  [class.active]="page === currentPage"
+                  [class.ellipsis]="page === -1"
+                  [disabled]="page === -1"
+                  (click)="onPageChange(page)">
+            {{page === -1 ? '...' : page}}
+          </button>
+
+          <button [disabled]="currentPage === totalPages" (click)="onPageChange(currentPage + 1)">
+            <span class="material-icons">navigate_next</span>
+          </button>
+          <button [disabled]="currentPage === totalPages" (click)="onPageChange(totalPages)">
+            <span class="material-icons">last_page</span>
+          </button>
         </div>
       </div>
-    </ng-template>
+    </div>
+  </ng-container>
+
+  <!-- Tree View -->
+  <ng-container *ngIf="isTree">
+    <ng-container *ngTemplateOutlet="treeTemplate; context: { $implicit: data, level: 0 }">
+    </ng-container>
+  </ng-container>
+</div>
+
+<!-- Tree Template -->
+<ng-template #treeTemplate let-nodes let-level="level">
+  <div class="ixt-matrix__row" *ngFor="let node of nodes; let i = index">
+    <div class="ixt-matrix__cell" 
+         *ngFor="let col of columns" 
+         [class.ixt-matrix__cell--first]="col === columns[0]" 
+         [style.padding-left.px]="col === columns[0] ? level * 16 : null">
+      <button *ngIf="hasChildren(node)" class="ixt-matrix__toggle" (click)="toggleNode(i)">
+        <i [class.expanded]="isExpanded(i)"></i>
+      </button>
+      {{node[col]}}
+    </div>
   </div>
-  
-  <ng-template #treeNode let-nodes let-level="level">
-    <ng-container *ngFor="let node of nodes; let i = index">
-      <div class="ixt-matrix__row">
-        <div *ngFor="let col of columns" 
-             class="ixt-matrix__cell"
-             [class.ixt-matrix__cell--first]="col === columns[0]"
-             [style.padding-left.px]="col === columns[0] ? level * 16 : null">
-          <ng-container *ngIf="col === columns[0]">
-            <button *ngIf="hasChildren(node)" 
-                    class="ixt-matrix__toggle"
-                    (click)="toggleNode(i)">
-              <i [class.expanded]="isExpanded(i)"></i>
-            </button>
-          </ng-container>
-          {{node[col]}}
-        </div>
-      </div>
-      
-      <ng-container *ngIf="hasChildren(node) && isExpanded(i)">
-        <ng-container *ngTemplateOutlet="treeNode; context: { 
-          $implicit: node.children, 
-          level: level + 1 
-        }">
-        </ng-container>
+  <ng-container *ngFor="let node of nodes; let i = index">
+    <ng-container *ngIf="hasChildren(node) && isExpanded(i)">
+      <ng-container *ngTemplateOutlet="treeTemplate; context: { $implicit: node.children, level: level + 1 }">
       </ng-container>
     </ng-container>
-  </ng-template>
-  
-  <ng-template #noData>
-    <div class="ixt-matrix__empty">No data available</div>
-  </ng-template>
+  </ng-container>
+</ng-template>
+
+<ng-template #noData>
+  <div class="ixt-matrix__empty">
+    No data available
+  </div>
+</ng-template>

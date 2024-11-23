@@ -1,5 +1,7 @@
 // ixt-matrix.provider.ts
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 interface MatrixNode {
   id?: number;
@@ -13,9 +15,14 @@ interface MatrixNode {
   children?: MatrixNode[];
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class IxtMatrixProvider {
   
+  constructor(private http: HttpClient) {}
+
+
   getTableData(): MatrixNode[] {
     return [
       { id: 1, name: 'John Smith', department: 'Engineering', position: 'Senior Developer', salary: 95000 },
@@ -98,5 +105,9 @@ export class IxtMatrixProvider {
         ]
       }
     ];
+  }
+
+  getAirportData(): Observable<any[]> {
+    return this.http.get<any[]>('assets/Airport.json');
   }
 }

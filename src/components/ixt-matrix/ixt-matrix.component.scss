@@ -1,63 +1,129 @@
 .ixt-matrix {
-    border: 1px solid #e2e8f0;
-    border-radius: 0.5rem;
-    overflow: hidden;
-  
-    &__header {
-      display: flex;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+ 
+  &__header {
+    display: flex;
+    background: #f7fafc;
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: 500;
+  }
+ 
+  &__row {
+    display: flex;
+    border-bottom: 1px solid #e2e8f0;
+    
+    &:hover {
       background: #f7fafc;
-      border-bottom: 1px solid #e2e8f0;
-      font-weight: 500;
     }
-  
-    &__row {
-      display: flex;
-      border-bottom: 1px solid #e2e8f0;
-      
-      &:hover {
-        background: #f7fafc;
+  }
+ 
+  &__cell {
+    padding: 0.5rem;
+    width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+ 
+    &--first {
+      width: 200px;
+    }
+  }
+ 
+  &__toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-right: 0.5rem;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    position: relative;
+ 
+    i {
+      border: solid #4a5568;
+      border-width: 0 2px 2px 0;
+      display: inline-block;
+      padding: 3px;
+      transform: rotate(-45deg);
+      transition: transform 0.2s;
+ 
+      &.expanded {
+        transform: rotate(45deg);
       }
     }
-  
-    &__cell {
-      padding: 0.5rem;
-      width: 150px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-  
-      &--first {
-        width: 200px;
-      }
+  }
+ 
+  &__empty {
+    padding: 1rem;
+    text-align: center;
+    color: #718096;
+  }
+ 
+  // Add pagination styles
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    border-top: 1px solid #e2e8f0;
+  }
+ 
+  &__pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+ 
+  &__page-size {
+    select {
+      padding: 0.25rem 0.5rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.25rem;
+      margin-right: 1rem;
     }
-  
-    &__toggle {
-      background: none;
+  }
+ 
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+ 
+    button {
+      padding: 0.25rem;
+      min-width: 2rem;
+      height: 2rem;
       border: none;
-      padding: 0;
-      margin-right: 0.5rem;
+      background: none;
       cursor: pointer;
-      width: 16px;
-      height: 16px;
-      position: relative;
-  
-      i {
-        border: solid #4a5568;
-        border-width: 0 2px 2px 0;
-        display: inline-block;
-        padding: 3px;
-        transform: rotate(-45deg);
-        transition: transform 0.2s;
-  
-        &.expanded {
-          transform: rotate(45deg);
+      border-radius: 0.25rem;
+      color: #4169E1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+ 
+      &:disabled {
+        color: #808080;
+        cursor: not-allowed;
+      }
+ 
+      &:not(:disabled):hover {
+        background-color: #f7fafc;
+      }
+ 
+      &.active {
+        background-color: #4169E1;
+        color: white;
+      }
+ 
+      &.ellipsis {
+        cursor: default;
+        &:hover {
+          background: none;
         }
       }
     }
-  
-    &__empty {
-      padding: 1rem;
-      text-align: center;
-      color: #718096;
-    }
   }
+ }

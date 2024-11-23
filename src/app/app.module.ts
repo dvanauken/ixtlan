@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 // Component Modules (alphabetized)
 import { IxtAutoCompleteModule } from '../components/ixt-auto-complete/ixt-auto-complete.module';
@@ -33,10 +34,11 @@ import { IxtTableHandler } from './table/ixt-table.handler';
 import { IxtTableProvider } from './table/ixt-table.provider';
 import { IxtTreeHandler } from './tree/ixt-tree.handler';
 import { IxtTreeProvider } from './tree/ixt-tree.provider';
-import { IxtMatrixModule } from 'src/components/ixt-matrix';
+import { IxtMatrixComponent, IxtMatrixModule } from 'src/components/ixt-matrix';
 import { IxtSplitPaneModule } from 'src/components/ixt-split-pane';
 import { IxtPanelModule } from 'src/components/ixt-panel';
 import { IxtAccordianModule } from 'src/components/ixt-accordian/accordian.module';
+
 
 
 @NgModule({
@@ -47,6 +49,7 @@ import { IxtAccordianModule } from 'src/components/ixt-accordian/accordian.modul
     BrowserAnimationsModule,
     BrowserModule,
     FormsModule,
+    HttpClientModule,  // Add this line
     IxtAccordianModule,  
     IxtAutoCompleteModule,
     IxtCalendarModule,
