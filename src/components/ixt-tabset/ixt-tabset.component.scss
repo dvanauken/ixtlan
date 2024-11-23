@@ -49,11 +49,15 @@
     display: none;
     flex: 1;
     min-height: 0;
-
+  
     &.active {
+      background-color: orange;
       display: flex;
-      padding: 20px;
+      flex-direction: column;
+      padding: 20px;        // Changed from 10px to 20px to match the panel container
       box-sizing: border-box;
+  
     }
   }
+
 }

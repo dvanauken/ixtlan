@@ -88,11 +88,9 @@
           <ixt-tab title="Standard Table">
             <ixt-matrix [data]="matrixTableData"></ixt-matrix>
           </ixt-tab>
-
           <ixt-tab title="Tree">
             <ixt-matrix [data]="matrixTreeData"></ixt-matrix>
           </ixt-tab>
-
           <ixt-tab title="Table Tree">
             <ixt-matrix [data]="matrixTableTreeData"></ixt-matrix>
           </ixt-tab>
@@ -108,56 +106,37 @@
           </div>
         </ixt-split-pane>
       </ixt-tab>
-
-
-
-      <ixt-tab title="Panels" class="container">
-        <h1 class="title">Panel Component Examples</h1>
+      <ixt-tab title="Panels" class="ixt-panel-container">
+        <h2>Examples</h2>
+        <div class="ixt-panel-container">
+            <div class="panel-grid">
+                <ixt-panel title="Basic Panel">
+                    <div class="panel-content">
+                        This is a basic panel with default settings (bordered=true, elevated=false)
+                    </div>
+                </ixt-panel>
         
-        <!-- Basic Panel -->
-        <ixt-panel title="Basic Panel">
-          <div class="panel-content">
-            This is a basic panel with default settings (bordered=true, elevated=false)
-          </div>
-        </ixt-panel>
-      
-        <!-- Elevated Panel -->
-        <ixt-panel 
-          title="Elevated Panel" 
-          caption="With caption text"
-          [elevated]="true">
-          <div class="panel-content">
-            This panel has elevation enabled, creating a shadow effect
-          </div>
-        </ixt-panel>
-      
-        <!-- No Border Panel -->
-        <ixt-panel 
-          title="No Border Panel" 
-          [bordered]="false"
-          [padding]="true">
-          <div class="panel-content">
-            This panel has borders disabled but keeps padding
-          </div>
-        </ixt-panel>
-      
-        <!-- Minimal Panel -->
-        <ixt-panel 
-          [bordered]="false"
-          [padding]="false"
-          [elevated]="false">
-          <div class="panel-content">
-            A minimal panel without title, borders, elevation or padding
-          </div>
-        </ixt-panel>
+                <ixt-panel title="Elevated Panel" [elevated]="true" caption="With caption text">
+                    <div class="panel-content">
+                        This panel has elevation enabled, creating a shadow effect
+                    </div>
+                </ixt-panel>
+        
+                <ixt-panel title="No Border Panel" [bordered]="false" [padding]="true">
+                    <div class="panel-content">
+                        This panel has borders disabled but keeps padding
+                    </div>
+                </ixt-panel>
+        
+                <ixt-panel [bordered]="false" [padding]="false" [elevated]="false">
+                    <div class="panel-content">
+                        A minimal panel without title, borders, elevation or padding
+                    </div>
+                </ixt-panel>
+            </div>
+        </div>
       </ixt-tab>
-
-
-
-
     </ixt-tabset>
-
-
   </main>
 
   <aside>
