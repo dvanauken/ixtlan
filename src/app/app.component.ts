@@ -24,6 +24,8 @@ import { IxtMatrixProvider } from './matrix/ixt-matrix.provider';
 import { MenuNode } from 'src/components/ixt-menu';
 import { IxtMenuProvider } from './menu/ixt-menu.provider';
 import { HttpClientModule } from '@angular/common/http';
+import { ColumnFilterConfig } from '../components/ixt-matrix/ixt-matrix.interfaces';  // Add this import
+
 
 @Component({
   selector: 'app-root',
@@ -54,6 +56,50 @@ export class AppComponent implements AfterViewInit {
   matrixTreeData = this.matrixProvider.getTreeData();
   matrixTableTreeData = this.matrixProvider.getTableTreeData();
   matrixAirportData: any[] = [];
+  matrixColumnFilters: ColumnFilterConfig = {
+    code: { 
+      type: 'text', 
+      field: 'code',
+      placeholder: 'Filter code...'
+    },
+    region: { 
+      type: 'number', 
+      field: 'region',
+      placeholder: 'Filter region...'
+    },
+    name: { 
+      type: 'text', 
+      field: 'name',
+      placeholder: 'Filter name...'
+    },
+    city: { 
+      type: 'text', 
+      field: 'city',
+      placeholder: 'Filter city...'
+    },
+    country: { 
+      type: 'enum', 
+      field: 'country',
+      placeholder: 'Select country...',
+      enumValues: [
+        { value: 'United States', label: 'United States' },
+        { value: 'Russia', label: 'Russia' },
+        { value: 'French Polynesia', label: 'French Polynesia' },
+        { value: 'Egypt', label: 'Egypt' },
+        { value: 'Algeria', label: 'Algeria' }
+      ]
+    },
+    lat: { 
+      type: 'number', 
+      field: 'lat',
+      placeholder: 'Filter latitude...'
+    },
+    lon: { 
+      type: 'number', 
+      field: 'lon',
+      placeholder: 'Filter longitude...'
+    }
+  };
 
   constructor(
     public tableProvider: IxtTableProvider,
