@@ -35,3 +35,106 @@ header { grid-area: header; }
 section { grid-area: section; }
 aside { grid-area: aside; }
 footer { grid-area: footer; }
+
+
+
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+h3 {
+  grid-column: 1 / -1;
+  margin: 20px 0 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.field {
+  display: grid;
+  gap: 5px;
+
+  label {
+    font-weight: 500;
+  }
+
+  input, select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+}
+
+.actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+
+  button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:first-child {
+      background: #007bff;
+      color: white;
+    }
+
+    &:last-child {
+      background: #6c757d;
+      color: white;
+    }
+  }
+}
+
+.expression-tab-container {
+  padding: 20px;
+
+  .tab-header {
+    margin-bottom: 20px;
+  }
+
+  .preview-container {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+
+    pre {
+      background: #fff;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #eee;
+    }
+  }
+
+
+  .autocomplete-wrapper {
+    margin-top: 20px;
+    width: 50%;
+  }
+}
+
+.ixt-panel-container {
+  padding: 20px;
+
+  // Header styling
+  .title {
+      font-size: 24px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  // Grid container for the panels
+  .panel-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+  }
+}

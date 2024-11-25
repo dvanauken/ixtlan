@@ -116,31 +116,31 @@ export class IxtMatrixProvider {
     return {
       code: { 
         type: 'text', 
-        field: 'code',
+        field: 'IATA Code',
         placeholder: 'Filter code...',
         editable: true
       },
       region: { 
         type: 'number', 
-        field: 'region',
+        field: 'Region',
         placeholder: 'Filter region...',
         editable: true
       },
       name: { 
         type: 'text', 
-        field: 'name',
+        field: 'Name',
         placeholder: 'Filter name...',
         editable: true 
       },
       city: { 
         type: 'text', 
-        field: 'city',
+        field: 'City',
         placeholder: 'Filter city...',
         editable: true  
       },
       country: { 
         type: 'enum', 
-        field: 'country',
+        field: 'Country',
         placeholder: 'Select country...',
         editable: true, 
         enumValues: [
@@ -153,13 +153,13 @@ export class IxtMatrixProvider {
       },
       lat: { 
         type: 'number', 
-        field: 'lat',
+        field: 'Lat',
         placeholder: 'Filter latitude...',
         editable: true
       },
       lon: { 
         type: 'number', 
-        field: 'lon',
+        field: 'Lon',
         placeholder: 'Filter longitude...',
         editable: true
       }

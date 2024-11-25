@@ -25,14 +25,14 @@ export class IxtMatrixComponent implements OnInit {
   isTree: boolean = false;
   expandedNodes: Set<number> = new Set();
 
-  pageSizeControl = new FormControl<number | 'all'>(50);
+  pageSizeControl = new FormControl<number | 'all'>(10);
   protected readonly Math = Math;
 
   // Pagination additions
   currentPage = 1;
-  pageSize: number | 'all' = 50;
+  pageSize: number | 'all' = 10;
   pageSizes: PageSize[] = [
-    { value: 50, label: '50' },
+    { value: 10, label: '10' },
     { value: 100, label: '100' },
     { value: 'all', label: 'All' }
   ];

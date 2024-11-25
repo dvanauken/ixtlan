@@ -1,23 +1,5 @@
 [
   {
-    "code": "%u0",
-    "region": 6459,
-    "name": "Magas",
-    "city": "Nazran",
-    "country": "Russia",
-    "lat": 43.323814,
-    "lon": 45.01776
-  },
-  {
-    "code": "...",
-    "region": 7702,
-    "name": "Truckee-Tahoe Airport",
-    "city": "Truckee",
-    "country": "United States",
-    "lat": 39.32004,
-    "lon": -120.139565
-  },
-  {
     "code": "1RL",
     "region": 6864,
     "name": "Point Roberts Airpark",
