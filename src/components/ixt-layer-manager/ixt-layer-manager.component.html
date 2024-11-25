@@ -1,59 +1,32 @@
 <!-- ixt-layer-manager.component.html -->
 <div class="layer-manager">
-  <div cdkDropList class="layer-list" (cdkDropListDropped)="onDrop($event)">
-    <div *ngFor="let layer of layers" class="layer-puck" cdkDrag>
+  <div class="manager-header">
+    <div class="header-content">
+      <span class="header-icon">⟰</span>
+      <h2>Layers</h2>
+    </div>
+  </div>
+
+  <div class="layer-list" cdkDropList (cdkDropListDropped)="onDrop($event)">
+    <div class="layer-puck" *ngFor="let layer of layers" cdkDrag>
       <div class="drag-handle">⋮</div>
+      
       <span class="layer-name">{{ layer.name }}</span>
+      
       <div class="layer-controls">
-        <button class="control-btn"
-                [style.background-color]="layer.fillColor"
-                (click)="openColorPicker(layer, 'fill')"
-                title="Fill Color">
-          <span class="icon">●</span>
+        <button class="control-btn" (click)="openColorPicker(layer, 'fill')">
+          <span class="icon" [style.color]="layer.fillColor">●</span>
         </button>
-        <button class="control-btn"
-                [style.background-color]="layer.strokeColor"
-                (click)="openColorPicker(layer, 'stroke')"
-                title="Stroke Color">
-          <span class="icon">○</span>
+        <button class="control-btn" (click)="openColorPicker(layer, 'stroke')">
+          <span class="icon" [style.color]="layer.strokeColor">○</span>
         </button>
-        <button class="control-btn"
-                (click)="openStrokeStylePicker(layer)"
-                title="Stroke Style">
+        <button class="control-btn" (click)="openStrokeStylePicker(layer)">
           <span class="icon" [ngClass]="layer.strokeStyle">─</span>
         </button>
-        <button class="control-btn"
-                (click)="toggleVisibility(layer)"
-                [class.active]="layer.visible"
-                title="Toggle Visibility">
-          <span class="icon">👁</span>
+        <button class="control-btn" (click)="toggleVisibility(layer)">
+          <span class="icon">{{ layer.visible ? '👁' : '👁‍🗨' }}</span>
         </button>
       </div>
-    </div>
-  </div>
-
-  <div *ngIf="showColorPicker" class="popup-overlay">
-    <div class="popup">
-      <h3>Select {{ activeProperty === 'fill' ? 'Fill' : 'Stroke' }} Color</h3>
-      <input #colorInput type="color"
-             [value]="activeProperty === 'fill' ? selectedLayer?.fillColor : selectedLayer?.strokeColor"
-             (input)="onColorSelect(colorInput.value)">
-      <button (click)="closeColorPicker()">Cancel</button>
-    </div>
-  </div>
-
-  <div *ngIf="showStrokeStylePicker" class="popup-overlay">
-    <div class="popup">
-      <h3>Select Stroke Style</h3>
-      <div class="stroke-style-options">
-        <button *ngFor="let style of strokeStyles"
-                class="stroke-style-btn"
-                [class]="style"
-                (click)="onStrokeStyleSelect(style)">
-          ─
-        </button>
-      </div>
-      <button (click)="closeStrokeStylePicker()">Cancel</button>
     </div>
   </div>
 </div>

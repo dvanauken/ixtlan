@@ -34,11 +34,14 @@ $border-color: #dee2e6;
   }
 }
 
-// Base styles
 .ixt-menu {
   width: 100%;
+  height: 100%;
   background-color: $background-color;
   padding: 0.5rem;
+  //overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .ixt-menu-container {
@@ -103,6 +106,7 @@ $border-color: #dee2e6;
 
 // Submenu styles
 .ixt-submenu {
+  z-index: 1000;
   position: absolute;
   top: 100%;
   left: 0;
@@ -158,6 +162,7 @@ $border-color: #dee2e6;
 
 // Nested submenu styles
 .ixt-nested-submenu {
+  z-index: 1000;
   position: absolute;
   top: 0;
   left: 100%;
