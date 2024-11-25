@@ -1,3 +1,6 @@
+import { Type } from "@angular/core";
+import { MatrixEditor } from "./matrix-editors/editor.interface";
+
 export interface MatrixNode {
   [key: string]: any;
   children?: MatrixNode[];
@@ -11,7 +14,7 @@ export interface PageSize {
 export type FilterOperator = 'equals' | 'startsWith' | 'between' | '>' | '<' | '>=' | '<=' | '!=';
 
 export interface ColumnConfig {
-  type: 'text' | 'number' | 'enum';
+  type: 'text' | 'number' | 'enum' | MatrixEditor;
   field: string;
   operator?: FilterOperator;
   enumValues?: { value: any, label: string }[];
@@ -30,5 +33,7 @@ export interface FilterState {
 export interface RowChanges {
   [key: string]: any;
 }
+
+
 
 export type ColumnConfigs = Record<string, ColumnConfig>;

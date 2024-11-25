@@ -4,6 +4,7 @@ import { ColumnConfig, FilterState, MatrixNode, PageSize, RowChanges } from './i
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { MatIconModule } from '@angular/material/icon';
+import { MatrixEditor } from './matrix-editors/editor.interface';
 
 export type SortDirection = 'asc' | 'desc' | null;
 
@@ -392,12 +393,16 @@ export class IxtMatrixComponent implements OnInit {
 
 
   // Add helper method for default values
-  private getDefaultValueForType(type: string): any {
-    switch (type) {
-      case 'number': return 0;
-      case 'enum': return '';
-      default: return '';
+  private getDefaultValueForType(type: string | MatrixEditor): any {
+    if (typeof type === 'string') {
+      switch(type) {
+        case 'number': return 0;
+        case 'enum': return '';
+        default: return '';
+      }
     }
+    // Handle custom editor
+    return null; // Or return type.getDefaultValue() if you add that to interface
   }
 
   // Add new row method

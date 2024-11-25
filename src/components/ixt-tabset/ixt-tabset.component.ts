@@ -10,7 +10,7 @@ export class IxtTabsetComponent implements AfterContentInit {
   @ContentChildren(IxtTabComponent) tabs!: QueryList<IxtTabComponent>;
 
   selectedIndex: number = 0;
-  notificationText: string = '🔔 Content Band Icons or Info';
+  notificationText: string = 'Content Band Icons or Info';
 
   ngAfterContentInit() {
     // Set initial active tab if there are tabs
