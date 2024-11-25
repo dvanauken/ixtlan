@@ -1,107 +1,136 @@
-<div class="ixt-matrix" *ngIf="data?.length; else noData">
-  <!-- Header Row -->
-  <div class="ixt-matrix__header">
-    <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
-      <div class="ixt-matrix__cell-content">
-        {{col}}
-        <button class="ixt-matrix__filter-toggle" (click)="toggleFilters(col)">
-          <span class="material-icons">filter_alt</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Filter Row -->
-  <!-- Filter Row -->
-  <div class="ixt-matrix__header" *ngIf="showFilters">
-    <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
-      <ng-container *ngIf="activeFilterColumn === col && columnFilters?.[col]">
-        <ng-container [ngSwitch]="columnFilters?.[col]?.type">
-          <!-- Text Filter -->
-          <input *ngSwitchCase="'text'" [formControl]="getFilterControl(col)"
-            [placeholder]="columnFilters?.[col]?.placeholder || ''" class="ixt-matrix__filter-input">
-
-          <!-- Number Filter -->
-          <div *ngSwitchCase="'number'" class="ixt-matrix__number-filter">
-            <select [formControl]="getOperatorControl(col)">
-              <option value="=">=</option>
-              <option value=">">&gt;</option>
-              <option value="<">&lt;</option>
-              <option value=">=">&ge;</option>
-              <option value="<=">&le;</option>
-              <option value="!=">!=</option>
-            </select>
-            <input type="number" [formControl]="getFilterControl(col)"
-              [placeholder]="columnFilters?.[col]?.placeholder || ''" class="ixt-matrix__filter-input">
-          </div>
-
-          <!-- Enum Filter -->
-          <div *ngSwitchCase="'enum'">
-            <input [formControl]="getFilterControl(col)" [placeholder]="columnFilters?.[col]?.placeholder || ''"
-              class="ixt-matrix__filter-input" [matAutocomplete]="auto">
-            <mat-autocomplete #auto="matAutocomplete">
-              <mat-option *ngFor="let option of columnFilters?.[col]?.enumValues || []" [value]="option.value">
-                {{option.label}}
-              </mat-option>
-            </mat-autocomplete>
-          </div>
-        </ng-container>
-      </ng-container>
-    </div>
-  </div>
-
-  <!-- Standard Table View -->
-  <ng-container *ngIf="!isTree">
-    <div class="ixt-matrix__row" *ngFor="let row of paginatedData">
+<!-- Add save button above table -->
+<div class="ixt-matrix__toolbar">
+  <button class="ixt-matrix__save-button" 
+          [disabled]="!hasChanges"
+          (click)="saveChanges()">
+    <span class="material-icons">save</span>
+  </button>
+ </div>
+ 
+ <ng-container *ngIf="hasData; else noData">
+  <div class="ixt-matrix">
+    <!-- Header Row -->
+    <div class="ixt-matrix__header">
       <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
-        {{row[col]}}
-      </div>
-    </div>
-
-    <!-- Pagination only for standard table -->
-    <div class="ixt-matrix__footer" *ngIf="showPagination">
-      <div class="ixt-matrix__pagination">
-        <div class="ixt-matrix__page-size">
-          <select [formControl]="pageSizeControl">
-            <option *ngFor="let size of pageSizes" [value]="size.value">{{size.label}}</option>
-          </select>
-          <span>Showing {{((currentPage - 1) * +pageSize) + 1}}-{{Math.min(currentPage * +pageSize, data.length)}} of
-            {{data.length}}</span>
-        </div>
-
-        <div class="ixt-matrix__controls">
-          <button [disabled]="currentPage === 1" (click)="onPageChange(1)">
-            <span class="material-icons">first_page</span>
-          </button>
-          <button [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">
-            <span class="material-icons">navigate_before</span>
-          </button>
-
-          <button *ngFor="let page of visiblePages" [class.active]="page === currentPage" [class.ellipsis]="page === -1"
-            [disabled]="page === -1" (click)="onPageChange(page)">
-            {{page === -1 ? '...' : page}}
-          </button>
-
-          <button [disabled]="currentPage === totalPages" (click)="onPageChange(currentPage + 1)">
-            <span class="material-icons">navigate_next</span>
-          </button>
-          <button [disabled]="currentPage === totalPages" (click)="onPageChange(totalPages)">
-            <span class="material-icons">last_page</span>
-          </button>
+        <div class="ixt-matrix__cell-content">
+          {{col}}
+          <div class="ixt-matrix__cell-actions">
+            <button class="ixt-matrix__sort-toggle" (click)="toggleSort(col)">
+              <span class="material-icons">
+                {{getSortIcon(col)}}
+              </span>
+            </button>
+            <button class="ixt-matrix__filter-toggle" (click)="toggleFilters(col)">
+              <span class="material-icons">filter_alt</span>
+            </button>
+          </div>
         </div>
       </div>
+      <div class="ixt-matrix__cell">Actions</div>
     </div>
-  </ng-container>
-
-  <!-- Tree View -->
-  <ng-container *ngIf="isTree">
-    <ng-container *ngTemplateOutlet="treeTemplate; context: { $implicit: data, level: 0 }">
+ 
+    <!-- Filter Row -->
+    <div class="ixt-matrix__header" *ngIf="showFilters">
+      <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
+        <ng-container *ngIf="activeFilterColumn === col && columnFilters?.[col]">
+          <ng-container [ngSwitch]="columnFilters?.[col]?.type">
+            <!-- Text Filter -->
+            <input *ngSwitchCase="'text'" [formControl]="getFilterControl(col)"
+              [placeholder]="columnFilters?.[col]?.placeholder || ''" class="ixt-matrix__filter-input">
+ 
+            <!-- Number Filter -->
+            <div *ngSwitchCase="'number'" class="ixt-matrix__number-filter">
+              <select [formControl]="getOperatorControl(col)">
+                <option value="=">=</option>
+                <option value=">">&gt;</option>
+                <option value="<">&lt;</option>
+                <option value=">=">&ge;</option>
+                <option value="<=">&le;</option>
+                <option value="!=">!=</option>
+              </select>
+              <input type="number" [formControl]="getFilterControl(col)"
+                [placeholder]="columnFilters?.[col]?.placeholder || ''" class="ixt-matrix__filter-input">
+            </div>
+ 
+            <!-- Enum Filter -->
+            <div *ngSwitchCase="'enum'">
+              <input [formControl]="getFilterControl(col)" [placeholder]="columnFilters?.[col]?.placeholder || ''"
+                class="ixt-matrix__filter-input" [matAutocomplete]="auto">
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of columnFilters?.[col]?.enumValues || []" [value]="option.value">
+                  {{option.label}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+ 
+    <!-- Standard Table View -->
+    <ng-container *ngIf="!isTree">
+      <div class="ixt-matrix__row" *ngFor="let row of paginatedData; let i = index">
+        <div class="ixt-matrix__cell" 
+             *ngFor="let col of columns" 
+             [class.ixt-matrix__cell--first]="col === columns[0]">
+ 
+          <ng-container *ngIf="editingRows.has(i) && columnFilters?.[col]?.editable; else displayValue">
+            <ng-container [ngSwitch]="columnFilters?.[col]?.type">
+              <!-- Text Input -->
+              <input *ngSwitchCase="'text'"
+                     type="text"
+                     [ngModel]="rowChanges.get(i)?.[col] ?? row[col]"
+                     (ngModelChange)="onValueChange(i, col, $event)">
+              
+              <!-- Number Input -->
+              <input *ngSwitchCase="'number'"
+                     type="number"
+                     [ngModel]="rowChanges.get(i)?.[col] ?? row[col]"
+                     (ngModelChange)="onValueChange(i, col, $event)">
+              
+              <!-- Enum select -->
+              <select *ngSwitchCase="'enum'"
+                      [ngModel]="rowChanges.get(i)?.[col] ?? row[col]"
+                      (ngModelChange)="onValueChange(i, col, $event)">
+                <option *ngFor="let opt of columnFilters?.[col]?.enumValues || []" 
+                        [ngValue]="opt.value">
+                  {{opt.label}}
+                </option>
+              </select>
+            </ng-container>
+          </ng-container>
+ 
+          <ng-template #displayValue>
+            {{row[col]}}
+          </ng-template>
+        </div>
+        
+        <!-- Actions Column -->
+        <div class="ixt-matrix__cell">
+          <button class="ixt-matrix__action-button"
+                  *ngIf="!editingRows.has(i)"
+                  (click)="startEditing(i)">
+            <span class="material-icons">edit</span>
+          </button>
+          <button class="ixt-matrix__action-button"
+                  *ngIf="editingRows.has(i)"
+                  (click)="cancelEditing(i)">
+            <span class="material-icons">close</span>
+          </button>
+        </div>
+      </div>
     </ng-container>
-  </ng-container>
-</div>
-
-<!-- Tree Template -->
-<ng-template #treeTemplate let-nodes let-level="level">
+ 
+    <!-- Tree View -->
+    <ng-container *ngIf="isTree">
+      <ng-container *ngTemplateOutlet="treeTemplate; context: { $implicit: data, level: 0 }">
+      </ng-container>
+    </ng-container>
+  </div>
+ </ng-container>
+ 
+ <!-- Tree Template -->
+ <ng-template #treeTemplate let-nodes let-level="level">
   <div class="ixt-matrix__row" *ngFor="let node of nodes; let i = index">
     <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]"
       [style.padding-left.px]="col === columns[0] ? level * 16 : null">
@@ -117,10 +146,10 @@
       </ng-container>
     </ng-container>
   </ng-container>
-</ng-template>
-
-<ng-template #noData>
+ </ng-template>
+ 
+ <ng-template #noData>
   <div class="ixt-matrix__empty">
     No data available
   </div>
-</ng-template>
+ </ng-template>

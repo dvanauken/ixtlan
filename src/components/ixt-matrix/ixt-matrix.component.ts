@@ -1,9 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ColumnFilterConfig, FilterState, MatrixNode, PageSize } from './ixt-matrix.interfaces';
+import { ColumnFilterConfig, FilterState, MatrixNode, PageSize, RowChanges } from './ixt-matrix.interfaces';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
 import { MatIconModule } from '@angular/material/icon';
 
+export type SortDirection = 'asc' | 'desc' | null;
 
 @Component({
   selector: 'ixt-matrix',
@@ -13,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class IxtMatrixComponent implements OnInit {
   @Input() data: MatrixNode[] = [];
   @Input() columnFilters?: ColumnFilterConfig;
+  @ViewChild('noData') noDataTemplate!: TemplateRef<any>;  // Add this line
 
   columns: string[] = [];
   isTree: boolean = false;
@@ -37,6 +40,17 @@ export class IxtMatrixComponent implements OnInit {
   activeFilterColumn?: string;  // For tracking which column is being filtered
   filterOperatorControls = new Map<string, FormControl<string>>();  // For number operators
 
+  // Add new properties for sorting
+  private sortColumn: string | null = null;
+  private sortDirection: SortDirection = null;
+
+  // Add new properties for editing
+  editingRows = new Set<number>();  // Track which rows are being edited
+  rowChanges = new Map<number, RowChanges>();  // Track changes per row
+
+  // Add this template reference
+  noData = true; // or make it a getter based on your needs
+
 
   ngOnInit() {
     this.columns = this.getColumns(this.data);
@@ -59,6 +73,11 @@ export class IxtMatrixComponent implements OnInit {
         this.filterControls.set(field, control);
       });
     }
+  }
+
+  // Add this getter
+  get hasData(): boolean {
+    return !!this.data?.length;
   }
 
   // Existing methods - unchanged
@@ -171,26 +190,26 @@ export class IxtMatrixComponent implements OnInit {
     this.filterControls.forEach(control => control.reset());
   }
 
-  // Override paginatedData to include filtering
-  get paginatedData(): MatrixNode[] {
-    let filteredData = this.data;
+  // // Override paginatedData to include filtering
+  // get paginatedData(): MatrixNode[] {
+  //   let filteredData = this.data;
 
-    if (this.activeFilters.size > 0) {
-      filteredData = this.data.filter(item =>
-        Array.from(this.activeFilters.values()).every(filter =>
-          this.matchesFilter(item[filter.field], filter)
-        )
-      );
-    }
+  //   if (this.activeFilters.size > 0) {
+  //     filteredData = this.data.filter(item =>
+  //       Array.from(this.activeFilters.values()).every(filter =>
+  //         this.matchesFilter(item[filter.field], filter)
+  //       )
+  //     );
+  //   }
 
-    if (this.isTree || this.pageSize === 'all' || filteredData.length <= 50) {
-      return filteredData;
-    }
+  //   if (this.isTree || this.pageSize === 'all' || filteredData.length <= 50) {
+  //     return filteredData;
+  //   }
 
-    const start = (this.currentPage - 1) * (+this.pageSize);
-    const end = start + (+this.pageSize);
-    return filteredData.slice(start, end);
-  }
+  //   const start = (this.currentPage - 1) * (+this.pageSize);
+  //   const end = start + (+this.pageSize);
+  //   return filteredData.slice(start, end);
+  // }
 
   private matchesFilter(value: any, filter: FilterState): boolean {
     if (value === undefined || value === null) return false;
@@ -237,7 +256,7 @@ export class IxtMatrixComponent implements OnInit {
     }
     return control;
   }
-  
+
   getOperatorControl(col: string): FormControl<string> {
     let control = this.filterOperatorControls.get(col);
     if (!control) {
@@ -245,5 +264,117 @@ export class IxtMatrixComponent implements OnInit {
       this.filterOperatorControls.set(col, control);
     }
     return control;
+  }
+
+  // Add new methods for sorting
+  toggleSort(column: string): void {
+    if (this.sortColumn === column) {
+      // Cycle through: null -> asc -> desc -> null
+      if (this.sortDirection === null) {
+        this.sortDirection = 'asc';
+      } else if (this.sortDirection === 'asc') {
+        this.sortDirection = 'desc';
+      } else {
+        this.sortDirection = null;
+        this.sortColumn = null;
+      }
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+  }
+
+  getSortIcon(column: string): string {
+    if (this.sortColumn !== column) {
+      return 'unfold_more';
+    }
+    return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
+  }
+
+  // Modify the existing paginatedData getter to include sorting
+  get paginatedData(): MatrixNode[] {
+    let filteredData = this.data;
+
+    // Apply filters first
+    if (this.activeFilters.size > 0) {
+      filteredData = this.data.filter(item =>
+        Array.from(this.activeFilters.values()).every(filter =>
+          this.matchesFilter(item[filter.field], filter)
+        )
+      );
+    }
+
+    // Apply sorting
+    if (this.sortColumn && this.sortDirection) {
+      filteredData = [...filteredData].sort((a, b) => {
+        const aVal = a[this.sortColumn!];
+        const bVal = b[this.sortColumn!];
+
+        // Handle null/undefined values
+        if (aVal == null) return -1;
+        if (bVal == null) return 1;
+
+        // Compare based on type
+        if (typeof aVal === 'string') {
+          const comparison = String(aVal).toLowerCase().localeCompare(String(bVal).toLowerCase());
+          return this.sortDirection === 'asc' ? comparison : -comparison;
+        } else {
+          const comparison = aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);
+          return this.sortDirection === 'asc' ? comparison : -comparison;
+        }
+      });
+    }
+
+    // Apply pagination
+    if (this.isTree || this.pageSize === 'all' || filteredData.length <= 50) {
+      return filteredData;
+    }
+
+    const start = (this.currentPage - 1) * (+this.pageSize);
+    const end = start + (+this.pageSize);
+    return filteredData.slice(start, end);
+  }
+
+  // Method to start editing a row
+  startEditing(rowIndex: number): void {
+    this.editingRows.add(rowIndex);
+  }
+
+  // Method to cancel editing a row
+  cancelEditing(rowIndex: number): void {
+    this.editingRows.delete(rowIndex);
+    this.rowChanges.delete(rowIndex);
+  }
+
+  // Method to handle value changes
+  onValueChange(rowIndex: number, column: string, value: any): void {
+    let changes = this.rowChanges.get(rowIndex) || {};
+    changes[column] = value;
+    this.rowChanges.set(rowIndex, changes);
+  }
+
+  // Method to check if there are any pending changes
+  get hasChanges(): boolean {
+    return this.rowChanges.size > 0;
+  }
+
+  // Method to save all changes
+  saveChanges(): void {
+    if (!this.hasChanges) return;
+
+    // Apply changes to original data
+    this.rowChanges.forEach((changes, rowIndex) => {
+      const row = this.data[rowIndex];
+      Object.assign(row, changes);
+    });
+
+    // Clear editing state
+    this.editingRows.clear();
+    this.rowChanges.clear();
+  }
+
+  // Method to check if sorting/filtering should be disabled
+  get isEditingDisabled(): boolean {
+    return this.editingRows.size > 0;
   }
 }
