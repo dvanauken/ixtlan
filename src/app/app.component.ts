@@ -21,10 +21,8 @@ import { IxtAutocompleteHandler } from './autocomplete/ixt-autocomplete.handler'
 import { IxtEmployeeFormProvider } from './form/ixt-employee-form.provider';
 import { IxtEmployeeFormHandler } from './form/ixt-employee-form.handler';
 import { IxtMatrixProvider } from './matrix/ixt-matrix.provider';
-import { MenuNode } from 'src/components/ixt-menu';
 import { IxtMenuProvider } from './menu/ixt-menu.provider';
-import { HttpClientModule } from '@angular/common/http';
-import { ColumnFilterConfig } from '../components/ixt-matrix/ixt-matrix.interfaces';  // Add this import
+import { AccordianDataService } from './accordion/accordion.data';
 
 
 @Component({
@@ -49,6 +47,7 @@ import { ColumnFilterConfig } from '../components/ixt-matrix/ixt-matrix.interfac
   ]
 })
 export class AppComponent implements AfterViewInit {
+  [x: string]: any;
   @ViewChild(IxtDialogComponent) dialog!: IxtDialogComponent;
   formData = this.employeeFormProvider.getCurrentForm();
 
@@ -56,50 +55,8 @@ export class AppComponent implements AfterViewInit {
   matrixTreeData = this.matrixProvider.getTreeData();
   matrixTableTreeData = this.matrixProvider.getTableTreeData();
   matrixAirportData: any[] = [];
-  matrixColumnFilters: ColumnFilterConfig = {
-    code: { 
-      type: 'text', 
-      field: 'code',
-      placeholder: 'Filter code...'
-    },
-    region: { 
-      type: 'number', 
-      field: 'region',
-      placeholder: 'Filter region...'
-    },
-    name: { 
-      type: 'text', 
-      field: 'name',
-      placeholder: 'Filter name...'
-    },
-    city: { 
-      type: 'text', 
-      field: 'city',
-      placeholder: 'Filter city...'
-    },
-    country: { 
-      type: 'enum', 
-      field: 'country',
-      placeholder: 'Select country...',
-      enumValues: [
-        { value: 'United States', label: 'United States' },
-        { value: 'Russia', label: 'Russia' },
-        { value: 'French Polynesia', label: 'French Polynesia' },
-        { value: 'Egypt', label: 'Egypt' },
-        { value: 'Algeria', label: 'Algeria' }
-      ]
-    },
-    lat: { 
-      type: 'number', 
-      field: 'lat',
-      placeholder: 'Filter latitude...'
-    },
-    lon: { 
-      type: 'number', 
-      field: 'lon',
-      placeholder: 'Filter longitude...'
-    }
-  };
+  matrixColumnConfigs = this.matrixProvider.getAirportColumnConfigs();
+  accordionPanels = this.accordianDataService.getAccordianPanels();
 
   constructor(
     public tableProvider: IxtTableProvider,
@@ -116,6 +73,7 @@ export class AppComponent implements AfterViewInit {
     public employeeFormHandler: IxtEmployeeFormHandler,
     public matrixProvider: IxtMatrixProvider,
     public menuProvider: IxtMenuProvider,
+    private accordianDataService: AccordianDataService
   ) { }
 
   ngOnInit() {
@@ -129,25 +87,5 @@ export class AppComponent implements AfterViewInit {
       this.dialog.visible = false;
     }
   }
-
-
-  accordionPanels: AccordionPanel[] = [
-    {
-      title: 'Section 1',
-      content: 'Content for section 1',
-      isOpen: false
-    },
-    {
-      title: 'Section 2',
-      content: 'Content for section 2',
-      isOpen: false
-    },
-    {
-      title: 'Section 3',
-      content: 'Content for section 3',
-      isOpen: false
-    }
-  ];
-
 
 }

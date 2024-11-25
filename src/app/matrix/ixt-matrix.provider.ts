@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ColumnConfig } from 'src/components/ixt-matrix/ixt-matrix.interfaces';
 
 interface MatrixNode {
   id?: number;
@@ -110,4 +111,59 @@ export class IxtMatrixProvider {
   getAirportData(): Observable<any[]> {
     return this.http.get<any[]>('assets/Airport.json');
   }
+
+  getAirportColumnConfigs(): Record<string, ColumnConfig> {
+    return {
+      code: { 
+        type: 'text', 
+        field: 'code',
+        placeholder: 'Filter code...',
+        editable: true
+      },
+      region: { 
+        type: 'number', 
+        field: 'region',
+        placeholder: 'Filter region...',
+        editable: true
+      },
+      name: { 
+        type: 'text', 
+        field: 'name',
+        placeholder: 'Filter name...',
+        editable: true 
+      },
+      city: { 
+        type: 'text', 
+        field: 'city',
+        placeholder: 'Filter city...',
+        editable: true  
+      },
+      country: { 
+        type: 'enum', 
+        field: 'country',
+        placeholder: 'Select country...',
+        editable: true, 
+        enumValues: [
+          { value: 'United States', label: 'United States' },
+          { value: 'Russia', label: 'Russia' },
+          { value: 'French Polynesia', label: 'French Polynesia' },
+          { value: 'Egypt', label: 'Egypt' },
+          { value: 'Algeria', label: 'Algeria' }
+        ]
+      },
+      lat: { 
+        type: 'number', 
+        field: 'lat',
+        placeholder: 'Filter latitude...',
+        editable: true
+      },
+      lon: { 
+        type: 'number', 
+        field: 'lon',
+        placeholder: 'Filter longitude...',
+        editable: true
+      }
+    };
+  }
+
 }

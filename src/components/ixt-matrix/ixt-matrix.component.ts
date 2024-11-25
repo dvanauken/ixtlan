@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ColumnFilterConfig, FilterState, MatrixNode, PageSize, RowChanges } from './ixt-matrix.interfaces';
+import { ColumnConfig, FilterState, MatrixNode, PageSize, RowChanges } from './ixt-matrix.interfaces';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { MatIconModule } from '@angular/material/icon';
@@ -14,8 +14,11 @@ export type SortDirection = 'asc' | 'desc' | null;
 })
 export class IxtMatrixComponent implements OnInit {
   @Input() data: MatrixNode[] = [];
-  @Input() columnFilters?: ColumnFilterConfig;
+  //@Input() columnFilters?: ColumnFilterConfig;
+  @Input() columnConfigs?: Record<string, ColumnConfig>;
   @ViewChild('noData') noDataTemplate!: TemplateRef<any>;  // Add this line
+
+  newRows: MatrixNode[] = [];
 
   columns: string[] = [];
   isTree: boolean = false;
@@ -63,8 +66,8 @@ export class IxtMatrixComponent implements OnInit {
     });
 
     // Initialize filter controls if filters configured
-    if (this.columnFilters) {
-      Object.entries(this.columnFilters).forEach(([field, config]) => {
+    if (this.columnConfigs) {
+      Object.entries(this.columnConfigs).forEach(([field, config]) => {
         const control = new FormControl('');
         control.valueChanges.pipe(
           debounceTime(config.debounceTime || 300),
@@ -172,7 +175,7 @@ export class IxtMatrixComponent implements OnInit {
 
   onFilterChange(field: string, value: any): void {
     if (value) {
-      const config = this.columnFilters?.[field];
+      const config = this.columnConfigs?.[field];
       if (config) {
         this.activeFilters.set(field, {
           field,
@@ -291,30 +294,29 @@ export class IxtMatrixComponent implements OnInit {
     return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
   }
 
-  // Modify the existing paginatedData getter to include sorting
   get paginatedData(): MatrixNode[] {
-    let filteredData = this.data;
+    // Start with combined data
+    let allData = [...this.newRows, ...this.data];
 
-    // Apply filters first
+    // Apply filters (skip new rows)
     if (this.activeFilters.size > 0) {
-      filteredData = this.data.filter(item =>
+      const filteredExisting = this.data.filter(item =>
         Array.from(this.activeFilters.values()).every(filter =>
           this.matchesFilter(item[filter.field], filter)
         )
       );
+      allData = [...this.newRows, ...filteredExisting];
     }
 
     // Apply sorting
     if (this.sortColumn && this.sortDirection) {
-      filteredData = [...filteredData].sort((a, b) => {
+      allData.sort((a, b) => {
         const aVal = a[this.sortColumn!];
         const bVal = b[this.sortColumn!];
 
-        // Handle null/undefined values
-        if (aVal == null) return -1;
-        if (bVal == null) return 1;
+        if (aVal == null) return 1;
+        if (bVal == null) return -1;
 
-        // Compare based on type
         if (typeof aVal === 'string') {
           const comparison = String(aVal).toLowerCase().localeCompare(String(bVal).toLowerCase());
           return this.sortDirection === 'asc' ? comparison : -comparison;
@@ -326,13 +328,23 @@ export class IxtMatrixComponent implements OnInit {
     }
 
     // Apply pagination
-    if (this.isTree || this.pageSize === 'all' || filteredData.length <= 50) {
-      return filteredData;
+    if (this.isTree || this.pageSize === 'all' || allData.length <= 50) {
+      return allData;
     }
 
     const start = (this.currentPage - 1) * (+this.pageSize);
     const end = start + (+this.pageSize);
-    return filteredData.slice(start, end);
+    return allData.slice(start, end);
+  }
+
+  // Helper to get real index
+  getRowIndex(displayIndex: number): number {
+    return displayIndex - this.newRows.length;
+  }
+
+  // Helper to check if row is new
+  isNewRow(displayIndex: number): boolean {
+    return displayIndex < this.newRows.length;
   }
 
   // Method to start editing a row
@@ -358,23 +370,85 @@ export class IxtMatrixComponent implements OnInit {
     return this.rowChanges.size > 0;
   }
 
-  // Method to save all changes
-  saveChanges(): void {
-    if (!this.hasChanges) return;
+  // // Method to save all changes
+  // saveChanges(): void {
+  //   if (!this.hasChanges) return;
 
-    // Apply changes to original data
+  //   // Apply changes to original data
+  //   this.rowChanges.forEach((changes, rowIndex) => {
+  //     const row = this.data[rowIndex];
+  //     Object.assign(row, changes);
+  //   });
+
+  //   // Clear editing state
+  //   this.editingRows.clear();
+  //   this.rowChanges.clear();
+  // }
+
+  // Method to check if sorting/filtering should be disabled
+  get isEditingDisabled(): boolean {
+    return this.editingRows.size > 0;
+  }
+
+
+  // Add helper method for default values
+  private getDefaultValueForType(type: string): any {
+    switch (type) {
+      case 'number': return 0;
+      case 'enum': return '';
+      default: return '';
+    }
+  }
+
+  // Add new row method
+  addNewRow(): void {
+    const newRow: MatrixNode = {};
+
+    if (this.columnConfigs) {
+      Object.entries(this.columnConfigs).forEach(([field, config]) => {
+        newRow[field] = this.getDefaultValueForType(config.type);
+      });
+    } else {
+      this.columns.forEach(col => newRow[col] = '');
+    }
+
+    this.newRows.unshift(newRow);
+    this.editingRows.add(-this.newRows.length);
+  }
+
+  // // Modify paginatedData getter
+  // get paginatedData(): MatrixNode[] {
+  //   let allData = [...this.newRows, ...this.data];
+  //   // Rest of existing pagination logic...
+  //   return allData;
+  // }
+
+  // Modify saveChanges
+  saveChanges(): void {
+    if (!this.hasChanges && !this.newRows.length) return;
+
+    // Apply changes to existing rows
     this.rowChanges.forEach((changes, rowIndex) => {
-      const row = this.data[rowIndex];
-      Object.assign(row, changes);
+      if (rowIndex >= 0) { // Only modify existing rows
+        const row = this.data[rowIndex];
+        Object.assign(row, changes);
+      }
     });
+
+    // Add new rows to data
+    if (this.newRows.length) {
+      this.data.unshift(...this.newRows);
+      this.newRows = [];
+    }
 
     // Clear editing state
     this.editingRows.clear();
     this.rowChanges.clear();
   }
 
-  // Method to check if sorting/filtering should be disabled
-  get isEditingDisabled(): boolean {
-    return this.editingRows.size > 0;
+  // Add validation stub
+  validateRow(row: MatrixNode): boolean {
+    return true; // TODO: Implement validation
   }
+
 }
