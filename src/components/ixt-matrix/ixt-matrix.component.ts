@@ -1,12 +1,16 @@
 import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ColumnConfig, FilterState, MatrixNode, PageSize, RowChanges } from './ixt-matrix.interfaces';
+import { ColumnConfig, FilterOperator, FilterState, MatrixNode, PageSize, RowChanges } from './ixt-matrix.interfaces';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatrixEditor } from './matrix-editors/editor.interface';
 
+
 export type SortDirection = 'asc' | 'desc' | null;
+
+
+
 
 @Component({
   selector: 'ixt-matrix',
@@ -54,6 +58,8 @@ export class IxtMatrixComponent implements OnInit {
 
   // Add this template reference
   noData = true; // or make it a getter based on your needs
+
+
 
 
   ngOnInit() {
@@ -111,16 +117,6 @@ export class IxtMatrixComponent implements OnInit {
     return this.expandedNodes.has(index);
   }
 
-  // // New pagination methods
-  // get paginatedData(): MatrixNode[] {
-  //   if (this.isTree || this.pageSize === 'all' || this.data.length <= 50) {
-  //     return this.data;
-  //   }
-  //   const start = (this.currentPage - 1) * (+this.pageSize);
-  //   const end = start + (+this.pageSize);
-  //   return this.data.slice(start, end);
-  // }
-
   get totalPages(): number {
     if (this.isTree || this.pageSize === 'all' || this.data.length <= 50) return 1;
     return Math.ceil(this.data.length / +this.pageSize);
@@ -174,18 +170,94 @@ export class IxtMatrixComponent implements OnInit {
     this.currentPage = 1;
   }
 
-  onFilterChange(field: string, value: any): void {
-    if (value) {
-      const config = this.columnConfigs?.[field];
-      if (config) {
-        this.activeFilters.set(field, {
-          field,
-          operator: config.operator || 'equals',
-          value
-        });
-      }
-    } else {
-      this.activeFilters.delete(field);
+  private matchesFilter(value: any, filter: FilterState): boolean {
+    if (value === undefined || value === null) return false;
+  
+    const config = this.columnConfigs?.[filter.field];
+    
+    // Debug log
+    console.log('matchesFilter:', {
+      field: filter.field,
+      operator: filter.operator,
+      filterValue: filter.value,
+      itemValue: value,
+      config: config
+    });
+  
+    // Handle numeric comparisons for number type
+    if (config?.type === 'number') {
+      const numValue = Number(value);
+      const numFilterValue = Number(filter.value);
+      return this.handleNumericComparison(numValue, numFilterValue, filter.operator);
+    }
+  
+    // String handling
+    const itemValue = String(value).toLowerCase();
+    const filterValue = String(filter.value).toLowerCase();
+    
+    // Debug log string comparison
+    console.log('String comparison:', {
+      itemValue,
+      filterValue,
+      operator: filter.operator,
+      includes: itemValue.includes(filterValue),
+      startsWith: itemValue.startsWith(filterValue),
+      equals: itemValue === filterValue
+    });
+  
+    switch (filter.operator) {
+      case 'startsWith':
+        return itemValue.startsWith(filterValue);
+      case 'equals':
+        return itemValue === filterValue;
+      case '!=':
+        return itemValue !== filterValue;
+      default:
+        return itemValue.includes(filterValue);
+    }
+  }
+  
+  // Helper method for numeric comparisons
+  private handleNumericComparison(numValue: number, numFilterValue: number, operator: FilterOperator): boolean {
+    switch (operator) {
+      case '>': return numValue > numFilterValue;
+      case '<': return numValue < numFilterValue;
+      case '>=': return numValue >= numFilterValue;
+      case '<=': return numValue <= numFilterValue;
+      case '!=': return numValue !== numFilterValue;
+      case 'equals': return numValue === numFilterValue;
+      case 'between': return false; // Handle between case if needed
+      default: return true;
+    }
+  }
+
+// In ixt-matrix.component.ts
+onFilterChange(field: string, value: any): void {
+  if (value || value === 0) {
+    const config = this.columnConfigs?.[field];
+    
+    // Use the proper FilterOperator type
+    const defaultOperator: FilterOperator = config?.type === 'number' ? 'equals' : 'contains';
+    const operator = this.filterOperatorControls.get(field)?.value || defaultOperator;
+    
+    if (config) {
+      this.activeFilters.set(field, {
+        field,
+        operator: operator as FilterOperator,
+        value: config.type === 'number' ? Number(value) : value
+      });
+    }
+  } else {
+    this.activeFilters.delete(field);
+  }
+}
+
+  onOperatorChange(field: string): void {
+    // Get current filter value
+    const currentValue = this.filterControls.get(field)?.value;
+    // If we have a value, update the filter with new operator
+    if (currentValue || currentValue === 0) {
+      this.onFilterChange(field, currentValue);
     }
   }
 
@@ -215,31 +287,31 @@ export class IxtMatrixComponent implements OnInit {
   //   return filteredData.slice(start, end);
   // }
 
-  private matchesFilter(value: any, filter: FilterState): boolean {
-    if (value === undefined || value === null) return false;
+  // private matchesFilter(value: any, filter: FilterState): boolean {
+  //   if (value === undefined || value === null) return false;
 
-    switch (filter.operator) {
-      case 'startsWith':
-        return value.toString().toLowerCase()
-          .startsWith(filter.value.toString().toLowerCase());
-      case 'equals':
-        return value === filter.value;
-      case '>':
-        return value > filter.value;
-      case '<':
-        return value < filter.value;
-      case '>=':
-        return value >= filter.value;
-      case '<=':
-        return value <= filter.value;
-      case '!=':
-        return value !== filter.value;
-      case 'between':
-        return value >= filter.value && value <= filter.secondaryValue;
-      default:
-        return true;
-    }
-  }
+  //   switch (filter.operator) {
+  //     case 'startsWith':
+  //       return value.toString().toLowerCase()
+  //         .startsWith(filter.value.toString().toLowerCase());
+  //     case 'equals':
+  //       return value === filter.value;
+  //     case '>':
+  //       return value > filter.value;
+  //     case '<':
+  //       return value < filter.value;
+  //     case '>=':
+  //       return value >= filter.value;
+  //     case '<=':
+  //       return value <= filter.value;
+  //     case '!=':
+  //       return value !== filter.value;
+  //     case 'between':
+  //       return value >= filter.value && value <= filter.secondaryValue;
+  //     default:
+  //       return true;
+  //   }
+  // }
 
   // Update your toggleFilters method to handle column-specific toggling
   toggleFilters(col: string): void {

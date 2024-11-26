@@ -11,7 +11,15 @@ export interface PageSize {
   label: string;
 }
 
-export type FilterOperator = 'equals' | 'startsWith' | 'between' | '>' | '<' | '>=' | '<=' | '!=';
+//export type FilterOperator = 'equals' | 'startsWith' | 'between' | '>' | '<' | '>=' | '<=' | '!=';
+export type FilterOperator = 'equals' | 'startsWith' | 'contains' | 'between' | '>' | '<' | '>=' | '<=' | '!=';
+
+export interface FilterState {
+  field: string;
+  operator: FilterOperator;
+  value: any;
+  secondaryValue?: any;
+}
 
 export interface ColumnConfig {
   type: 'text' | 'number' | 'enum' | MatrixEditor;

@@ -39,17 +39,18 @@
 
             <!-- Number Filter -->
             <div *ngSwitchCase="'number'" class="ixt-matrix__number-filter">
-              <select [formControl]="getOperatorControl(col)">
+              <select [formControl]="getOperatorControl(col)" (change)="onOperatorChange(col)">
                 <option value="=">=</option>
                 <option value=">">&gt;</option>
                 <option value="<">&lt;</option>
-                <option value=">=">&ge;</option>
-                <option value="<=">&le;</option>
+                <option value=">=">&gt;=</option>
+                <option value="<=">&lt;=</option>
                 <option value="!=">!=</option>
               </select>
               <input type="number" [formControl]="getFilterControl(col)"
                 [placeholder]="columnConfigs?.[col]?.placeholder || ''" class="ixt-matrix__filter-input">
             </div>
+
 
             <!-- Enum Filter -->
             <div *ngSwitchCase="'enum'">
