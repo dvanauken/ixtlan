@@ -2,15 +2,12 @@ import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core'
 import { FormControl } from '@angular/forms';
 import { ColumnConfig, FilterOperator, FilterState, MatrixNode, PageSize, RowChanges } from './ixt-matrix.interfaces';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-
-import { MatIconModule } from '@angular/material/icon';
 import { MatrixEditor } from './matrix-editors/editor.interface';
+import { AirportCodeEditorComponent } from './matrix-editors/airport-code/airport-code-editor.component';
+import { IxtDialogService } from '../ixt-dialog';
 
 
 export type SortDirection = 'asc' | 'desc' | null;
-
-
-
 
 @Component({
   selector: 'ixt-matrix',
@@ -59,8 +56,10 @@ export class IxtMatrixComponent implements OnInit {
   // Add this template reference
   noData = true; // or make it a getter based on your needs
 
+  editControls = new Map<string, FormControl>();
 
 
+  constructor(private dialogService: IxtDialogService) { }
 
   ngOnInit() {
     this.columns = this.getColumns(this.data);
@@ -172,9 +171,9 @@ export class IxtMatrixComponent implements OnInit {
 
   private matchesFilter(value: any, filter: FilterState): boolean {
     if (value === undefined || value === null) return false;
-  
+
     const config = this.columnConfigs?.[filter.field];
-    
+
     // Debug log
     console.log('matchesFilter:', {
       field: filter.field,
@@ -183,18 +182,18 @@ export class IxtMatrixComponent implements OnInit {
       itemValue: value,
       config: config
     });
-  
+
     // Handle numeric comparisons for number type
     if (config?.type === 'number') {
       const numValue = Number(value);
       const numFilterValue = Number(filter.value);
       return this.handleNumericComparison(numValue, numFilterValue, filter.operator);
     }
-  
+
     // String handling
     const itemValue = String(value).toLowerCase();
     const filterValue = String(filter.value).toLowerCase();
-    
+
     // Debug log string comparison
     console.log('String comparison:', {
       itemValue,
@@ -204,7 +203,7 @@ export class IxtMatrixComponent implements OnInit {
       startsWith: itemValue.startsWith(filterValue),
       equals: itemValue === filterValue
     });
-  
+
     switch (filter.operator) {
       case 'startsWith':
         return itemValue.startsWith(filterValue);
@@ -216,7 +215,7 @@ export class IxtMatrixComponent implements OnInit {
         return itemValue.includes(filterValue);
     }
   }
-  
+
   // Helper method for numeric comparisons
   private handleNumericComparison(numValue: number, numFilterValue: number, operator: FilterOperator): boolean {
     switch (operator) {
@@ -231,26 +230,26 @@ export class IxtMatrixComponent implements OnInit {
     }
   }
 
-// In ixt-matrix.component.ts
-onFilterChange(field: string, value: any): void {
-  if (value || value === 0) {
-    const config = this.columnConfigs?.[field];
-    
-    // Use the proper FilterOperator type
-    const defaultOperator: FilterOperator = config?.type === 'number' ? 'equals' : 'contains';
-    const operator = this.filterOperatorControls.get(field)?.value || defaultOperator;
-    
-    if (config) {
-      this.activeFilters.set(field, {
-        field,
-        operator: operator as FilterOperator,
-        value: config.type === 'number' ? Number(value) : value
-      });
+  // In ixt-matrix.component.ts
+  onFilterChange(field: string, value: any): void {
+    if (value || value === 0) {
+      const config = this.columnConfigs?.[field];
+
+      // Use the proper FilterOperator type
+      const defaultOperator: FilterOperator = config?.type === 'number' ? 'equals' : 'contains';
+      const operator = this.filterOperatorControls.get(field)?.value || defaultOperator;
+
+      if (config) {
+        this.activeFilters.set(field, {
+          field,
+          operator: operator as FilterOperator,
+          value: config.type === 'number' ? Number(value) : value
+        });
+      }
+    } else {
+      this.activeFilters.delete(field);
     }
-  } else {
-    this.activeFilters.delete(field);
   }
-}
 
   onOperatorChange(field: string): void {
     // Get current filter value
@@ -467,7 +466,7 @@ onFilterChange(field: string, value: any): void {
   // Add helper method for default values
   private getDefaultValueForType(type: string | MatrixEditor): any {
     if (typeof type === 'string') {
-      switch(type) {
+      switch (type) {
         case 'number': return 0;
         case 'enum': return '';
         default: return '';
@@ -528,4 +527,38 @@ onFilterChange(field: string, value: any): void {
     return true; // TODO: Implement validation
   }
 
+  // In ixt-matrix.component.ts
+  getEditorType(type: any): string {
+    if (typeof type === 'string') {
+      return type;
+    }
+    if (type === AirportCodeEditorComponent) {
+      return 'custom';
+    }
+    return 'text';
+  }
+
+  getEditorComponent(type: any): MatrixEditor | null {
+    if (type === AirportCodeEditorComponent) {
+      return new AirportCodeEditorComponent(this.dialogService);
+    }
+    return null;
+  }
+
+  // src/components/ixt-matrix/ixt-matrix.component.ts
+  getEditControl(rowIndex: number, field: string): FormControl {
+    const key = `${rowIndex}-${field}`;
+    let control = this.editControls.get(key);
+    if (!control) {
+      control = new FormControl('');
+      this.editControls.set(key, control);
+    }
+    return control;
+  }
+
+  // in ixt-matrix.component.ts
+  getCodes(data: MatrixNode[]): string[] {
+    if (!data) return [];
+    return data.map(row => row['code']?.toString() || '');
+  }
 }

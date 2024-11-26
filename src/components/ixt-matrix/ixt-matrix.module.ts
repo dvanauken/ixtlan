@@ -4,9 +4,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { IxtMatrixComponent } from './ixt-matrix.component';
+import { AirportCodeEditorComponent } from './matrix-editors/airport-code/airport-code-editor.component';
 
 @NgModule({
-  declarations: [IxtMatrixComponent],
+  declarations: [
+    IxtMatrixComponent,
+    AirportCodeEditorComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,           // Make sure this is here

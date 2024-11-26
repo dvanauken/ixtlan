@@ -2,6 +2,7 @@ import { Type } from "@angular/core";
 import { MatrixEditor } from "./matrix-editors/editor.interface";
 
 export interface MatrixNode {
+  code?: string;  // Add this property
   [key: string]: any;
   children?: MatrixNode[];
 }
@@ -11,7 +12,6 @@ export interface PageSize {
   label: string;
 }
 
-//export type FilterOperator = 'equals' | 'startsWith' | 'between' | '>' | '<' | '>=' | '<=' | '!=';
 export type FilterOperator = 'equals' | 'startsWith' | 'contains' | 'between' | '>' | '<' | '>=' | '<=' | '!=';
 
 export interface FilterState {

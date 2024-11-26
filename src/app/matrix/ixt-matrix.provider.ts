@@ -1,8 +1,10 @@
-// ixt-matrix.provider.ts
+// src/app/matrix/ixt-matrix.provider.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ColumnConfig } from 'src/components/ixt-matrix/ixt-matrix.interfaces';
+import { IxtDialogService } from 'src/components/ixt-dialog/ixt-dialog.service';
+import { AirportCodeEditorComponent } from 'src/components/ixt-matrix';
+import { ColumnConfig, ColumnConfigs } from 'src/components/ixt-matrix/ixt-matrix.interfaces';
 
 interface MatrixNode {
   id?: number;
@@ -20,9 +22,35 @@ interface MatrixNode {
   providedIn: 'root'
 })
 export class IxtMatrixProvider {
-  
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private dialogService: IxtDialogService
+  ) {}
 
+  getColumnConfigs(): ColumnConfigs {
+    return {
+      code: {
+        //type: new AirportCodeEditorComponent(this.dialogService),
+        type: AirportCodeEditorComponent as any,  // Add type casting
+        field: 'code',
+        editable: true
+      },
+      region: { type: 'text', field: 'region', editable: true },
+      name: { type: 'text', field: 'name', editable: true },
+      city: { type: 'text', field: 'city', editable: true },
+      country: { type: 'enum', field: 'country', editable: true,
+        enumValues: [
+          { value: 'United States', label: 'United States' },
+          { value: 'Russia', label: 'Russia' },
+          { value: 'French Polynesia', label: 'French Polynesia' },
+          { value: 'Egypt', label: 'Egypt' },
+          { value: 'Algeria', label: 'Algeria' }
+        ]
+      },
+      lat: { type: 'number', field: 'lat', editable: true },
+      lon: { type: 'number', field: 'lon', editable: true }
+    };
+  }
 
   getTableData(): MatrixNode[] {
     return [
@@ -112,58 +140,7 @@ export class IxtMatrixProvider {
     return this.http.get<any[]>('assets/Airport.json');
   }
 
-  getAirportColumnConfigs(): Record<string, ColumnConfig> {
-    return {
-      code: { 
-        type: 'text', 
-        field: 'IATA Code',
-        placeholder: 'Filter code...',
-        editable: true
-      },
-      region: { 
-        type: 'number', 
-        field: 'Region',
-        placeholder: 'Filter region...',
-        editable: true
-      },
-      name: { 
-        type: 'text', 
-        field: 'Name',
-        placeholder: 'Filter name...',
-        editable: true 
-      },
-      city: { 
-        type: 'text', 
-        field: 'City',
-        placeholder: 'Filter city...',
-        editable: true  
-      },
-      country: { 
-        type: 'enum', 
-        field: 'Country',
-        placeholder: 'Select country...',
-        editable: true, 
-        enumValues: [
-          { value: 'United States', label: 'United States' },
-          { value: 'Russia', label: 'Russia' },
-          { value: 'French Polynesia', label: 'French Polynesia' },
-          { value: 'Egypt', label: 'Egypt' },
-          { value: 'Algeria', label: 'Algeria' }
-        ]
-      },
-      lat: { 
-        type: 'number', 
-        field: 'Lat',
-        placeholder: 'Filter latitude...',
-        editable: true
-      },
-      lon: { 
-        type: 'number', 
-        field: 'Lon',
-        placeholder: 'Filter longitude...',
-        editable: true
-      }
-    };
+  getAirportColumnConfigs(): ColumnConfigs {
+    return this.getColumnConfigs();
   }
-
 }
