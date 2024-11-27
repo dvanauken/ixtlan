@@ -38,18 +38,18 @@ import { DialogType } from '../../../ixt-dialog/ixt-dialog.interfaces';
 export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit, MatrixEditor {
   @Input() config?: MatrixEditorConfig;
   @Input() existingCodes: string[] = [];
-  
+
   inputControl = new FormControl('');
   hasError = false;
   errorMessage = '';
-  
+
   // MatrixEditor implementation
   component: Type<any> = AirportCodeEditorComponent;
 
-  private onChange: (value: string) => void = () => {};
-  private onTouch: () => void = () => {};
+  private onChange: (value: string) => void = () => { };
+  private onTouch: () => void = () => { };
 
-  constructor(private dialogService: IxtDialogService) {}
+  constructor(private dialogService: IxtDialogService) { }
 
   ngOnInit() {
     this.setupValueChanges();
@@ -81,21 +81,19 @@ export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit,
     return value ? String(value).toUpperCase() : '';
   }
 
-  // Component methods
+  // airport-code-editor.component.ts
+  @Input() field: string = 'code';
+
   private setupValueChanges() {
     this.inputControl.valueChanges.subscribe(value => {
       if (value !== null) {
         const upperValue = value.toUpperCase();
-        if (upperValue !== value) {
-          this.inputControl.setValue(upperValue, { emitEvent: false });
-        }
         if (this.validateValue(upperValue)) {
           this.onChange(upperValue);
         }
       }
     });
   }
-
   private validateValue(value: string): boolean {
     this.hasError = false;
     this.errorMessage = '';
