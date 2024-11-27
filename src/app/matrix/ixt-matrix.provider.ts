@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { IxtDialogService } from 'src/components/ixt-dialog/ixt-dialog.service';
 import { AirportCodeEditorComponent } from 'src/components/ixt-matrix';
 import { ColumnConfig, ColumnConfigs } from 'src/components/ixt-matrix/ixt-matrix.interfaces';
+import { CoordinateEditorComponent } from 'src/components/ixt-matrix/matrix-editors/coordinate/coordinate-editor.component';
 
 interface MatrixNode {
   id?: number;
@@ -47,8 +48,16 @@ export class IxtMatrixProvider {
           { value: 'Algeria', label: 'Algeria' }
         ]
       },
-      lat: { type: 'number', field: 'lat', editable: true },
-      lon: { type: 'number', field: 'lon', editable: true }
+      lat: {
+        type: CoordinateEditorComponent as any,
+        field: 'lat',
+        editable: true
+      },
+      lon: {
+        type: CoordinateEditorComponent as any,
+        field: 'lon',
+        editable: true
+      }
     };
   }
 
