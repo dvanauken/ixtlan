@@ -270,6 +270,53 @@ export class IxtMatrixComponent implements OnInit {
     this.filterControls.forEach(control => control.reset());
   }
 
+  // // Override paginatedData to include filtering
+  // get paginatedData(): MatrixNode[] {
+  //   let filteredData = this.data;
+
+  //   if (this.activeFilters.size > 0) {
+  //     filteredData = this.data.filter(item =>
+  //       Array.from(this.activeFilters.values()).every(filter =>
+  //         this.matchesFilter(item[filter.field], filter)
+  //       )
+  //     );
+  //   }
+
+  //   if (this.isTree || this.pageSize === 'all' || filteredData.length <= 50) {
+  //     return filteredData;
+  //   }
+
+  //   const start = (this.currentPage - 1) * (+this.pageSize);
+  //   const end = start + (+this.pageSize);
+  //   return filteredData.slice(start, end);
+  // }
+
+  // private matchesFilter(value: any, filter: FilterState): boolean {
+  //   if (value === undefined || value === null) return false;
+
+  //   switch (filter.operator) {
+  //     case 'startsWith':
+  //       return value.toString().toLowerCase()
+  //         .startsWith(filter.value.toString().toLowerCase());
+  //     case 'equals':
+  //       return value === filter.value;
+  //     case '>':
+  //       return value > filter.value;
+  //     case '<':
+  //       return value < filter.value;
+  //     case '>=':
+  //       return value >= filter.value;
+  //     case '<=':
+  //       return value <= filter.value;
+  //     case '!=':
+  //       return value !== filter.value;
+  //     case 'between':
+  //       return value >= filter.value && value <= filter.secondaryValue;
+  //     default:
+  //       return true;
+  //   }
+  // }
+
   // Update your toggleFilters method to handle column-specific toggling
   toggleFilters(col: string): void {
     if (this.activeFilterColumn === col) {
@@ -388,6 +435,7 @@ export class IxtMatrixComponent implements OnInit {
     this.rowChanges.delete(rowIndex);
   }
 
+
   onValueChange(rowIndex: number, column: string, value: any): void {
     let changes = this.rowChanges.get(rowIndex) || {};
     changes[column] = value;
@@ -403,7 +451,6 @@ export class IxtMatrixComponent implements OnInit {
   get isEditingDisabled(): boolean {
     return this.editingRows.size > 0;
   }
-
 
   // Add helper method for default values
   private getDefaultValueForType(type: string | MatrixEditor): any {
@@ -421,7 +468,6 @@ export class IxtMatrixComponent implements OnInit {
   // Add new row method
   addNewRow(): void {
     const newRow: MatrixNode = {};
-
     if (this.columnConfigs) {
       Object.entries(this.columnConfigs).forEach(([field, config]) => {
         newRow[field] = this.getDefaultValueForType(config.type);
@@ -479,16 +525,33 @@ export class IxtMatrixComponent implements OnInit {
     return null;
   }
 
-  // src/components/ixt-matrix/ixt-matrix.component.ts
-  getEditControl(rowIndex: number, field: string): FormControl {
-    const key = `${rowIndex}-${field}`;
-    let control = this.editControls.get(key);
-    if (!control) {
-      control = new FormControl('');
-      this.editControls.set(key, control);
-    }
-    return control;
+  // // src/components/ixt-matrix/ixt-matrix.component.ts
+  // getEditControl(rowIndex: number, field: string): FormControl {
+  //   const key = `${rowIndex}-${field}`;
+  //   let control = this.editControls.get(key);
+  //   if (!control) {
+  //     control = new FormControl('');
+  //     this.editControls.set(key, control);
+  //   }
+  //   return control;
+  // }
+
+// ixt-matrix.component.ts
+getEditControl(rowIndex: number, field: string): FormControl {
+  const key = `${rowIndex}-${field}`;
+  let control = this.editControls.get(key);
+  if (!control) {
+    control = new FormControl('');
+    // Add subscription to handle value changes
+    control.valueChanges.subscribe(value => {
+      console.log(`Form control change - rowIndex: ${rowIndex}, field: ${field}, value:`, value);
+      this.onValueChange(rowIndex, field, value);
+    });
+    this.editControls.set(key, control);
   }
+  return control;
+}
+
 
   // in ixt-matrix.component.ts
   getCodes(data: MatrixNode[]): string[] {

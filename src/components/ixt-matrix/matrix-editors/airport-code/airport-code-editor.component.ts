@@ -39,6 +39,9 @@ export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit,
   @Input() config?: MatrixEditorConfig;
   @Input() existingCodes: string[] = [];
 
+  // airport-code-editor.component.ts
+  @Input() field: string = 'code';
+
   inputControl = new FormControl('');
   hasError = false;
   errorMessage = '';
@@ -81,19 +84,35 @@ export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit,
     return value ? String(value).toUpperCase() : '';
   }
 
-  // airport-code-editor.component.ts
-  @Input() field: string = 'code';
+
+
+  // private setupValueChanges() {
+  //   debugger;
+  //   this.inputControl.valueChanges.subscribe(value => {
+  //     if (value !== null) {
+  //       const upperValue = value.toUpperCase();
+  //       if (this.validateValue(upperValue)) {
+  //         this.onChange(upperValue);
+  //       }
+  //     }
+  //   });
+  // }
 
   private setupValueChanges() {
     this.inputControl.valueChanges.subscribe(value => {
       if (value !== null) {
         const upperValue = value.toUpperCase();
+        if (upperValue !== value) {
+          this.inputControl.setValue(upperValue, { emitEvent: false });
+        }
         if (this.validateValue(upperValue)) {
-          this.onChange(upperValue);
+          console.log('Editor emitting code change:', upperValue);
+          this.onChange(upperValue);  // This triggers the form control change
         }
       }
     });
   }
+
   private validateValue(value: string): boolean {
     this.hasError = false;
     this.errorMessage = '';
@@ -127,12 +146,24 @@ export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit,
     return true;
   }
 
-  // ControlValueAccessor methods
+  // // ControlValueAccessor methods
+  // writeValue(value: string): void {
+  //   this.inputControl.setValue(value, { emitEvent: false });
+  // }
+
+  // registerOnChange(fn: any): void {
+  //   this.onChange = fn;
+  // }
+
+
+  // These methods are already in your component at the bottom
   writeValue(value: string): void {
+    console.log('AirportCodeEditor writeValue:', value);
     this.inputControl.setValue(value, { emitEvent: false });
   }
 
   registerOnChange(fn: any): void {
+    console.log('AirportCodeEditor registerOnChange');
     this.onChange = fn;
   }
 
