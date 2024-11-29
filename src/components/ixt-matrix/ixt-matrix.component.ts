@@ -1,10 +1,11 @@
-import { ChangeDetectorRef, Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, TemplateRef, ViewChild, Type } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ColumnConfig, FilterOperator, FilterState, MatrixNode, PageSize, RowChanges } from './ixt-matrix.interfaces';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatrixEditor } from './matrix-editors/editor.interface';
-import { AirportCodeEditorComponent } from './matrix-editors/airport-code/airport-code-editor.component';
 import { IxtDialogService } from '../ixt-dialog';
+import { AirportCodeEditorComponent } from './matrix-editors/airport-code/airport-code-editor.component';
+import { CoordinateEditorComponent } from './matrix-editors/coordinate/coordinate-editor.component';
 
 
 export type SortDirection = 'asc' | 'desc' | null;
@@ -60,6 +61,8 @@ export class IxtMatrixComponent implements OnInit {
 
   private _editorInstance: MatrixEditor | null = null;
 
+  readonly AirportCodeEditorComponent = AirportCodeEditorComponent;
+  readonly CoordinateEditorComponent = CoordinateEditorComponent;
 
   constructor(
     private dialogService: IxtDialogService,
@@ -270,53 +273,6 @@ export class IxtMatrixComponent implements OnInit {
     this.filterControls.forEach(control => control.reset());
   }
 
-  // // Override paginatedData to include filtering
-  // get paginatedData(): MatrixNode[] {
-  //   let filteredData = this.data;
-
-  //   if (this.activeFilters.size > 0) {
-  //     filteredData = this.data.filter(item =>
-  //       Array.from(this.activeFilters.values()).every(filter =>
-  //         this.matchesFilter(item[filter.field], filter)
-  //       )
-  //     );
-  //   }
-
-  //   if (this.isTree || this.pageSize === 'all' || filteredData.length <= 50) {
-  //     return filteredData;
-  //   }
-
-  //   const start = (this.currentPage - 1) * (+this.pageSize);
-  //   const end = start + (+this.pageSize);
-  //   return filteredData.slice(start, end);
-  // }
-
-  // private matchesFilter(value: any, filter: FilterState): boolean {
-  //   if (value === undefined || value === null) return false;
-
-  //   switch (filter.operator) {
-  //     case 'startsWith':
-  //       return value.toString().toLowerCase()
-  //         .startsWith(filter.value.toString().toLowerCase());
-  //     case 'equals':
-  //       return value === filter.value;
-  //     case '>':
-  //       return value > filter.value;
-  //     case '<':
-  //       return value < filter.value;
-  //     case '>=':
-  //       return value >= filter.value;
-  //     case '<=':
-  //       return value <= filter.value;
-  //     case '!=':
-  //       return value !== filter.value;
-  //     case 'between':
-  //       return value >= filter.value && value <= filter.secondaryValue;
-  //     default:
-  //       return true;
-  //   }
-  // }
-
   // Update your toggleFilters method to handle column-specific toggling
   toggleFilters(col: string): void {
     if (this.activeFilterColumn === col) {
@@ -452,19 +408,37 @@ export class IxtMatrixComponent implements OnInit {
     return this.editingRows.size > 0;
   }
 
-  // Add helper method for default values
-  private getDefaultValueForType(type: string | MatrixEditor): any {
+  private getDefaultValueForType(type: string | MatrixEditor | Type<MatrixEditor>): any {
+    // Handle string types
     if (typeof type === 'string') {
       switch (type) {
-        case 'number': return 0;
-        case 'enum': return '';
-        default: return '';
+        case 'number':
+          return 0;
+        case 'enum':
+          return '';
+        case 'text':
+          return '';
+        default:
+          return '';
       }
     }
-    // Handle custom editor
-    return null; // Or return type.getDefaultValue() if you add that to interface
+  
+    // Handle editor component types
+    if (type === CoordinateEditorComponent) {
+      return 0; // Default value for coordinates
+    }
+    if (type === AirportCodeEditorComponent) {
+      return ''; // Default value for airport codes
+    }
+  
+    // Handle editor instances (when type is MatrixEditor)
+    if (typeof type === 'object' && 'getDefaultValue' in type) {
+      return type.getDefaultValue?.() ?? '';
+    }
+  
+    return '';
   }
-
+  
   // Add new row method
   addNewRow(): void {
     const newRow: MatrixNode = {};
@@ -509,53 +483,64 @@ export class IxtMatrixComponent implements OnInit {
 
   // In ixt-matrix.component.ts
   getEditorType(type: any): string {
+    console.log('getEditorType called with:', {
+      type,
+      isString: typeof type === 'string',
+      isCoordinate: type === CoordinateEditorComponent,
+      isAirport: type === AirportCodeEditorComponent
+    });
+    
     if (typeof type === 'string') {
       return type;
     }
-    if (type === AirportCodeEditorComponent) {
+    if (type === AirportCodeEditorComponent || type === CoordinateEditorComponent) {
+      console.log('Returning custom for editor type');
       return 'custom';
     }
+    console.log('Falling back to text type');
     return 'text';
   }
 
   getEditorComponent(type: any): MatrixEditor | null {
+    console.log('getEditorComponent called with:', {
+      type,
+      isCoordinate: type === CoordinateEditorComponent,
+      isAirport: type === AirportCodeEditorComponent
+    });
+    
     if (type === AirportCodeEditorComponent) {
       return new AirportCodeEditorComponent(this.dialogService);
+    }
+    if (type === CoordinateEditorComponent) {
+      return new CoordinateEditorComponent(this.dialogService);
     }
     return null;
   }
 
-  // // src/components/ixt-matrix/ixt-matrix.component.ts
-  // getEditControl(rowIndex: number, field: string): FormControl {
-  //   const key = `${rowIndex}-${field}`;
-  //   let control = this.editControls.get(key);
-  //   if (!control) {
-  //     control = new FormControl('');
-  //     this.editControls.set(key, control);
-  //   }
-  //   return control;
-  // }
 
-// ixt-matrix.component.ts
-getEditControl(rowIndex: number, field: string): FormControl {
-  const key = `${rowIndex}-${field}`;
-  let control = this.editControls.get(key);
-  if (!control) {
-    control = new FormControl('');
-    // Add subscription to handle value changes
-    control.valueChanges.subscribe(value => {
-      console.log(`Form control change - rowIndex: ${rowIndex}, field: ${field}, value:`, value);
-      this.onValueChange(rowIndex, field, value);
-    });
-    this.editControls.set(key, control);
+  getEditControl(rowIndex: number, field: string): FormControl {
+    const key = `${rowIndex}-${field}`;
+    let control = this.editControls.get(key);
+    if (!control) {
+      control = new FormControl('');
+      // Add subscription to handle value changes
+      control.valueChanges.subscribe(value => {
+        console.log(`Form control change - rowIndex: ${rowIndex}, field: ${field}, value:`, value);
+        this.onValueChange(rowIndex, field, value);
+      });
+      this.editControls.set(key, control);
+    }
+    return control;
   }
-  return control;
-}
 
 
   // in ixt-matrix.component.ts
   getCodes(data: MatrixNode[]): string[] {
     if (!data) return [];
     return data.map(row => row['code']?.toString() || '');
+  }
+
+  formatCoordinate(value: number): string {
+    return value.toFixed(1);
   }
 }

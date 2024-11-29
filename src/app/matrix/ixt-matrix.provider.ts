@@ -31,31 +31,45 @@ export class IxtMatrixProvider {
   getColumnConfigs(): ColumnConfigs {
     return {
       code: {
-        //type: new AirportCodeEditorComponent(this.dialogService),
-        type: AirportCodeEditorComponent as any,  // Add type casting
+        type: AirportCodeEditorComponent as any,
         field: 'code',
+        editable: true,
+        label: 'IATA Code' 
+      },
+      region: {
+        type: 'text',
+        field: 'region',
+        label: 'IATA Code', 
         editable: true
       },
-      region: { type: 'text', field: 'region', editable: true },
-      name: { type: 'text', field: 'name', editable: true },
-      city: { type: 'text', field: 'city', editable: true },
-      country: { type: 'enum', field: 'country', editable: true,
-        enumValues: [
-          { value: 'United States', label: 'United States' },
-          { value: 'Russia', label: 'Russia' },
-          { value: 'French Polynesia', label: 'French Polynesia' },
-          { value: 'Egypt', label: 'Egypt' },
-          { value: 'Algeria', label: 'Algeria' }
-        ]
+      name: {
+        type: 'text',
+        field: 'name',
+        label: 'Name', 
+        editable: true
+      },
+      city: {
+        type: 'text',
+        field: 'city',
+        label: 'City', 
+        editable: true
+      },
+      country: {
+        type: 'text',
+        field: 'country',
+        label: 'Country', 
+        editable: true
       },
       lat: {
-        type: CoordinateEditorComponent as any,
+        type: CoordinateEditorComponent,
         field: 'lat',
+        label: 'LAT', 
         editable: true
       },
       lon: {
-        type: CoordinateEditorComponent as any,
+        type: CoordinateEditorComponent,
         field: 'lon',
+        label: 'LON', 
         editable: true
       }
     };

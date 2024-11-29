@@ -22,13 +22,15 @@ export interface FilterState {
 }
 
 export interface ColumnConfig {
-  type: 'text' | 'number' | 'enum' | MatrixEditor;
+  type: 'text' | 'number' | 'enum' | Type<MatrixEditor> | MatrixEditor;  
   field: string;
+  label?: string;  // Add this line
   operator?: FilterOperator;
   enumValues?: { value: any, label: string }[];
   placeholder?: string;
   debounceTime?: number;
   editable?: boolean;
+  config?: any; // Add this line to support editor-specific configuration
 }
 
 export interface FilterState {
