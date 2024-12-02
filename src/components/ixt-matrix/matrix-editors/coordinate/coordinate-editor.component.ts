@@ -9,20 +9,22 @@ import { DialogType } from '../../../ixt-dialog/ixt-dialog.interfaces';
     selector: 'coordinate-editor',
     template: `
    <div class="editor-container">
-     <input
-       type="number"
-       step="any"
-       [formControl]="inputControl"
-       class="w-24 px-2 py-1 border rounded"
-       [class.border-red-500]="hasError"
-       [placeholder]="config?.['type'] === 'lat' ? '(-90 to 90)' : '(-180 to 180)'"
-       (blur)="onBlur()"
-     />
+
+    <input
+        type="number"
+        step="any"
+        [min]="config?.['type'] === 'lat' ? -90 : -180"
+        [max]="config?.['type'] === 'lat' ? 90 : 180"
+        [formControl]="inputControl"
+        class="w-24 px-2 py-1 border rounded"
+        [class.border-red-500]="hasError"
+        [placeholder]="config?.['type'] === 'lat' ? '(-90 to 90)' : '(-180 to 180)'"
+        (blur)="onBlur()"
+    />
      <div *ngIf="hasError" class="text-red-500 text-sm mt-1">
        {{ errorMessage }}
      </div>
-   </div>
- `,
+   </div>`,
     providers: [
         {
             provide: NG_VALUE_ACCESSOR,
@@ -52,9 +54,9 @@ export class CoordinateEditorComponent implements ControlValueAccessor, OnInit, 
 
     getEditConfig(): MatrixEditorConfig {
         return {
-          type: this.config?.['type'] || 'lat'
+            type: this.config?.['type'] || 'lat'
         };
-      }
+    }
 
     validate(value: any): boolean {
         const num = Number(value);
@@ -62,17 +64,31 @@ export class CoordinateEditorComponent implements ControlValueAccessor, OnInit, 
         return isLat ? (num >= -90 && num <= 90) : (num >= -180 && num <= 180);
     }
 
-    private setupValueChanges() {
+    // private setupValueChanges() {
+    //     this.inputControl.valueChanges.subscribe(value => {
+    //         if (value !== null) {
+    //             // Convert string to number for validation
+    //             const numValue = Number(value);
+    //             if (this.validateValue(numValue)) {
+    //                 this.onChange(numValue);
+    //             }
+    //         }
+    //     });
+    // }
+
+    setupValueChanges() {
         this.inputControl.valueChanges.subscribe(value => {
-            if (value !== null) {
-                // Convert string to number for validation
-                const numValue = Number(value);
-                if (this.validateValue(numValue)) {
-                    this.onChange(numValue);
-                }
+          if (value !== null) {
+            const numValue = Number(value);
+            if (!isNaN(numValue) && this.validateValue(numValue)) {
+              this.onChange(numValue);
+            } else {
+              // Reset to last valid value or empty
+              this.inputControl.setValue('', {emitEvent: false});
             }
+          }
         });
-    }
+      }
 
     private validateValue(value: number): boolean {
         this.hasError = false;

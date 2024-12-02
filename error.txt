@@ -1,2 +1,0 @@
-To https://github.com/dvanauken/ixtlan.git
- * [new tag]         v0.3.2 -> v0.3.2
