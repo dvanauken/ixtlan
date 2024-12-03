@@ -11,6 +11,13 @@
   <div class="ixt-matrix">
     <!-- Header -->
     <div class="ixt-matrix__header">
+      <div class="ixt-matrix__cell">
+        <binary-editor
+          [config]="{ rowIndex: -1 }"
+          [(ngModel)]="allSelected"
+          (selectionChange)="toggleAllRows($event.selected)">
+        </binary-editor>
+      </div>
       <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
         <div class="ixt-matrix__cell-content">
           {{columnConfigs?.[col]?.label || col}}
@@ -29,6 +36,7 @@
 
     <!-- Filter Row -->
     <div class="ixt-matrix__header" *ngIf="showFilters">
+      <div class="ixt-matrix__cell"></div>
       <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
         <ng-container *ngIf="activeFilterColumn === col && columnConfigs?.[col]">
           <ng-container [ngSwitch]="getEditorType(columnConfigs?.[col]?.type)">
@@ -65,9 +73,16 @@
     </div>
 
     <!-- Data Rows -->
-    <!-- Data Rows -->
     <ng-container *ngIf="!isTree">
-      <div class="ixt-matrix__row" *ngFor="let row of paginatedData; let i = index">
+      <div class="ixt-matrix__row" *ngFor="let row of paginatedData; let i = index" 
+           [class.ixt-matrix__row--selected]="selectedRows.has(getRowIndex(i))">
+        <div class="ixt-matrix__cell">
+          <binary-editor
+            [config]="{ rowIndex: getRowIndex(i), rowData: row }"
+            [ngModel]="selectedRows.has(getRowIndex(i))"
+            (selectionChange)="selectRow(getRowIndex(i), $event.selected)">
+          </binary-editor>
+        </div>
         <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
           <ng-container *ngIf="isNewRow(i) || editingRows.has(getRowIndex(i)); else displayValue">
             <ng-container [ngSwitch]="getEditorType(columnConfigs?.[col]?.type)">
@@ -89,19 +104,18 @@
 
               <!-- Custom Editor -->
               <ng-container *ngSwitchCase="'custom'">
-                <ng-container *ngTemplateOutlet="customEditorTpl; context: { 
-                  $implicit: getEditorComponent(columnConfigs?.[col]?.type), 
-                  row: row, 
-                  col: col, 
-                  index: i, 
-                  control: getEditControl(getRowIndex(i), col) 
-                }">
+                <ng-container *ngTemplateOutlet="customEditorTpl; context: {
+                   $implicit: getEditorComponent(columnConfigs?.[col]?.type),
+                   row: row,
+                   col: col,
+                   index: i,
+                   control: getEditControl(getRowIndex(i), col)
+                 }">
                 </ng-container>
               </ng-container>
             </ng-container>
           </ng-container>
-
-
+            
           <ng-template #displayValue>
             <ng-container [ngSwitch]="columnConfigs?.[col]?.type">
               <ng-container *ngSwitchCase="CoordinateEditorComponent">
@@ -112,9 +126,9 @@
               </ng-container>
             </ng-container>
           </ng-template>
-
+         
         </div>
-
+         
         <div class="ixt-matrix__cell">
           <ng-container *ngIf="!isNewRow(i) && !editingRows.has(getRowIndex(i))">
             <button class="ixt-matrix__action-button" (click)="startEditing(getRowIndex(i))">
@@ -189,9 +203,8 @@
   </ng-container>
 </ng-template>
 
-
+<!-- Custom Editor Template -->
 <ng-template #customEditorTpl let-editor let-row="row" let-col="col" let-index="index" let-control="control">
-  <!-- Remove any separate input fields here - we only want our custom components -->
   <coordinate-editor
     *ngIf="editor?.component === CoordinateEditorComponent"
     [formControl]="control"
@@ -199,9 +212,9 @@
       type: col === 'lat' ? 'lat' : 'lon'
     }">
   </coordinate-editor>
-  
+
   <airport-code-editor 
-    *ngIf="editor?.component === AirportCodeEditorComponent"
+   *ngIf="editor?.component === AirportCodeEditorComponent"
     [formControl]="control"
     [config]="editor.getEditConfig()"
     [existingCodes]="getCodes(data)">

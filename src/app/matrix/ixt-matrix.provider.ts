@@ -39,7 +39,7 @@ export class IxtMatrixProvider {
       region: {
         type: 'text',
         field: 'region',
-        label: 'IATA Code', 
+        label: 'Region', 
         editable: true
       },
       name: {

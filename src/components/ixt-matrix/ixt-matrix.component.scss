@@ -1,7 +1,8 @@
 .ixt-matrix {
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
-  overflow: hidden;
+  overflow: auto;
+  max-height: calc(100vh - 600px); // Adjust based on your layout
  
   &__header {
     display: flex;
@@ -22,19 +23,44 @@
   &__cell {
     padding: 0.5rem;
     width: 150px;
+    min-width: 150px;
+    box-sizing: border-box;
+    border-right: 1px solid #e2e8f0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
  
+    &:first-child {
+      width: 40px;
+      min-width: 40px;
+    }
+ 
     &--first {
       width: 200px;
+      min-width: 200px;
     }
-
-    // Add cell content styles for filter icon
+ 
+    &--actions {
+      width: 80px;
+      min-width: 80px;
+    }
+ 
     &-content {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+    }
+ 
+    input, select {
+      width: 100%;
+      padding: 4px 24px 4px 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+    }
+ 
+    coordinate-editor input {
+      padding-right: 24px;
     }
   }
  
@@ -132,8 +158,7 @@
       }
     }
   }
-
-  // Add filter specific styles
+ 
   &__filter-toggle {
     background: none;
     border: none;
@@ -143,31 +168,31 @@
     display: flex;
     align-items: center;
   }
-
+ 
   &__filter-input {
     width: 100%;
     padding: 0.25rem;
     border: 1px solid #e2e8f0;
     border-radius: 0.25rem;
     font-size: 0.875rem;
-
+ 
     &:focus {
       outline: none;
       border-color: #4169E1;
     }
   }
-
+ 
   &__number-filter {
     display: flex;
     gap: 0.25rem;
-
+ 
     select {
       padding: 0.25rem;
       border: 1px solid #e2e8f0;
       border-radius: 0.25rem;
     }
   }
-
+ 
   .material-icons {
     font-family: 'Material Icons';
     font-weight: normal;
@@ -180,21 +205,21 @@
     white-space: nowrap;
     direction: ltr;
   }
-}
-
-.ixt-matrix {
+ }
+ 
+ .ixt-matrix {
   &__cell-content {
     display: flex;
     align-items: center;
     gap: 8px;
   }
-
+ 
   &__cell-actions {
     display: flex;
     align-items: center;
     gap: 4px;
   }
-
+ 
   &__sort-toggle,
   &__filter-toggle {
     background: none;
@@ -204,28 +229,26 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
+ 
     &:hover {
       background-color: rgba(0, 0, 0, 0.04);
       border-radius: 4px;
     }
-
+ 
     .material-icons {
       font-size: 18px;
       color: rgba(0, 0, 0, 0.54);
     }
   }
-}
-
-.ixt-matrix {
-  // ... existing styles ...
-
+ }
+ 
+ .ixt-matrix {
   &__toolbar {
     display: flex;
     justify-content: flex-end;
     padding: 8px;
   }
-
+ 
   &__save-button,
   &__action-button {
     background: none;
@@ -237,13 +260,12 @@
       opacity: 0.5;
       cursor: not-allowed;
     }
-
+ 
     .material-icons {
       font-size: 18px;
     }
   }
-
-  // Style for editable inputs
+ 
   input, select {
     width: 100%;
     padding: 4px;
@@ -255,4 +277,4 @@
       border-color: #007bff;
     }
   }
-}
+ }

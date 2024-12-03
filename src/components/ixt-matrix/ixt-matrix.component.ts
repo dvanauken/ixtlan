@@ -59,6 +59,10 @@ export class IxtMatrixComponent implements OnInit {
 
   editControls = new Map<string, FormControl>();
 
+  selectedRows = new Set<number>();
+  allSelected = false;
+
+
   private _editorInstance: MatrixEditor | null = null;
 
   readonly AirportCodeEditorComponent = AirportCodeEditorComponent;
@@ -422,7 +426,7 @@ export class IxtMatrixComponent implements OnInit {
           return '';
       }
     }
-  
+
     // Handle editor component types
     if (type === CoordinateEditorComponent) {
       return 0; // Default value for coordinates
@@ -430,15 +434,15 @@ export class IxtMatrixComponent implements OnInit {
     if (type === AirportCodeEditorComponent) {
       return ''; // Default value for airport codes
     }
-  
+
     // Handle editor instances (when type is MatrixEditor)
     if (typeof type === 'object' && 'getDefaultValue' in type) {
       return type.getDefaultValue?.() ?? '';
     }
-  
+
     return '';
   }
-  
+
   // Add new row method
   addNewRow(): void {
     const newRow: MatrixNode = {};
@@ -489,7 +493,7 @@ export class IxtMatrixComponent implements OnInit {
       isCoordinate: type === CoordinateEditorComponent,
       isAirport: type === AirportCodeEditorComponent
     });
-    
+
     if (typeof type === 'string') {
       return type;
     }
@@ -507,7 +511,7 @@ export class IxtMatrixComponent implements OnInit {
       isCoordinate: type === CoordinateEditorComponent,
       isAirport: type === AirportCodeEditorComponent
     });
-    
+
     if (type === AirportCodeEditorComponent) {
       return new AirportCodeEditorComponent(this.dialogService);
     }
@@ -543,4 +547,34 @@ export class IxtMatrixComponent implements OnInit {
   formatCoordinate(value: number): string {
     return value.toFixed(1);
   }
+
+  // Methods for external components
+  getSelectedRows(): MatrixNode[] {
+    return this.data.filter((_, index) => this.selectedRows.has(index));
+  }
+
+  setSelectedRows(indices: number[]): void {
+    this.selectedRows.clear();
+    indices.forEach(i => this.selectedRows.add(i));
+  }
+
+  selectRow(index: number, selected = true): void {
+    if (selected) {
+      this.selectedRows.add(index);
+    } else {
+      this.selectedRows.delete(index);
+    }
+  }
+
+
+  // Handle master checkbox
+  toggleAllRows(selected: boolean): void {
+    if (selected) {
+      this.data.forEach((_, index) => this.selectedRows.add(index));
+    } else {
+      this.selectedRows.clear();
+    }
+    this.allSelected = selected;
+  }
+
 }
