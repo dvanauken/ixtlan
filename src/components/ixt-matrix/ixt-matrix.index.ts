@@ -8,3 +8,5 @@ export interface MatrixNode {
     children?: MatrixNode[];
 }
 export * from './matrix-editors/airport-code/airport-code-editor.component';
+export * from './matrix-editors/binary-editor/binary-editor.component';
+export * from './matrix-editors/coordinate/coordinate-editor.component';
