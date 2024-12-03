@@ -1,6 +1,6 @@
 // app.component.ts
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
-import { IxtDialogComponent, DialogType, DialogButton, DialogResult } from '../components/ixt-dialog';
+import { IxtDialogComponent, DialogType, DialogButton, DialogResult } from '../components/ixt-dialog/ixt-dialog.index';
 import { Layer } from '../components/ixt-layer-manager/ixt-layer-manager.component';
 import { TreeNode } from '../components/ixt-tree/ixt-tree.component';
 import { AccordionPanel } from '../components/ixt-accordian/ixt-accordian.component';

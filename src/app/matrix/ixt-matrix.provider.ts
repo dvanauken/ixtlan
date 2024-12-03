@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IxtDialogService } from 'src/components/ixt-dialog/ixt-dialog.service';
-import { AirportCodeEditorComponent } from 'src/components/ixt-matrix';
+import { AirportCodeEditorComponent } from 'src/components/ixt-matrix/ixt-matrix.index';
 import { ColumnConfig, ColumnConfigs } from 'src/components/ixt-matrix/ixt-matrix.interfaces';
 import { CoordinateEditorComponent } from 'src/components/ixt-matrix/matrix-editors/coordinate/coordinate-editor.component';
 

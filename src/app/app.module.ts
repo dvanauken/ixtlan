@@ -34,7 +34,7 @@ import { IxtTableHandler } from './table/ixt-table.handler';
 import { IxtTableProvider } from './table/ixt-table.provider';
 import { IxtTreeHandler } from './tree/ixt-tree.handler';
 import { IxtTreeProvider } from './tree/ixt-tree.provider';
-import { IxtMatrixComponent, IxtMatrixModule } from 'src/components/ixt-matrix';
+import { IxtMatrixComponent, IxtMatrixModule } from 'src/components/ixt-matrix/ixt-matrix.index';
 import { IxtSplitPaneModule } from 'src/components/ixt-split-pane';
 import { IxtPanelModule } from 'src/components/ixt-panel';
 import { IxtAccordianModule } from 'src/components/ixt-accordian/accordian.module';

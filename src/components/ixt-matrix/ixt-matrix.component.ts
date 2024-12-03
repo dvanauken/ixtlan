@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { ColumnConfig, FilterOperator, FilterState, MatrixNode, PageSize, RowChanges } from './ixt-matrix.interfaces';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatrixEditor } from './matrix-editors/editor.interface';
-import { IxtDialogService } from '../ixt-dialog';
+import { IxtDialogService } from '../ixt-dialog/ixt-dialog.index';
 import { AirportCodeEditorComponent } from './matrix-editors/airport-code/airport-code-editor.component';
 import { CoordinateEditorComponent } from './matrix-editors/coordinate/coordinate-editor.component';
 
