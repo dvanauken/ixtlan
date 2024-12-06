@@ -34,11 +34,13 @@ import { IxtTableHandler } from './table/ixt-table.handler';
 import { IxtTableProvider } from './table/ixt-table.provider';
 import { IxtTreeHandler } from './tree/ixt-tree.handler';
 import { IxtTreeProvider } from './tree/ixt-tree.provider';
-import { IxtMatrixComponent, IxtMatrixModule } from 'src/components/ixt-matrix/ixt-matrix.index';
+import { IxtMatrixModule } from 'src/components/ixt-matrix/ixt-matrix.index';
 import { IxtSplitPaneModule } from 'src/components/ixt-split-pane';
 import { IxtPanelModule } from 'src/components/ixt-panel';
 import { IxtAccordianModule } from 'src/components/ixt-accordian/accordian.module';
 
+import { IxtMapModule } from 'src/components/ixt-map/ixt-map.module';
+import { RouterModule } from '@angular/router';
 
 
 @NgModule({
@@ -46,6 +48,7 @@ import { IxtAccordianModule } from 'src/components/ixt-accordian/accordian.modul
     AppComponent
   ],
   imports: [
+    RouterModule.forRoot([]),  // No routes defined, but RouterModule is configured
     BrowserAnimationsModule,
     BrowserModule,
     FormsModule,
@@ -63,7 +66,8 @@ import { IxtAccordianModule } from 'src/components/ixt-accordian/accordian.modul
     IxtTreeModule,
     IxtSplitPaneModule,
     IxtPanelModule,
-    IxtMenuModule
+    IxtMenuModule,
+    IxtMapModule
   ],
   providers: [
     IxtAutocompleteHandler,

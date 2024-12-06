@@ -30,7 +30,7 @@ interface SelectionEvent {
         class="w-4 h-4 rounded border-gray-300"
       />
       <span *ngIf="showLabel" class="ml-2">
-        {{ isChecked ? config?.trueDisplay : config?.falseDisplay }}
+        {{ isChecked ? config.trueDisplay : config.falseDisplay }}
       </span>
     </div>
   `,

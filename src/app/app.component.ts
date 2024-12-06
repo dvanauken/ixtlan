@@ -88,4 +88,12 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  select(event: Event): void {
+    console.log('Selected:', event);
+  }
+
+  highlight(event: Event): void {
+    console.log('Highlighted:', event);
+  }
+
 }

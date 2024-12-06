@@ -5,7 +5,11 @@
     "entryFile": "src/public-api.ts"
   },
   "allowedNonPeerDependencies": [
-    "tslib"
+    "tslib",
+    "@types/d3",
+    "@types/geojson",
+    "d3",
+    "geojson"
   ]
 }
 
