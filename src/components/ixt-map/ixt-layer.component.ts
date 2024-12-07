@@ -1,13 +1,17 @@
 // ixt-layer.component.ts
 import { Component, Input, Output, EventEmitter, ElementRef, Host } from '@angular/core';
 import * as d3 from 'd3';
-import { Feature, GeoJsonProperties, Geometry } from 'geojson';
+import { Feature, LineString, GeoJsonProperties, Geometry } from 'geojson';
 import { IxtMapComponent } from './ixt-map.component';
 
 @Component({
   selector: 'ixt-layer',
-  template: '<svg:g></svg:g>'
-})
+  template: `
+    <svg:g>
+      <ng-content></ng-content>
+    </svg:g>
+  `
+  })
 export class IxtLayerComponent {
   @Input() src: string = '';
   @Input() stroke: string = 'black';
@@ -18,8 +22,74 @@ export class IxtLayerComponent {
   private initialized = false;
   private pathGenerator!: d3.GeoPath;
   private hoveredElement: SVGPathElement | null = null;
+  private filterExpression: string = '';
 
-  constructor(@Host() private mapComponent: IxtMapComponent) {}
+  constructor(
+    @Host() private mapComponent: IxtMapComponent,
+    private elementRef: ElementRef
+  ) {}
+
+  ngAfterContentInit() {
+    // Get the content and clean it up, if any
+    const content = this.elementRef.nativeElement.textContent?.trim();
+    if (content) {
+      this.filterExpression = content;
+    }
+  }
+
+  private createFilterFunction(): Function | null {
+    if (!this.filterExpression) return null;
+    
+    console.log('Creating filter with expression:', this.filterExpression);
+    
+    return new Function('feature', `
+      try {
+        const properties = feature.properties;
+        //console.log('Evaluating:', properties);
+        return ${this.filterExpression};
+      } catch (e) {
+        console.error('Filter expression error:', e);
+        return true;  // If there's an error, include the feature
+      }
+    `);
+  }
+
+  private interpolateRoute(feature: Feature<LineString, GeoJsonProperties>): Feature<LineString, GeoJsonProperties> {
+    const line = feature.geometry;
+    const coordinates = line.coordinates;
+  
+    if (coordinates.length !== 2) {
+      return feature; // Return original if not a simple point-to-point route
+    }
+  
+    const start = coordinates[0] as [number, number]; // Ensure these are tuples [number, number]
+    const end = coordinates[1] as [number, number];
+  
+    // Create a great circle generator
+    const route = d3.geoInterpolate(start, end);
+  
+    // Calculate approximate distance in miles
+    const distance = d3.geoDistance(start, end) * 3959; // Earth radius in miles
+  
+    // Calculate number of points needed
+    const pointsPer5Miles = Math.ceil(distance / 5);
+    const numPoints = Math.max(5, pointsPer5Miles); // Minimum 5 points
+  
+    // Generate interpolated points
+    const newCoordinates = Array.from({ length: numPoints }, (_, i) => {
+      const t = i / (numPoints - 1);
+      return route(t);
+    });
+  
+    return {
+      ...feature,
+      geometry: {
+        ...line,
+        coordinates: newCoordinates
+      }
+    };
+  }
+  
 
   private isLightColor(color: string): boolean {
     if (color === 'none') return true;
@@ -112,17 +182,35 @@ export class IxtLayerComponent {
       console.error('Map container or projection not ready');
       return;
     }
-
+  
     d3.json(this.src).then((data: any) => {
+      //let features = data.features;
+      let features = data.features.map((feature: Feature<LineString, GeoJsonProperties>) => 
+        this.interpolateRoute(feature) // Using `this` to refer to the current class instance
+      );
+      
+      // Apply filter only if one exists
+      const filterFn = this.createFilterFunction();
+      if (filterFn) {
+        features = features.filter((feature: Feature<Geometry, GeoJsonProperties>) => {
+          try {
+            return filterFn(feature);
+          } catch (e) {
+            console.error('Error applying filter to feature:', e);
+            return true;
+          }
+        });
+      }
+  
       const layerGroup = d3.select(container.nativeElement)
         .append('g')
         .attr('class', 'map-layer');
-
+  
       layerGroup.selectAll('path')
-        .data(data.features as Feature<Geometry, GeoJsonProperties>[])
+        .data(features)
         .enter()
         .append('path')
-        .attr('d', (d: Feature<Geometry, GeoJsonProperties>) => this.pathGenerator(d))
+        .attr('d', (datum: any) => this.pathGenerator(datum as Feature<Geometry, GeoJsonProperties>))
         .attr('stroke', this.stroke)
         .attr('fill', this.fill)
         .attr('stroke-width', '1')
@@ -130,9 +218,9 @@ export class IxtLayerComponent {
         .attr('data-original-stroke', this.stroke)
         .attr('vector-effect', 'non-scaling-stroke')
         .style('cursor', 'pointer')
-        .on('click', (event: Event, d: Feature<Geometry, GeoJsonProperties>) => {
+        .on('click', (event: any, datum: any) => {
           event.stopPropagation();
-          const clickedPath = event.currentTarget as SVGPathElement;
+          const clickedPath = event.currentTarget;
           
           if (clickedPath === this.mapComponent['selectedElement']) {
             this.mapComponent.setSelection(null);
@@ -145,21 +233,26 @@ export class IxtLayerComponent {
             this.applyHoverEffect(clickedPath, true);
           }
           
-          this.click.emit(event as MouseEvent);
+          this.click.emit(event);
         })
-        .on('mouseover', (event: Event, d: Feature<Geometry, GeoJsonProperties>) => {
+        .on('mouseover', (event: any, datum: any) => {
           event.stopPropagation();
-          const currentPath = event.currentTarget as SVGPathElement;
+          const currentPath = event.currentTarget;
           if (currentPath !== this.mapComponent['selectedElement']) {
             this.applyHoverEffect(currentPath, true);
           }
-          this.hover.emit(event as MouseEvent);
+          this.hover.emit(event);
         })
-        .on('mouseout', (event: Event, d: Feature<Geometry, GeoJsonProperties>) => {
+        .on('mouseout', (event: any, datum: any) => {
           this.clearHoverState();
+        })
+        .on('mousemove', (event: any) => {
+          event.stopPropagation();
         });
+  
     }).catch((error: Error) => {
       console.error('Error loading the GeoJSON data:', error);
     });
   }
+  
 }

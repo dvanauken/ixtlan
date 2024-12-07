@@ -24,7 +24,13 @@
         <ixt-tab title="D3 Geo">
           <ixt-map [width]="'100%'" [height]="'80%'" scale="1" translate="0,0">
             <ixt-layer src="./../assets/countries.geojson" stroke="black" fill="gray"></ixt-layer>
-            <ixt-layer src="./../assets/lakes.geojson" stroke="black" fill="blue" (click)="select($event)"></ixt-layer>
+            <ixt-layer src="./../assets/flights.minified.geojson" stroke="red" fill="none" (click)="select($event)">
+                properties.airlineIata === 'F9'
+            </ixt-layer>
+            <ixt-layer src="./../assets/flights.minified.geojson" stroke="green" fill="none" (click)="select($event)">
+              properties.airlineIata === 'NK'
+          </ixt-layer>
+          <ixt-layer src="./../assets/lakes.geojson" stroke="black" fill="blue" (click)="select($event)"></ixt-layer>
             <ixt-layer src="./../assets/rivers.geojson" stroke="purple" fill="none" (hover)="highlight($event)"></ixt-layer>
           </ixt-map>
       </ixt-tab>
