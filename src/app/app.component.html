@@ -21,11 +21,9 @@
 
   <section>
       <ixt-tabset>
-        <ixt-tab title="Tab 0">
-          <h1>D3 Geo</h1>
-          <hr />
-          <ixt-map width="800" height="600" scale="1" translate="0,0">
-            <ixt-layer src="./../assets/countries.geojson" stroke="black" fill="beige"></ixt-layer>
+        <ixt-tab title="D3 Geo">
+          <ixt-map [width]="'100%'" [height]="'80%'" scale="1" translate="0,0">
+            <ixt-layer src="./../assets/countries.geojson" stroke="black" fill="gray"></ixt-layer>
             <ixt-layer src="./../assets/lakes.geojson" stroke="black" fill="blue" (click)="select($event)"></ixt-layer>
             <ixt-layer src="./../assets/rivers.geojson" stroke="purple" fill="none" (hover)="highlight($event)"></ixt-layer>
           </ixt-map>

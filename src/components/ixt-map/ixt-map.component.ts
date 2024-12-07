@@ -1,5 +1,5 @@
 // ixt-map.component.ts
-import { Component, Input, ViewChild, ElementRef, ContentChildren, QueryList, AfterContentInit } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, ContentChildren, QueryList, AfterContentInit, OnChanges, SimpleChanges } from '@angular/core';
 import * as d3 from 'd3';
 import { IxtLayerComponent } from './ixt-layer.component';
 import { GeoProjection } from 'd3';
@@ -7,42 +7,75 @@ import { GeoProjection } from 'd3';
 @Component({
   selector: 'ixt-map',
   template: `
-    <svg:svg #mapSvg
-         [attr.width]="width" 
+    <svg #mapSvg
+         [attr.width]="width"
          [attr.height]="height"
-         [style.transform]="getTransform()"
+         [attr.viewBox]="getViewBox()"
          style="display: block; background: lightgray;">
-      <svg:g #mapContainer>
+      <g #mapGroup>
         <ng-content></ng-content>
-      </svg:g>
-    </svg:svg>`
+      </g>
+    </svg>
+  `,
+  styles: [`
+    :host {
+      display: block;
+    }
+    svg {
+      display: block;
+    }
+  `]
 })
-export class IxtMapComponent implements AfterContentInit {
-  @Input() width: string = '800px';
-  @Input() height: string = '600px';
-  @Input() scale: string = '1';
+export class IxtMapComponent implements AfterContentInit, OnChanges {
+  @Input() width: string | number = 800;
+  @Input() height: string | number = 600;
+  @Input() scale: string | number = 1;
   @Input() translate: string = '0,0';
 
-  @ViewChild('mapContainer') mapContainer!: ElementRef;
+  @ViewChild('mapSvg') mapSvg!: ElementRef;
+  @ViewChild('mapGroup') mapGroup!: ElementRef;
   @ContentChildren(IxtLayerComponent) layers!: QueryList<IxtLayerComponent>;
 
   private projection!: GeoProjection;
   private pathGenerator!: d3.GeoPath;
 
-  getTransform(): string {
-    return `scale(${this.scale}) translate(${this.translate})`;
+  private selectedElement: SVGPathElement | null = null;
+
+
+  private getBaseDimension(value: string | number): number {
+    if (typeof value === 'number') return value;
+    // Extract numeric value for viewBox calculation
+    const num = parseFloat(value);
+    return isNaN(num) ? 800 : num;
+  }
+
+  getViewBox(): string {
+    const width = this.getBaseDimension(this.width);
+    const height = this.getBaseDimension(this.height);
+    return `0 0 ${width} ${height}`;
   }
 
   ngAfterContentInit(): void {
-    // Create projection once for all layers
+    this.initializeMap();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ((changes['width'] || changes['height']) && this.mapSvg) {
+      this.initializeMap();
+    }
+  }
+
+  private initializeMap(): void {
+    const width = this.getBaseDimension(this.width);
+    const height = this.getBaseDimension(this.height);
+
     this.projection = d3.geoMercator()
-      .center([0, 20])
-      .scale(120)
-      .translate([400, 300]);
+      .fitSize([width, height], {
+        type: 'Sphere'
+      });
 
     this.pathGenerator = d3.geoPath().projection(this.projection);
 
-    // Initialize all layers with the shared projection
     setTimeout(() => {
       this.layers.forEach(layer => {
         layer.setProjection(this.pathGenerator);
@@ -52,11 +85,26 @@ export class IxtMapComponent implements AfterContentInit {
   }
 
   getContainer(): ElementRef {
-    return this.mapContainer;
+    return this.mapGroup;
   }
 
   getPathGenerator(): d3.GeoPath {
     return this.pathGenerator;
   }
-}
 
+  clearSelection(): void {
+    if (this.selectedElement) {
+      d3.select(this.selectedElement)
+        .attr('stroke', d3.select(this.selectedElement).attr('data-original-stroke'))
+        .attr('stroke-width', '1');
+      this.selectedElement = null;
+    }
+  }
+
+  setSelection(element: SVGPathElement | null): void {
+    this.clearSelection();
+    if (element) {
+      this.selectedElement = element;
+    }
+  }
+}
