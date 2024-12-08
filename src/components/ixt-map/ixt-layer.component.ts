@@ -3,6 +3,7 @@ import { Component, Input, Output, EventEmitter, ElementRef, Host } from '@angul
 import * as d3 from 'd3';
 import { Feature, LineString, GeoJsonProperties, Geometry } from 'geojson';
 import { IxtMapComponent } from './ixt-map.component';
+import { GeoProjection } from 'd3';
 
 @Component({
   selector: 'ixt-layer',
@@ -23,6 +24,9 @@ export class IxtLayerComponent {
   private pathGenerator!: d3.GeoPath;
   private hoveredElement: SVGPathElement | null = null;
   private filterExpression: string = '';
+
+   private resizeObserver?: ResizeObserver;
+
 
   constructor(
     @Host() private mapComponent: IxtMapComponent,
@@ -184,11 +188,15 @@ export class IxtLayerComponent {
     }
   
     d3.json(this.src).then((data: any) => {
-      //let features = data.features;
-      let features = data.features.map((feature: Feature<LineString, GeoJsonProperties>) => 
-        this.interpolateRoute(feature) // Using `this` to refer to the current class instance
-      );
+      let features = data.features;
       
+      // Only interpolate routes for LineString geometries
+      if (features.length > 0 && features[0].geometry.type === 'LineString') {
+        features = features.map((feature: Feature<LineString, GeoJsonProperties>) =>
+          this.interpolateRoute(feature)
+        );
+      }
+  
       // Apply filter only if one exists
       const filterFn = this.createFilterFunction();
       if (filterFn) {
@@ -221,7 +229,7 @@ export class IxtLayerComponent {
         .on('click', (event: any, datum: any) => {
           event.stopPropagation();
           const clickedPath = event.currentTarget;
-          
+  
           if (clickedPath === this.mapComponent['selectedElement']) {
             this.mapComponent.setSelection(null);
             this.applyHoverEffect(clickedPath, false);
@@ -232,7 +240,7 @@ export class IxtLayerComponent {
             this.mapComponent.setSelection(clickedPath);
             this.applyHoverEffect(clickedPath, true);
           }
-          
+  
           this.click.emit(event);
         })
         .on('mouseover', (event: any, datum: any) => {
@@ -254,5 +262,4 @@ export class IxtLayerComponent {
       console.error('Error loading the GeoJSON data:', error);
     });
   }
-  
 }
