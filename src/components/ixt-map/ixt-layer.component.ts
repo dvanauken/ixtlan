@@ -1,9 +1,13 @@
 // ixt-layer.component.ts
-import { Component, Input, Output, EventEmitter, ElementRef, Host,   ChangeDetectionStrategy, ChangeDetectorRef, SimpleChanges  } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, Host, ChangeDetectionStrategy, ChangeDetectorRef, SimpleChanges } from '@angular/core';
 import * as d3 from 'd3';
 import { Feature, LineString, GeoJsonProperties, Geometry } from 'geojson';
 import { IxtMapComponent } from './ixt-map.component';
 import { GeoProjection } from 'd3';
+import { GeoProcessingService } from './geo-processing.service';
+import { GeoProcessingOptions } from './geo.types';
+import { Selection } from 'd3-selection';
+
 
 @Component({
   selector: 'ixt-layer',
@@ -13,7 +17,7 @@ import { GeoProjection } from 'd3';
     </svg:g>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush  // Added
-  })
+})
 export class IxtLayerComponent {
   @Input() src: string = '';
   @Input() stroke: string = 'black';
@@ -26,14 +30,15 @@ export class IxtLayerComponent {
   private hoveredElement: SVGPathElement | null = null;
   private filterExpression: string = '';
 
-   private resizeObserver?: ResizeObserver;
+  private resizeObserver?: ResizeObserver;
 
 
   constructor(
     @Host() private mapComponent: IxtMapComponent,
     private elementRef: ElementRef,
-    private cdr: ChangeDetectorRef  // Added
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private geoProcessingService: GeoProcessingService
+  ) { }
 
   ngOnChanges(changes: SimpleChanges) {  // Added
     if (changes['src'] || changes['stroke'] || changes['fill']) {
@@ -53,9 +58,9 @@ export class IxtLayerComponent {
 
   private createFilterFunction(): Function | null {
     if (!this.filterExpression) return null;
-    
+
     console.log('Creating filter with expression:', this.filterExpression);
-    
+
     return new Function('feature', `
       try {
         const properties = feature.properties;
@@ -71,30 +76,30 @@ export class IxtLayerComponent {
   private interpolateRoute(feature: Feature<LineString, GeoJsonProperties>): Feature<LineString, GeoJsonProperties> {
     const line = feature.geometry;
     const coordinates = line.coordinates;
-  
+
     if (coordinates.length !== 2) {
       return feature; // Return original if not a simple point-to-point route
     }
-  
+
     const start = coordinates[0] as [number, number]; // Ensure these are tuples [number, number]
     const end = coordinates[1] as [number, number];
-  
+
     // Create a great circle generator
     const route = d3.geoInterpolate(start, end);
-  
+
     // Calculate approximate distance in miles
     const distance = d3.geoDistance(start, end) * 3959; // Earth radius in miles
-  
+
     // Calculate number of points needed
     const pointsPer5Miles = Math.ceil(distance / 5);
     const numPoints = Math.max(5, pointsPer5Miles); // Minimum 5 points
-  
+
     // Generate interpolated points
     const newCoordinates = Array.from({ length: numPoints }, (_, i) => {
       const t = i / (numPoints - 1);
       return route(t);
     });
-  
+
     return {
       ...feature,
       geometry: {
@@ -103,28 +108,28 @@ export class IxtLayerComponent {
       }
     };
   }
-  
+
 
   private isLightColor(color: string): boolean {
     if (color === 'none') return true;
     const rgb = d3.rgb(color);
-    
+
     // Using HSP color model for better brightness perception
     const brightness = Math.sqrt(
       0.299 * (rgb.r * rgb.r) +
       0.587 * (rgb.g * rgb.g) +
       0.114 * (rgb.b * rgb.b)
     );
-    
+
     return brightness > 127.5;
   }
 
   private adjustBrightness(color: string, isHover: boolean): string {
     if (color === 'none') return color;
-    
+
     const rgb = d3.rgb(color);
     const isLight = this.isLightColor(color);
-    
+
     // For very dark colors (like black)
     if (!isLight && Math.max(rgb.r, rgb.g, rgb.b) < 50) {
       return d3.rgb(
@@ -133,7 +138,7 @@ export class IxtLayerComponent {
         Math.min(255, rgb.b + 100)
       ).toString();
     }
-    
+
     // For saturated colors (like pure red)
     const hsl = d3.hsl(color);
     if (!isLight && hsl.s > 0.7) {
@@ -143,7 +148,7 @@ export class IxtLayerComponent {
         Math.min(1, hsl.l * 1.5)
       ).toString();
     }
-    
+
     // Default brightness adjustment
     const factor = isLight ? 0.7 : 1.5;
     return d3.rgb(
@@ -158,7 +163,7 @@ export class IxtLayerComponent {
       const path = d3.select(this.hoveredElement);
       const originalFill = path.attr('data-original-fill');
       path.attr('fill', originalFill)
-          .attr('stroke-width', '1');
+        .attr('stroke-width', '1');
     }
     this.hoveredElement = null;
   }
@@ -171,10 +176,10 @@ export class IxtLayerComponent {
 
     const path = d3.select(element);
     const currentFill = path.attr('data-original-fill');
-    
+
     if (currentFill && currentFill !== 'none') {
       path.attr('fill', isHover ? this.adjustBrightness(currentFill, true) : currentFill)
-         .attr('stroke-width', isHover ? '2' : '1');
+        .attr('stroke-width', isHover ? '2' : '1');
     } else {
       path.attr('stroke-width', isHover ? '2' : '1');
     }
@@ -192,6 +197,7 @@ export class IxtLayerComponent {
     this.loadAndRenderData();
   }
 
+
   private loadAndRenderData(): void {
     const container = this.mapComponent.getContainer();
     if (!container || !this.pathGenerator) {
@@ -200,37 +206,28 @@ export class IxtLayerComponent {
     }
   
     d3.json(this.src).then((data: any) => {
-      let features = data.features;
+      const options: GeoProcessingOptions = {
+        interpolateRoutes: true,
+        filterExpression: this.filterExpression
+      };
       
-      // Only interpolate routes for LineString geometries
-      if (features.length > 0 && features[0].geometry.type === 'LineString') {
-        features = features.map((feature: Feature<LineString, GeoJsonProperties>) =>
-          this.interpolateRoute(feature)
-        );
-      }
+      const processedFeatures = this.geoProcessingService.processFeatures(
+        data.features,
+        options
+      );
   
-      // Apply filter only if one exists
-      const filterFn = this.createFilterFunction();
-      if (filterFn) {
-        features = features.filter((feature: Feature<Geometry, GeoJsonProperties>) => {
-          try {
-            return filterFn(feature);
-          } catch (e) {
-            console.error('Error applying filter to feature:', e);
-            return true;
-          }
-        });
-      }
-  
+      // Create layer group
       const layerGroup = d3.select(container.nativeElement)
         .append('g')
         .attr('class', 'map-layer');
   
-      layerGroup.selectAll('path')
-        .data(features)
+      // Create paths with all events restored
+      layerGroup
+        .selectAll('path')
+        .data(processedFeatures)
         .enter()
         .append('path')
-        .attr('d', (datum: any) => this.pathGenerator(datum as Feature<Geometry, GeoJsonProperties>))
+        .attr('d', (datum) => this.pathGenerator(datum) || '')
         .attr('stroke', this.stroke)
         .attr('fill', this.fill)
         .attr('stroke-width', '1')
@@ -238,10 +235,10 @@ export class IxtLayerComponent {
         .attr('data-original-stroke', this.stroke)
         .attr('vector-effect', 'non-scaling-stroke')
         .style('cursor', 'pointer')
-        .on('click', (event: any, datum: any) => {
+        .on('click', (event: MouseEvent, datum) => {
           event.stopPropagation();
-          const clickedPath = event.currentTarget;
-  
+          const clickedPath = event.currentTarget as SVGPathElement;
+          
           if (clickedPath === this.mapComponent['selectedElement']) {
             this.mapComponent.setSelection(null);
             this.applyHoverEffect(clickedPath, false);
@@ -255,25 +252,26 @@ export class IxtLayerComponent {
   
           this.click.emit(event);
         })
-        .on('mouseover', (event: any, datum: any) => {
+        .on('mouseover', (event: MouseEvent) => {
           event.stopPropagation();
-          const currentPath = event.currentTarget;
+          const currentPath = event.currentTarget as SVGPathElement;
           if (currentPath !== this.mapComponent['selectedElement']) {
             this.applyHoverEffect(currentPath, true);
           }
           this.hover.emit(event);
         })
-        .on('mouseout', (event: any, datum: any) => {
+        .on('mouseout', (event: MouseEvent) => {
           this.clearHoverState();
         })
-        .on('mousemove', (event: any) => {
+        .on('mousemove', (event: MouseEvent) => {
           event.stopPropagation();
         });
   
+      this.cdr.markForCheck();
     }).catch((error: Error) => {
       console.error('Error loading the GeoJSON data:', error);
     });
-
-    this.cdr.markForCheck();
   }
+
+
 }
