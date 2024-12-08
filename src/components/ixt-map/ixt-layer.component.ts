@@ -1,5 +1,5 @@
 // ixt-layer.component.ts
-import { Component, Input, Output, EventEmitter, ElementRef, Host } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, Host,   ChangeDetectionStrategy, ChangeDetectorRef, SimpleChanges  } from '@angular/core';
 import * as d3 from 'd3';
 import { Feature, LineString, GeoJsonProperties, Geometry } from 'geojson';
 import { IxtMapComponent } from './ixt-map.component';
@@ -11,7 +11,8 @@ import { GeoProjection } from 'd3';
     <svg:g>
       <ng-content></ng-content>
     </svg:g>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush  // Added
   })
 export class IxtLayerComponent {
   @Input() src: string = '';
@@ -30,8 +31,17 @@ export class IxtLayerComponent {
 
   constructor(
     @Host() private mapComponent: IxtMapComponent,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private cdr: ChangeDetectorRef  // Added
   ) {}
+
+  ngOnChanges(changes: SimpleChanges) {  // Added
+    if (changes['src'] || changes['stroke'] || changes['fill']) {
+      if (this.initialized) {
+        this.loadAndRenderData();
+      }
+    }
+  }
 
   ngAfterContentInit() {
     // Get the content and clean it up, if any
@@ -168,6 +178,8 @@ export class IxtLayerComponent {
     } else {
       path.attr('stroke-width', isHover ? '2' : '1');
     }
+
+    this.cdr.markForCheck();  // Added
   }
 
   setProjection(pathGenerator: d3.GeoPath): void {
@@ -261,5 +273,7 @@ export class IxtLayerComponent {
     }).catch((error: Error) => {
       console.error('Error loading the GeoJSON data:', error);
     });
+
+    this.cdr.markForCheck();
   }
 }

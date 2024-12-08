@@ -1,5 +1,5 @@
 // ixt-map.component.ts
-import { Component, Input, ViewChild, ElementRef, ContentChildren, QueryList, AfterContentInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, ContentChildren, QueryList, AfterContentInit, OnChanges, SimpleChanges,   ChangeDetectionStrategy,  ChangeDetectorRef } from '@angular/core';
 import * as d3 from 'd3';
 import { IxtLayerComponent } from './ixt-layer.component';
 import { GeoProjection } from 'd3';
@@ -41,6 +41,7 @@ export class IxtMapComponent implements AfterContentInit, OnChanges {
 
   private selectedElement: SVGPathElement | null = null;
 
+  constructor(private cdr: ChangeDetectorRef) {}  // Added
 
   private getBaseDimension(value: string | number): number {
     if (typeof value === 'number') return value;
@@ -57,11 +58,19 @@ export class IxtMapComponent implements AfterContentInit, OnChanges {
 
   ngAfterContentInit(): void {
     this.initializeMap();
+
+    // Added: Listen to layer changes
+    this.layers.changes.subscribe(() => {
+      this.initializeMap();
+      this.cdr.markForCheck();
+    });
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['width'] || changes['height']) && this.mapSvg) {
       this.initializeMap();
+      this.cdr.markForCheck();  // Added
     }
   }
 
@@ -76,7 +85,7 @@ export class IxtMapComponent implements AfterContentInit, OnChanges {
 
     this.pathGenerator = d3.geoPath().projection(this.projection);
 
-    setTimeout(() => {
+    Promise.resolve().then(() => {
       this.layers.forEach(layer => {
         layer.setProjection(this.pathGenerator);
         layer.initializeLayer();
@@ -98,6 +107,7 @@ export class IxtMapComponent implements AfterContentInit, OnChanges {
         .attr('stroke', d3.select(this.selectedElement).attr('data-original-stroke'))
         .attr('stroke-width', '1');
       this.selectedElement = null;
+      this.cdr.markForCheck();  // Added
     }
   }
 
@@ -105,6 +115,7 @@ export class IxtMapComponent implements AfterContentInit, OnChanges {
     this.clearSelection();
     if (element) {
       this.selectedElement = element;
+      this.cdr.markForCheck();  // Added
     }
   }
 }
