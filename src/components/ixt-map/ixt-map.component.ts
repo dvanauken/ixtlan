@@ -1,4 +1,3 @@
-// ixt-map.component.ts
 import { 
   Component, 
   Input, 
@@ -8,15 +7,17 @@ import {
   QueryList, 
   AfterContentInit, 
   OnChanges,
-  OnDestroy,  // Added
+  OnDestroy,
   SimpleChanges, 
   ChangeDetectionStrategy, 
   ChangeDetectorRef 
 } from '@angular/core';
 import * as d3 from 'd3';
 import { IxtLayerComponent } from './ixt-layer.component';
-import { GeoProjection } from 'd3';
-import { Subscription } from 'rxjs';  // Added
+import { GeoProjection, GeoPath } from 'd3';
+import { Subscription } from 'rxjs';
+import { MapService } from './map.service';
+import { MapDimensions, MapSelection, PathSelection, MapContainer } from './map.types';
 
 @Component({
   selector: 'ixt-map',
@@ -41,42 +42,120 @@ import { Subscription } from 'rxjs';  // Added
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class IxtMapComponent implements AfterContentInit, OnChanges, OnDestroy {  // Added OnDestroy
+export class IxtMapComponent implements AfterContentInit, OnChanges, OnDestroy {
   @Input() width: string | number = 800;
   @Input() height: string | number = 600;
   @Input() scale: string | number = 1;
   @Input() translate: string = '0,0';
 
-  @ViewChild('mapSvg') mapSvg!: ElementRef;
-  @ViewChild('mapGroup') mapGroup!: ElementRef;
+  @ViewChild('mapSvg') mapSvg!: ElementRef<SVGSVGElement>;
+  @ViewChild('mapGroup') mapGroup!: MapContainer;
   @ContentChildren(IxtLayerComponent) layers!: QueryList<IxtLayerComponent>;
 
   private projection!: GeoProjection;
-  private pathGenerator!: d3.GeoPath;
+  private pathGenerator!: GeoPath;
   private selectedElement: SVGPathElement | null = null;
   
-  // Added for cleanup
-  private selections: d3.Selection<any, unknown, null, undefined>[] = [];
+  private selections: MapSelection[] = [];
   private mapSubscriptions: Subscription = new Subscription();
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private mapService: MapService
+  ) {}
 
-  private getBaseDimension(value: string | number): number {
-    if (typeof value === 'number') return value;
-    const num = parseFloat(value);
-    return isNaN(num) ? 800 : num;
+  private getDimensions(): MapDimensions {
+    return {
+      width: this.mapService.getBaseDimension(this.width),
+      height: this.mapService.getBaseDimension(this.height),
+      scale: Number(this.scale),
+      translate: this.translate
+    };
   }
 
   getViewBox(): string {
-    const width = this.getBaseDimension(this.width);
-    const height = this.getBaseDimension(this.height);
+    const { width, height } = this.getDimensions();
     return `0 0 ${width} ${height}`;
+  }
+
+  private initializeMap(): void {
+    const dimensions = this.getDimensions();
+
+    // Clean up existing selections
+    this.selections.forEach(selection => {
+      if (selection && !selection.empty()) {
+        selection.remove();
+      }
+    });
+    this.selections = [];
+
+    const { projection, pathGenerator } = this.mapService.initializeProjection(
+      dimensions.width, 
+      dimensions.height
+    );
+
+    this.projection = projection;
+    this.pathGenerator = pathGenerator;
+
+    // Track any new selections
+    if (this.mapGroup) {
+      const mapSelection = d3.select<SVGGElement, unknown>(this.mapGroup.nativeElement);
+      this.selections.push(mapSelection);
+
+      mapSelection.on('click', () => {
+        this.clearSelection();
+      });
+    }
+
+    setTimeout(() => {
+      this.layers.forEach(layer => {
+        layer.setProjection(this.pathGenerator);
+        layer.initializeLayer();
+      });
+    });
+  }
+
+  getContainer(): MapContainer {
+    return this.mapGroup;
+  }
+
+  getPathGenerator(): GeoPath {
+    return this.pathGenerator;
+  }
+
+  clearSelection(): void {
+    if (this.selectedElement) {
+      d3.select<SVGPathElement, unknown>(this.selectedElement)
+        .attr('stroke', function(this: SVGPathElement) { 
+          return this.getAttribute('data-original-stroke') || '';
+        })
+        .attr('stroke-width', '1');
+      this.selectedElement = null;
+      this.cdr.markForCheck();
+    }
+  }
+
+  setSelection(element: SVGPathElement | null): void {
+    this.clearSelection();
+    if (element) {
+      this.selectedElement = element;
+      this.cdr.markForCheck();
+    }
+  }
+
+  private cleanupSelection(selection: MapSelection | null): void {
+    if (selection && !selection.empty()) {
+      selection.remove();
+      const index = this.selections.indexOf(selection);
+      if (index > -1) {
+        this.selections.splice(index, 1);
+      }
+    }
   }
 
   ngAfterContentInit(): void {
     this.initializeMap();
     
-    // Track the subscription
     this.mapSubscriptions.add(
       this.layers.changes.subscribe(() => {
         this.initializeMap();
@@ -92,60 +171,7 @@ export class IxtMapComponent implements AfterContentInit, OnChanges, OnDestroy {
     }
   }
 
-  private initializeMap(): void {
-    const width = this.getBaseDimension(this.width);
-    const height = this.getBaseDimension(this.height);
-
-    this.projection = d3.geoMercator()
-      .fitSize([width, height], {
-        type: 'Sphere'
-      });
-
-    this.pathGenerator = d3.geoPath().projection(this.projection);
-
-    // Track any new selections
-    if (this.mapGroup) {
-      const mapSelection = d3.select(this.mapGroup.nativeElement);
-      this.selections.push(mapSelection);
-    }
-
-    setTimeout(() => {
-      this.layers.forEach(layer => {
-        layer.setProjection(this.pathGenerator);
-        layer.initializeLayer();
-      });
-    });
-  }
-
-  getContainer(): ElementRef {
-    return this.mapGroup;
-  }
-
-  getPathGenerator(): d3.GeoPath {
-    return this.pathGenerator;
-  }
-
-  clearSelection(): void {
-    if (this.selectedElement) {
-      d3.select(this.selectedElement)
-        .attr('stroke', d3.select(this.selectedElement).attr('data-original-stroke'))
-        .attr('stroke-width', '1');
-      this.selectedElement = null;
-      this.cdr.markForCheck();
-    }
-  }
-
-  setSelection(element: SVGPathElement | null): void {
-    this.clearSelection();
-    if (element) {
-      this.selectedElement = element;
-      this.cdr.markForCheck();
-    }
-  }
-
-  // Added for cleanup
   ngOnDestroy(): void {
-    // Clean up all d3 selections
     this.selections.forEach(selection => {
       if (selection && !selection.empty()) {
         selection.remove();
@@ -153,23 +179,10 @@ export class IxtMapComponent implements AfterContentInit, OnChanges, OnDestroy {
     });
     this.selections = [];
 
-    // Clean up references
     this.selectedElement = null;
     this.projection = null as any;
     this.pathGenerator = null as any;
 
-    // Clean up subscriptions
     this.mapSubscriptions.unsubscribe();
-  }
-
-  // Added helper method for cleanup
-  private cleanupSelection(selection: d3.Selection<any, unknown, null, undefined> | null): void {
-    if (selection && !selection.empty()) {
-      selection.remove();
-      const index = this.selections.indexOf(selection);
-      if (index > -1) {
-        this.selections.splice(index, 1);
-      }
-    }
   }
 }
