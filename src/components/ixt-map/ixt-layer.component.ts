@@ -7,6 +7,7 @@ import { GeoProjection } from 'd3';
 import { GeoProcessingService } from './geo-processing.service';
 import { GeoProcessingOptions } from './geo.types';
 import { Selection } from 'd3-selection';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -31,6 +32,12 @@ export class IxtLayerComponent {
   private filterExpression: string = '';
 
   private resizeObserver?: ResizeObserver;
+
+    // Add property to track all d3 selections
+    private selections: d3.Selection<any, any, any, any>[] = [];
+
+      // Track subscription if you add any
+  private layerSubscriptions = new Subscription();
 
 
   constructor(
@@ -273,5 +280,27 @@ export class IxtLayerComponent {
     });
   }
 
+  ngOnDestroy(): void {
+    // Clean up all d3 selections
+    this.selections.forEach(selection => {
+      if (selection && !selection.empty()) {
+        selection.remove();
+      }
+    });
+    this.selections = [];
+
+    // Clean up resize observer if it exists
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = undefined;
+    }
+
+    // Clear any references
+    this.hoveredElement = null;
+    this.pathGenerator = null as any;
+
+    // Clean up any subscriptions
+    this.layerSubscriptions.unsubscribe();
+  }
 
 }
