@@ -8,6 +8,7 @@ import { GeoProcessingService } from './geo-processing.service';
 import { GeoProcessingOptions } from './geo.types';
 import { Selection } from 'd3-selection';
 import { Subscription } from 'rxjs';
+import { LayerRenderService } from './layer-render.service';
 
 
 @Component({
@@ -30,21 +31,17 @@ export class IxtLayerComponent {
   private pathGenerator!: d3.GeoPath;
   private hoveredElement: SVGPathElement | null = null;
   private filterExpression: string = '';
-
-  private resizeObserver?: ResizeObserver;
-
-    // Add property to track all d3 selections
-    private selections: d3.Selection<any, any, any, any>[] = [];
-
-      // Track subscription if you add any
+  private selections: d3.Selection<any, any, any, any>[] = [];
   private layerSubscriptions = new Subscription();
 
+  private resizeObserver?: ResizeObserver;
 
   constructor(
     @Host() private mapComponent: IxtMapComponent,
     private elementRef: ElementRef,
     private cdr: ChangeDetectorRef,
-    private geoProcessingService: GeoProcessingService
+    private geoProcessingService: GeoProcessingService,
+    private layerRenderService: LayerRenderService
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {  // Added
@@ -223,7 +220,7 @@ export class IxtLayerComponent {
       console.error('Map container or projection not ready');
       return;
     }
-  
+
     d3.json(this.src).then((data: any) => {
       const options: GeoProcessingOptions = {
         interpolateRoutes: true,
@@ -234,64 +231,52 @@ export class IxtLayerComponent {
         data.features,
         options
       );
-  
-      // Create layer group
-      const layerGroup = d3.select(container.nativeElement)
-        .append('g')
-        .attr('class', 'map-layer');
-  
-      // Create paths with all events restored
-      layerGroup
-        .selectAll('path')
-        .data(processedFeatures)
-        .enter()
-        .append('path')
-        .attr('d', (datum) => this.pathGenerator(datum) || '')
-        .attr('stroke', this.stroke)
-        .attr('fill', this.fill)
-        .attr('stroke-width', '1')
-        .attr('data-original-fill', this.fill)
-        .attr('data-original-stroke', this.stroke)
-        .attr('vector-effect', 'non-scaling-stroke')
-        .style('cursor', 'pointer')
-        .on('click', (event: MouseEvent, datum) => {
-          event.stopPropagation();
-          const clickedPath = event.currentTarget as SVGPathElement;
-          
-          if (clickedPath === this.mapComponent['selectedElement']) {
-            this.mapComponent.setSelection(null);
-            this.applyHoverEffect(clickedPath, false);
-          } else {
-            if (this.mapComponent['selectedElement']) {
-              this.applyHoverEffect(this.mapComponent['selectedElement'], false);
+
+      const selection = this.layerRenderService.createLayer(
+        d3.select(container.nativeElement),
+        processedFeatures,
+        { stroke: this.stroke, fill: this.fill },
+        {
+          onClick: (event: MouseEvent, datum: any) => {
+            event.stopPropagation();
+            const clickedPath = event.currentTarget as SVGPathElement;
+            
+            if (clickedPath === this.mapComponent['selectedElement']) {
+              this.mapComponent.setSelection(null);
+              this.applyHoverEffect(clickedPath, false);
+            } else {
+              if (this.mapComponent['selectedElement']) {
+                this.applyHoverEffect(this.mapComponent['selectedElement'], false);
+              }
+              this.mapComponent.setSelection(clickedPath);
+              this.applyHoverEffect(clickedPath, true);
             }
-            this.mapComponent.setSelection(clickedPath);
-            this.applyHoverEffect(clickedPath, true);
+            this.click.emit(event);
+          },
+          onMouseOver: (event: MouseEvent) => {
+            event.stopPropagation();
+            const currentPath = event.currentTarget as SVGPathElement;
+            if (currentPath !== this.mapComponent['selectedElement']) {
+              this.applyHoverEffect(currentPath, true);
+            }
+            this.hover.emit(event);
+          },
+          onMouseOut: (event: MouseEvent) => {
+            this.clearHoverState();
+          },
+          onMouseMove: (event: MouseEvent) => {
+            event.stopPropagation();
           }
-  
-          this.click.emit(event);
-        })
-        .on('mouseover', (event: MouseEvent) => {
-          event.stopPropagation();
-          const currentPath = event.currentTarget as SVGPathElement;
-          if (currentPath !== this.mapComponent['selectedElement']) {
-            this.applyHoverEffect(currentPath, true);
-          }
-          this.hover.emit(event);
-        })
-        .on('mouseout', (event: MouseEvent) => {
-          this.clearHoverState();
-        })
-        .on('mousemove', (event: MouseEvent) => {
-          event.stopPropagation();
-        });
-  
+        }
+      );
+
+      this.selections.push(selection);
       this.cdr.markForCheck();
     }).catch((error: Error) => {
       console.error('Error loading the GeoJSON data:', error);
     });
   }
-
+  
   ngOnDestroy(): void {
     // Clean up all d3 selections
     this.selections.forEach(selection => {
