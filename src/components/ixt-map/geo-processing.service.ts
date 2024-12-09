@@ -100,4 +100,21 @@ export class GeoProcessingService {
       return null;
     }
   }
+
+  // private createFilterFunction(): Function | null {
+  //   if (!this.filterExpression) return null;
+
+  //   console.log('Creating filter with expression:', this.filterExpression);
+
+  //   return new Function('feature', `
+  //     try {
+  //       const properties = feature.properties;
+  //       //console.log('Evaluating:', properties);
+  //       return ${this.filterExpression};
+  //     } catch (e) {
+  //       console.error('Filter expression error:', e);
+  //       return true;  // If there's an error, include the feature
+  //     }
+  //   `);
+  // }
 }
