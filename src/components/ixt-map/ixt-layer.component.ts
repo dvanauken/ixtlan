@@ -9,6 +9,7 @@ import { GeoProcessingOptions } from './geo.types';
 import { Selection } from 'd3-selection';
 import { Subscription } from 'rxjs';
 import { LayerRenderService } from './layer-render.service';
+import { LayerEventService } from './layer-event.service';
 
 
 @Component({
@@ -41,7 +42,8 @@ export class IxtLayerComponent {
     private elementRef: ElementRef,
     private cdr: ChangeDetectorRef,
     private geoProcessingService: GeoProcessingService,
-    private layerRenderService: LayerRenderService
+    private layerRenderService: LayerRenderService,
+    private layerEventService: LayerEventService
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {  // Added
@@ -222,14 +224,12 @@ export class IxtLayerComponent {
     }
 
     d3.json(this.src).then((data: any) => {
-      const options: GeoProcessingOptions = {
-        interpolateRoutes: true,
-        filterExpression: this.filterExpression
-      };
-      
       const processedFeatures = this.geoProcessingService.processFeatures(
         data.features,
-        options
+        {
+          interpolateRoutes: true,
+          filterExpression: this.filterExpression
+        }
       );
 
       const selection = this.layerRenderService.createLayer(
@@ -238,31 +238,15 @@ export class IxtLayerComponent {
         { stroke: this.stroke, fill: this.fill },
         {
           onClick: (event: MouseEvent, datum: any) => {
-            event.stopPropagation();
-            const clickedPath = event.currentTarget as SVGPathElement;
-            
-            if (clickedPath === this.mapComponent['selectedElement']) {
-              this.mapComponent.setSelection(null);
-              this.applyHoverEffect(clickedPath, false);
-            } else {
-              if (this.mapComponent['selectedElement']) {
-                this.applyHoverEffect(this.mapComponent['selectedElement'], false);
-              }
-              this.mapComponent.setSelection(clickedPath);
-              this.applyHoverEffect(clickedPath, true);
-            }
+            this.layerEventService.handleClick(event, this.mapComponent);
             this.click.emit(event);
           },
           onMouseOver: (event: MouseEvent) => {
-            event.stopPropagation();
-            const currentPath = event.currentTarget as SVGPathElement;
-            if (currentPath !== this.mapComponent['selectedElement']) {
-              this.applyHoverEffect(currentPath, true);
-            }
+            this.layerEventService.handleMouseOver(event, this.mapComponent);
             this.hover.emit(event);
           },
-          onMouseOut: (event: MouseEvent) => {
-            this.clearHoverState();
+          onMouseOut: () => {
+            this.layerEventService.handleMouseOut();
           },
           onMouseMove: (event: MouseEvent) => {
             event.stopPropagation();
@@ -276,28 +260,4 @@ export class IxtLayerComponent {
       console.error('Error loading the GeoJSON data:', error);
     });
   }
-  
-  ngOnDestroy(): void {
-    // Clean up all d3 selections
-    this.selections.forEach(selection => {
-      if (selection && !selection.empty()) {
-        selection.remove();
-      }
-    });
-    this.selections = [];
-
-    // Clean up resize observer if it exists
-    if (this.resizeObserver) {
-      this.resizeObserver.disconnect();
-      this.resizeObserver = undefined;
-    }
-
-    // Clear any references
-    this.hoveredElement = null;
-    this.pathGenerator = null as any;
-
-    // Clean up any subscriptions
-    this.layerSubscriptions.unsubscribe();
-  }
-
 }
