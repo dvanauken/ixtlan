@@ -166,10 +166,18 @@ export class IxtLayerComponent {
   }
 
   private clearHoverState(): void {
+    // Before: Making multiple selections of the same element
     if (this.hoveredElement && this.hoveredElement !== this.mapComponent['selectedElement']) {
       const path = d3.select(this.hoveredElement);
       const originalFill = path.attr('data-original-fill');
       path.attr('fill', originalFill)
+        .attr('stroke-width', '1');
+    }
+
+    // After: Single selection with chained operations
+    if (this.hoveredElement && this.hoveredElement !== this.mapComponent['selectedElement']) {
+      d3.select(this.hoveredElement)
+        .attr('fill', function() { return this.getAttribute('data-original-fill'); })
         .attr('stroke-width', '1');
     }
     this.hoveredElement = null;
@@ -180,18 +188,23 @@ export class IxtLayerComponent {
       this.clearHoverState();
       this.hoveredElement = element;
     }
-
-    const path = d3.select(element);
-    const currentFill = path.attr('data-original-fill');
-
-    if (currentFill && currentFill !== 'none') {
-      path.attr('fill', isHover ? this.adjustBrightness(currentFill, true) : currentFill)
-        .attr('stroke-width', isHover ? '2' : '1');
-    } else {
-      path.attr('stroke-width', isHover ? '2' : '1');
-    }
-
-    this.cdr.markForCheck();  // Added
+  
+    // Cache the adjustBrightness method reference since we're changing scope
+    const adjustBrightness = this.adjustBrightness.bind(this);
+  
+    d3.select(element)
+      .each(function() {
+        const currentFill = this.getAttribute('data-original-fill');
+        if (currentFill && currentFill !== 'none') {
+          d3.select(this)
+            .attr('fill', isHover ? adjustBrightness(currentFill, true) : currentFill)
+            .attr('stroke-width', isHover ? '2' : '1');
+        } else {
+          d3.select(this).attr('stroke-width', isHover ? '2' : '1');
+        }
+      });
+  
+    this.cdr.markForCheck();
   }
 
   setProjection(pathGenerator: d3.GeoPath): void {
@@ -203,7 +216,6 @@ export class IxtLayerComponent {
     this.initialized = true;
     this.loadAndRenderData();
   }
-
 
   private loadAndRenderData(): void {
     const container = this.mapComponent.getContainer();
