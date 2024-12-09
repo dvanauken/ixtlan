@@ -10,6 +10,8 @@ import { Selection } from 'd3-selection';
 import { Subscription } from 'rxjs';
 import { LayerRenderService } from './layer-render.service';
 import { LayerEventService } from './layer-event.service';
+import { LayerStateService } from './layer-state.service';
+import { RouteProcessorService } from './route-processor.service';
 
 
 @Component({
@@ -43,7 +45,9 @@ export class IxtLayerComponent {
     private cdr: ChangeDetectorRef,
     private geoProcessingService: GeoProcessingService,
     private layerRenderService: LayerRenderService,
-    private layerEventService: LayerEventService
+    private layerEventService: LayerEventService,
+    private layerStateService: LayerStateService,
+    private routeProcessorService: RouteProcessorService
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {  // Added
@@ -222,16 +226,18 @@ export class IxtLayerComponent {
       console.error('Map container or projection not ready');
       return;
     }
-
+  
     d3.json(this.src).then((data: any) => {
+      const options: GeoProcessingOptions = {
+        interpolateRoutes: true,
+        filterExpression: this.filterExpression
+      };
+      
       const processedFeatures = this.geoProcessingService.processFeatures(
         data.features,
-        {
-          interpolateRoutes: true,
-          filterExpression: this.filterExpression
-        }
+        options
       );
-
+  
       const selection = this.layerRenderService.createLayer(
         d3.select(container.nativeElement),
         processedFeatures,
@@ -253,11 +259,16 @@ export class IxtLayerComponent {
           }
         }
       );
-
-      this.selections.push(selection);
+  
+      this.layerStateService.addSelection(selection);
       this.cdr.markForCheck();
     }).catch((error: Error) => {
       console.error('Error loading the GeoJSON data:', error);
     });
+  }
+  
+  ngOnDestroy(): void {
+    this.layerStateService.clearSelections();
+    // Remove: this.selections cleanup code
   }
 }
