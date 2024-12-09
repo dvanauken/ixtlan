@@ -3,6 +3,14 @@ import { Injectable } from '@angular/core';
 import { MapService } from './map.service';
 import * as d3 from 'd3';
 
+export interface LayerEventHandlers {
+  onClick: (event: MouseEvent, datum: any) => void;
+  onMouseOver: (event: MouseEvent) => void;
+  onMouseOut: () => void;
+  onMouseMove: (event: MouseEvent) => void;
+}
+
+
 @Injectable({
   providedIn: 'root'
 })

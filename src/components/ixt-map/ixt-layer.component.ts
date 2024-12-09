@@ -5,10 +5,10 @@ import {
 import * as d3 from 'd3';
 import { IxtMapComponent } from './ixt-map.component';
 import { GeoProcessingService } from './geo-processing.service';
-import { GeoProcessingOptions } from './geo.types';
 import { LayerRenderService } from './layer-render.service';
-import { LayerEventService } from './layer-event.service';
+import { LayerEventHandlers, LayerEventService } from './layer-event.service';
 import { LayerStateService } from './layer-state.service';
+import { Feature } from 'geojson';
 
 @Component({
   selector: 'ixt-layer',
@@ -41,13 +41,11 @@ export class IxtLayerComponent {
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['src'] || changes['stroke'] || changes['fill']) {
-      if (this.initialized) {
-        this.loadAndRenderData();
-      }
+    if ((changes['src'] || changes['stroke'] || changes['fill']) && this.initialized) {
+      this.initializeLayer();
     }
   }
-
+ 
   ngAfterContentInit() {
     const content = this.elementRef.nativeElement.textContent?.trim();
     if (content) {
@@ -57,59 +55,66 @@ export class IxtLayerComponent {
 
   setProjection(pathGenerator: d3.GeoPath): void {
     this.pathGenerator = pathGenerator;
+    this.initializeLayer();
   }
 
-  initializeLayer(): void {
+  async initializeLayer(): Promise<void> {
     if (this.initialized) return;
-    this.initialized = true;
-    this.loadAndRenderData();
+    if (!this.validateContainer()) return;
+
+    try {
+      const features = await this.loadGeoJsonData();
+      const handlers = this.createEventHandlers();
+      this.renderLayer(features, handlers);
+      this.initialized = true;
+    } catch (error) {
+      console.error('Layer initialization failed:', error);
+    }
   }
 
-  private loadAndRenderData(): void {
+  private validateContainer(): boolean {
     const container = this.mapComponent.getContainer();
     if (!container || !this.pathGenerator) {
       console.error('Map container or projection not ready');
-      return;
+      return false;
     }
+    return true;
+  }
 
-    d3.json(this.src).then((data: any) => {
-      const options: GeoProcessingOptions = {
-        interpolateRoutes: true,
-        filterExpression: this.filterExpression
-      };
-
-      const processedFeatures = this.geoProcessingService.processFeatures(
-        data.features,
-        options
-      );
-
-      const selection = this.layerRenderService.createLayer(
-        d3.select(container.nativeElement),
-        processedFeatures,
-        { stroke: this.stroke, fill: this.fill },
-        {
-          onClick: (event: MouseEvent, datum: any) => {
-            this.layerEventService.handleClick(event, this.mapComponent);
-            this.click.emit(event);
-          },
-          onMouseOver: (event: MouseEvent) => {
-            this.layerEventService.handleMouseOver(event, this.mapComponent);
-            this.hover.emit(event);
-          },
-          onMouseOut: () => {
-            this.layerEventService.handleMouseOut();
-          },
-          onMouseMove: (event: MouseEvent) => {
-            event.stopPropagation();
-          }
-        }
-      );
-
-      this.layerStateService.addSelection(selection);
-      this.cdr.markForCheck();
-    }).catch((error: Error) => {
-      console.error('Error loading the GeoJSON data:', error);
+  private async loadGeoJsonData(): Promise<Feature[]> {
+    const data = await d3.json(this.src) as { features: Feature[] };
+    return this.geoProcessingService.processFeatures(data.features, {
+      interpolateRoutes: true,
+      filterExpression: this.filterExpression
     });
+  }
+
+  private async renderLayer(features: any, handlers: any): Promise<void> {
+    const container = this.mapComponent.getContainer();
+    const selection = this.layerRenderService.createLayer(
+      d3.select(container.nativeElement),
+      features,
+      { stroke: this.stroke, fill: this.fill },
+      handlers
+    );
+  
+    this.layerStateService.addSelection(selection);
+    this.cdr.markForCheck();
+  }
+
+  private createEventHandlers(): LayerEventHandlers {
+    return {
+      onClick: (event: MouseEvent, datum: any) => {
+        this.layerEventService.handleClick(event, this.mapComponent);
+        this.click.emit(event);
+      },
+      onMouseOver: (event: MouseEvent) => {
+        this.layerEventService.handleMouseOver(event, this.mapComponent);
+        this.hover.emit(event);
+      },
+      onMouseOut: () => this.layerEventService.handleMouseOut(),
+      onMouseMove: (event: MouseEvent) => event.stopPropagation()
+    };
   }
 
   ngOnDestroy(): void {
