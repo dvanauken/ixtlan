@@ -7,6 +7,7 @@ import { MatrixEditor } from './matrix-editors/editor.interface';
 import { IxtDialogService } from '../ixt-dialog/ixt-dialog.index';
 import { AirportCodeEditorComponent } from './matrix-editors/airport-code/airport-code-editor.component';
 import { CoordinateEditorComponent } from './matrix-editors/coordinate/coordinate-editor.component';
+import { MatrixDataService } from './matrix-data.service';
 
 export type SortDirection = 'asc' | 'desc' | null;
 
@@ -66,16 +67,27 @@ export class IxtMatrixComponent implements OnInit {
 
   constructor(
     private dialogService: IxtDialogService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private matrixDataService: MatrixDataService  // Add this
   ) { }
 
   ngOnInit() {
     this.columns = this.getColumns(this.data);
+
+
+    // Initialize pagination state
+    this.matrixDataService.setPaginationState({
+      pageSize: this.pageSize,
+      currentPage: this.currentPage
+    });
+
+    // Subscribe to page size changes
     this.pageSizeControl.valueChanges.subscribe(value => {
       if (value) {
         this.onPageSizeChange(value);
       }
     });
+
     if (this.columnConfigs) {
       Object.entries(this.columnConfigs).forEach(([field, config]) => {
         const control = new FormControl('');
@@ -144,13 +156,22 @@ export class IxtMatrixComponent implements OnInit {
   onPageChange(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+      this.matrixDataService.setPaginationState({
+        currentPage: page
+      });
     }
   }
 
+  // Update these two methods to use the service
   onPageSizeChange(size: number | 'all'): void {
     this.pageSize = size;
     this.currentPage = 1;
+    this.matrixDataService.setPaginationState({
+      pageSize: size,
+      currentPage: 1
+    });
   }
+
 
   private matchesFilter(value: any, filter: FilterState): boolean {
     if (value === undefined || value === null) return false;
