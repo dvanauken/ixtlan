@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component, Input, OnInit, TemplateRef, ViewChild, Type } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ColumnConfig, FilterOperator, FilterState, MatrixNode, PageSize, RowChanges } from './ixt-matrix.interfaces';
+import { ColumnConfig, FilterOperator, FilterState, PageSize, RowChanges } from './ixt-matrix.interfaces';
+import { MatrixRow } from './matrix-base.type';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatrixEditor } from './matrix-editors/editor.interface';
 import { IxtDialogService } from '../ixt-dialog/ixt-dialog.index';
 import { AirportCodeEditorComponent } from './matrix-editors/airport-code/airport-code-editor.component';
 import { CoordinateEditorComponent } from './matrix-editors/coordinate/coordinate-editor.component';
-
 
 export type SortDirection = 'asc' | 'desc' | null;
 
@@ -16,16 +16,12 @@ export type SortDirection = 'asc' | 'desc' | null;
   styleUrls: ['./ixt-matrix.component.scss']
 })
 export class IxtMatrixComponent implements OnInit {
-  @Input() data: MatrixNode[] = [];
-  //@Input() columnFilters?: ColumnFilterConfig;
+  @Input() data: MatrixRow[] = [];
   @Input() columnConfigs?: Record<string, ColumnConfig>;
   @ViewChild('noData') noDataTemplate!: TemplateRef<any>;  // Add this line
 
-  newRows: MatrixNode[] = [];
-
+  newRows: MatrixRow[] = [];
   columns: string[] = [];
-  isTree: boolean = false;
-  expandedNodes: Set<number> = new Set();
 
   pageSizeControl = new FormControl<number | 'all'>(10);
   protected readonly Math = Math;
@@ -75,15 +71,11 @@ export class IxtMatrixComponent implements OnInit {
 
   ngOnInit() {
     this.columns = this.getColumns(this.data);
-    this.isTree = this.isTreeData(this.data);
-
     this.pageSizeControl.valueChanges.subscribe(value => {
       if (value) {
         this.onPageSizeChange(value);
       }
     });
-
-    // Initialize filter controls if filters configured
     if (this.columnConfigs) {
       Object.entries(this.columnConfigs).forEach(([field, config]) => {
         const control = new FormControl('');
@@ -101,40 +93,19 @@ export class IxtMatrixComponent implements OnInit {
     return !!this.data?.length;
   }
 
-  // Existing methods - unchanged
-  public hasChildren(node: MatrixNode): boolean {
-    return Array.isArray(node?.children) && node.children.length > 0;
-  }
-
-  public isTreeData(data: MatrixNode[]): boolean {
-    return Array.isArray(data) && data.some(item => this.hasChildren(item));
-  }
-
-  public getColumns(data: MatrixNode[]): string[] {
+  public getColumns(data: MatrixRow[]): string[] {
     if (!data?.length) return [];
     const firstRow = data[0];
-    return Object.keys(firstRow).filter(key => key !== 'children');
-  }
-
-  toggleNode(index: number): void {
-    if (this.expandedNodes.has(index)) {
-      this.expandedNodes.delete(index);
-    } else {
-      this.expandedNodes.add(index);
-    }
-  }
-
-  isExpanded(index: number): boolean {
-    return this.expandedNodes.has(index);
+    return Object.keys(firstRow);
   }
 
   get totalPages(): number {
-    if (this.isTree || this.pageSize === 'all' || this.data.length <= 50) return 1;
+    if (this.pageSize === 'all' || this.data.length <= 50) return 1;
     return Math.ceil(this.data.length / +this.pageSize);
   }
 
   get showPagination(): boolean {
-    return !this.isTree && this.data.length > 50;
+    return this.data.length > 50;
   }
 
   get visiblePages(): number[] {
@@ -331,7 +302,7 @@ export class IxtMatrixComponent implements OnInit {
     return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
   }
 
-  get paginatedData(): MatrixNode[] {
+  get paginatedData(): MatrixRow[] {
     // Start with combined data
     let allData = [...this.newRows, ...this.data];
 
@@ -365,7 +336,7 @@ export class IxtMatrixComponent implements OnInit {
     }
 
     // Apply pagination
-    if (this.isTree || this.pageSize === 'all' || allData.length <= 50) {
+    if (this.pageSize === 'all' || allData.length <= 50) {
       return allData;
     }
 
@@ -445,7 +416,7 @@ export class IxtMatrixComponent implements OnInit {
 
   // Add new row method
   addNewRow(): void {
-    const newRow: MatrixNode = {};
+    const newRow: MatrixRow = {};
     if (this.columnConfigs) {
       Object.entries(this.columnConfigs).forEach(([field, config]) => {
         newRow[field] = this.getDefaultValueForType(config.type);
@@ -481,7 +452,7 @@ export class IxtMatrixComponent implements OnInit {
   }
 
   // Add validation stub
-  validateRow(row: MatrixNode): boolean {
+  validateRow(row: MatrixRow): boolean {
     return true; // TODO: Implement validation
   }
 
@@ -537,9 +508,7 @@ export class IxtMatrixComponent implements OnInit {
     return control;
   }
 
-
-  // in ixt-matrix.component.ts
-  getCodes(data: MatrixNode[]): string[] {
+  getCodes(data: MatrixRow[]): string[] {
     if (!data) return [];
     return data.map(row => row['code']?.toString() || '');
   }
@@ -548,8 +517,7 @@ export class IxtMatrixComponent implements OnInit {
     return value.toFixed(1);
   }
 
-  // Methods for external components
-  getSelectedRows(): MatrixNode[] {
+  getSelectedRows(): MatrixRow[] {
     return this.data.filter((_, index) => this.selectedRows.has(index));
   }
 
@@ -576,5 +544,6 @@ export class IxtMatrixComponent implements OnInit {
     }
     this.allSelected = selected;
   }
+
 
 }

@@ -64,30 +64,6 @@
     }
   }
  
-  &__toggle {
-    background: none;
-    border: none;
-    padding: 0;
-    margin-right: 0.5rem;
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-    position: relative;
- 
-    i {
-      border: solid #4a5568;
-      border-width: 0 2px 2px 0;
-      display: inline-block;
-      padding: 3px;
-      transform: rotate(-45deg);
-      transition: transform 0.2s;
- 
-      &.expanded {
-        transform: rotate(45deg);
-      }
-    }
-  }
- 
   &__empty {
     padding: 1rem;
     text-align: center;
@@ -205,9 +181,7 @@
     white-space: nowrap;
     direction: ltr;
   }
- }
- 
- .ixt-matrix {
+
   &__cell-content {
     display: flex;
     align-items: center;
@@ -240,9 +214,7 @@
       color: rgba(0, 0, 0, 0.54);
     }
   }
- }
- 
- .ixt-matrix {
+
   &__toolbar {
     display: flex;
     justify-content: flex-end;
@@ -277,4 +249,4 @@
       border-color: #007bff;
     }
   }
- }
+}
