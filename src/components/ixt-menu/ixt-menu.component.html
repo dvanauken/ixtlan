@@ -1,53 +1,31 @@
-<!-- ixt-menu.component.html -->
-<nav class="ixt-menu">
-  <div class="ixt-menu-container">
-    <ul class="ixt-menu-list">
-      <li *ngFor="let item of menuData" class="ixt-menu-item">
-        <ng-container *ngIf="hasChildren(item); else leafNode">
-          <button class="ixt-menu-button" (click)="toggleSubmenu(item, $event)">
-            <span class="button-content">
-              <i *ngIf="item.icon" class="material-icons">{{item.icon}}</i>
-              {{item.label}}
-            </span>
-            <i class="material-icons expand-icon">
-              {{isActive(item) ? 'expand_less' : 'expand_more'}}
-            </i>
-          </button>
-          <ul *ngIf="isActive(item)" class="ixt-submenu">
-            <li *ngFor="let child of item.children" class="ixt-submenu-item">
-              <ng-container *ngIf="hasChildren(child); else childLeafNode">
-                <button class="ixt-submenu-button" (click)="toggleSubmenu(child, $event)">
-                  <span class="button-content">
-                    <i *ngIf="child.icon" class="material-icons">{{child.icon}}</i>
-                    {{child.label}}
-                  </span>
-                  <i class="material-icons chevron-icon">chevron_right</i>
-                </button>
-                <ul *ngIf="isActive(child)" class="ixt-nested-submenu">
-                  <li *ngFor="let subChild of child.children" class="ixt-submenu-item">
-                    <a [routerLink]="subChild.route" class="ixt-submenu-link">
-                      <i *ngIf="subChild.icon" class="material-icons">{{subChild.icon}}</i>
-                      {{subChild.label}}
-                    </a>
-                  </li>
-                </ul>
-              </ng-container>
-              <ng-template #childLeafNode>
-                <a [routerLink]="child.route" class="ixt-submenu-link">
-                  <i *ngIf="child.icon" class="material-icons">{{child.icon}}</i>
-                  {{child.label}}
-                </a>
-              </ng-template>
-            </li>
-          </ul>
-        </ng-container>
-        <ng-template #leafNode>
-          <a [routerLink]="item.route" class="ixt-menu-link">
-            <i *ngIf="item.icon" class="material-icons">{{item.icon}}</i>
-            {{item.label}}
-          </a>
-        </ng-template>
-      </li>
-    </ul>
+<nav class="navbar" [ngStyle]="themeStyles" fxLayout="row" fxLayoutAlign="start center" fxFill>
+  <div class="navbar-brand" fxFlex="none">
+    <a [routerLink]="brandLink" class="brand-link">
+      <img *ngIf="brandLogo" [src]="brandLogo" alt="Brand Logo" class="brand-logo">
+      <span class="brand-name">{{ brandName }}</span>
+    </a>
+  </div>
+
+  <div fxFlex fxLayout="row" [fxLayoutAlign]="linkAlignment + ' center'" class="nav-items">
+    <a *ngFor="let item of menuItems" 
+       [routerLink]="item.link" 
+       class="nav-link">
+      {{ item.name }}
+    </a>
+  </div>
+
+  <div *ngIf="showSearch" fxFlex="none" class="search-container">
+    <form (ngSubmit)="onSearch($event)" class="search-form">
+      <div class="input-group">
+        <input type="text" 
+               [(ngModel)]="searchTerm"
+               name="search"
+               [placeholder]="searchPlaceholder"
+               class="form-control">
+        <button type="submit" class="btn">
+          Search
+        </button>
+      </div>
+    </form>
   </div>
 </nav>

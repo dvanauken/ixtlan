@@ -1,210 +1,110 @@
-// ixt-menu.component.scss
-
-// Variables
-$tabset-blue: #0d6efd;
-$background-color: #f8f9fa;
-$text-color: #333;
-$border-color: #dee2e6;
-
-// Mixins
-@mixin menu-button {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.navbar {
   padding: 0.5rem 1rem;
-  width: 100%;
-  border: 1px solid $border-color;
-  background-color: white;
-  color: $text-color;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
-  min-width: 150px;
-
-  &:hover {
-    background-color: lighten($tabset-blue, 45%);
-    border-color: $tabset-blue;
-  }
-
-  .material-icons {
-    font-size: 18px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-}
-
-.ixt-menu {
-  width: 100%;
-  height: 100%;
-  background-color: $background-color;
-  padding: 0.5rem;
-  //overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.ixt-menu-container {
   margin: 0;
-  padding-left: 1rem;
-}
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
 
-.ixt-menu-list {
-  display: flex;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  gap: 0.5rem;
-  justify-content: flex-start;
-}
-
-.ixt-menu-item {
-  position: relative;
-}
-
-.button-content {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.material-icons {
-  font-size: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.expand-icon {
-  margin-left: auto;
-  transition: transform 0.2s ease;
-}
-
-.chevron-icon {
-  margin-left: auto;
-}
-
-.ixt-menu-button {
-  @include menu-button;
-  background-color: $tabset-blue;
-  color: white;
-  border: none;
-
-  &:hover {
-    background-color: darken($tabset-blue, 10%);
+  :host {
+    display: block;
+    margin: 0;
   }
 
-  .material-icons {
-    color: white;  // Ensure icons are white in the blue buttons
-  }
-}
+  .navbar-brand {
+    .brand-link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: inherit;
+      
+      &:hover {
+        opacity: 0.9;
+      }
+    }
 
-.ixt-menu-link {
-  @include menu-button;
-  text-decoration: none;
-}
+    .brand-logo {
+      height: 30px;
+      margin-right: 0.5rem;
+    }
 
-// Submenu styles
-.ixt-submenu {
-  z-index: 1000;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  list-style: none;
-  padding: 0.5rem 0;
-  margin: 0;
-  background-color: white;
-  border: 1px solid $border-color;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  min-width: 200px;
-  z-index: 1000;
-}
-
-.ixt-submenu-item {
-  position: relative;
-}
-
-.ixt-submenu-button {
-  @include menu-button;
-  border: none;
-  border-radius: 0;
-
-  &:hover {
-    background-color: lighten($tabset-blue, 45%);
+    .brand-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
   }
 
-  .button-content {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex: 1;
-  }
-}
-
-.ixt-submenu-link {
-  @include menu-button;
-  border: none;
-  border-radius: 0;
-  text-decoration: none;
-
-  &:hover {
-    background-color: lighten($tabset-blue, 45%);
+  .nav-items {
+    padding: 0 1rem;
   }
 
-  .button-content {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex: 1;
+  .nav-link {
+    color: inherit;
+    text-decoration: none;
+    padding: 0.5rem 0.75rem;
+    font-weight: 400;
+    opacity: 0.8;
+    transition: all 0.15s ease-in-out;
+
+    &:hover {
+      opacity: 0.9;
+      background-color: var(--theme-hover);
+    }
+
+    &:active {
+      opacity: 1;
+      background-color: var(--theme-active);
+    }
   }
-}
 
-// Nested submenu styles
-.ixt-nested-submenu {
-  z-index: 1000;
-  position: absolute;
-  top: 0;
-  left: 100%;
-  list-style: none;
-  padding: 0.5rem 0;
-  margin: 0;
-  background-color: white;
-  border: 1px solid $border-color;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  min-width: 200px;
-  z-index: 1001;
-}
+  .search-container {
+    .search-form {
+      margin: 0;
+    }
 
-// Active state styles
-.ixt-menu-button.active,
-.ixt-submenu-button.active {
-  background-color: darken($tabset-blue, 5%);
-  color: white;
-}
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
 
-// Icon specific styles
-.expand-icon {
-  margin-left: 0.5rem;
-  
-  &.expanded {
-    transform: rotate(180deg);
-  }
-}
+    .form-control {
+      padding: 0.375rem 0.75rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #212529;
+      background-color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.25rem;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      
+      &:focus {
+        border-color: rgba(255, 255, 255, 0.25);
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+      }
+    }
 
-.chevron-icon {
-  margin-left: auto;
-  font-size: 16px;  // Slightly smaller chevron icons
-}
+    .btn {
+      padding: 0.375rem 0.75rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: inherit;
+      background-color: transparent;
+      border: 1px solid currentColor;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      opacity: 0.8;
+      transition: all 0.15s ease-in-out;
 
-// Button and link content alignment
-.ixt-menu-button,
-.ixt-submenu-button,
-.ixt-menu-link,
-.ixt-submenu-link {
-  .button-content {
-    flex: 1;
-    min-width: 0;  // Allows text to truncate if needed
+      &:hover {
+        opacity: 1;
+        background-color: var(--theme-hover);
+      }
+
+      &:active {
+        background-color: var(--theme-active);
+      }
+    }
   }
 }

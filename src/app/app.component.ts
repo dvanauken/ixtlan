@@ -96,4 +96,10 @@ export class AppComponent implements AfterViewInit {
     console.log('Highlighted:', event);
   }
 
+
+  onSearch(searchTerm: string) {
+    // Handle the search term
+    console.log('Search term:', searchTerm);
+  }
+
 }

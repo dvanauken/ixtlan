@@ -1,77 +1,73 @@
-// ixt-menu.component.ts
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { MenuNode } from './ixt-menu.model';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { baseThemeColors } from '../theme/theme.colors';
+import { ThemeVariant, ThemeColors } from '../theme/theme.types';
+
+interface MenuItem {
+  name: string;
+  link: string;
+}
+
+interface MenuConfig {
+  items: MenuItem[];
+}
 
 @Component({
   selector: 'ixt-menu',
   templateUrl: './ixt-menu.component.html',
-  styleUrls: ['./ixt-menu.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./ixt-menu.component.scss']
 })
-export class IxtMenuComponent {
-  @Input() menuData: MenuNode[] = [];
+export class IxtMenuComponent implements OnInit {
+  @Input() linkAlignment: string = 'start';
+  @Input() src: string = '';
+  @Input() brandName: string = '';
+  @Input() brandLogo?: string;
+  @Input() brandLink: string = '/';
+  @Input() showSearch: boolean = false;
+  @Input() searchPlaceholder: string = 'Search...';
   
-  private _activeNodes: Set<MenuNode> = new Set();
+  // Theme inputs
+  @Input() variant: ThemeVariant = 'primary';
+  @Input() theme: ThemeColors = baseThemeColors;
   
-  constructor() {}
+  @Output() searchSubmitted = new EventEmitter<string>();
 
-  hasChildren(node: MenuNode): boolean {
-    return !!node.children && node.children.length > 0;
+  menuItems: MenuItem[] = [];
+  searchTerm: string = '';
+
+  get themeStyles() {
+    const colors = this.theme[this.variant];
+    return {
+      'background-color': colors.base,
+      'color': colors.text,
+      '--theme-hover': colors.hover,
+      '--theme-active': colors.active
+    };
   }
 
-  isActive(node: MenuNode): boolean {
-    return this._activeNodes.has(node);
+  constructor(private http: HttpClient) { }
+
+  ngOnInit(): void {
+    if (this.src) {
+      this.loadMenu();
+    }
   }
 
-  toggleSubmenu(node: MenuNode, event: MouseEvent): void {
+  loadMenu() {
+    this.http.get<MenuConfig>(this.src).subscribe({
+      next: (data) => {
+        this.menuItems = data.items;
+      },
+      error: (error) => {
+        console.error('Error loading menu:', error);
+      }
+    });
+  }
+
+  onSearch(event: Event) {
     event.preventDefault();
-    event.stopPropagation();
-    
-    // Close other menus at the same level
-    const parent = this.findParent(node);
-    if (parent) {
-      parent.children?.forEach(child => {
-        if (child !== node) {
-          this._activeNodes.delete(child);
-        }
-      });
-    } else {
-      // For top-level items
-      this.menuData.forEach(item => {
-        if (item !== node) {
-          this._activeNodes.delete(item);
-        }
-      });
-    }
-
-    // Toggle the clicked menu
-    if (this.isActive(node)) {
-      this._activeNodes.delete(node);
-      // Also close all child menus
-      this.closeChildMenus(node);
-    } else {
-      this._activeNodes.add(node);
-    }
-  }
-
-  private findParent(node: MenuNode, currentNode: MenuNode = this.menuData[0]): MenuNode | null {
-    if (!currentNode.children) return null;
-    
-    for (const child of currentNode.children) {
-      if (child === node) return currentNode;
-      const found = this.findParent(node, child);
-      if (found) return found;
-    }
-    
-    return null;
-  }
-
-  private closeChildMenus(node: MenuNode): void {
-    if (node.children) {
-      node.children.forEach(child => {
-        this._activeNodes.delete(child);
-        this.closeChildMenus(child);
-      });
+    if (this.searchTerm.trim()) {
+      this.searchSubmitted.emit(this.searchTerm);
     }
   }
 }
