@@ -4,7 +4,6 @@ import { MatrixEditor } from "./matrix-editors/editor.interface";
 export interface MatrixNode {
   code?: string;  // Add this property
   [key: string]: any;
-  children?: MatrixNode[];
 }
 
 export interface PageSize {

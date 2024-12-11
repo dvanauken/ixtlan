@@ -1,3 +1,4 @@
+<!-- ixt-matrix.component.html - Remove tree-related markup -->
 <div class="ixt-matrix__toolbar">
   <button class="ixt-matrix__action-button" (click)="addNewRow()">
     <span class="material-icons">add</span>
@@ -73,82 +74,73 @@
     </div>
 
     <!-- Data Rows -->
-    <ng-container *ngIf="!isTree">
-      <div class="ixt-matrix__row" *ngFor="let row of paginatedData; let i = index" 
-           [class.ixt-matrix__row--selected]="selectedRows.has(getRowIndex(i))">
-        <div class="ixt-matrix__cell">
-          <binary-editor
-            [config]="{ rowIndex: getRowIndex(i), rowData: row }"
-            [ngModel]="selectedRows.has(getRowIndex(i))"
-            (selectionChange)="selectRow(getRowIndex(i), $event.selected)">
-          </binary-editor>
-        </div>
-        <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
-          <ng-container *ngIf="isNewRow(i) || editingRows.has(getRowIndex(i)); else displayValue">
-            <ng-container [ngSwitch]="getEditorType(columnConfigs?.[col]?.type)">
-              <!-- Text Input -->
-              <input *ngSwitchCase="'text'" type="text" [ngModel]="row[col]"
-                (ngModelChange)="onValueChange(getRowIndex(i), col, $event)">
-
-              <!-- Number Input -->
-              <input *ngSwitchCase="'number'" type="number" [ngModel]="row[col]"
-                (ngModelChange)="onValueChange(getRowIndex(i), col, $event)">
-
-              <!-- Enum Select -->
-              <select *ngSwitchCase="'enum'" [ngModel]="row[col]"
-                (ngModelChange)="onValueChange(getRowIndex(i), col, $event)">
-                <option *ngFor="let opt of columnConfigs?.[col]?.enumValues" [ngValue]="opt.value">
-                  {{opt.label}}
-                </option>
-              </select>
-
-              <!-- Custom Editor -->
-              <ng-container *ngSwitchCase="'custom'">
-                <ng-container *ngTemplateOutlet="customEditorTpl; context: {
-                   $implicit: getEditorComponent(columnConfigs?.[col]?.type),
-                   row: row,
-                   col: col,
-                   index: i,
-                   control: getEditControl(getRowIndex(i), col)
-                 }">
-                </ng-container>
-              </ng-container>
-            </ng-container>
-          </ng-container>
-            
-          <ng-template #displayValue>
-            <ng-container [ngSwitch]="columnConfigs?.[col]?.type">
-              <ng-container *ngSwitchCase="CoordinateEditorComponent">
-                {{formatCoordinate(row[col])}}
-              </ng-container>
-              <ng-container *ngSwitchDefault>
-                {{row[col]}}
-              </ng-container>
-            </ng-container>
-          </ng-template>
-         
-        </div>
-         
-        <div class="ixt-matrix__cell">
-          <ng-container *ngIf="!isNewRow(i) && !editingRows.has(getRowIndex(i))">
-            <button class="ixt-matrix__action-button" (click)="startEditing(getRowIndex(i))">
-              <span class="material-icons">edit</span>
-            </button>
-          </ng-container>
-          <ng-container *ngIf="isNewRow(i) || editingRows.has(getRowIndex(i))">
-            <button class="ixt-matrix__action-button" (click)="cancelEditing(getRowIndex(i))">
-              <span class="material-icons">close</span>
-            </button>
-          </ng-container>
-        </div>
+    <div class="ixt-matrix__row" *ngFor="let row of paginatedData; let i = index" 
+         [class.ixt-matrix__row--selected]="selectedRows.has(getRowIndex(i))">
+      <div class="ixt-matrix__cell">
+        <binary-editor
+          [config]="{ rowIndex: getRowIndex(i), rowData: row }"
+          [ngModel]="selectedRows.has(getRowIndex(i))"
+          (selectionChange)="selectRow(getRowIndex(i), $event.selected)">
+        </binary-editor>
       </div>
-    </ng-container>
+      <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
+        <ng-container *ngIf="isNewRow(i) || editingRows.has(getRowIndex(i)); else displayValue">
+          <ng-container [ngSwitch]="getEditorType(columnConfigs?.[col]?.type)">
+            <!-- Text Input -->
+            <input *ngSwitchCase="'text'" type="text" [ngModel]="row[col]"
+              (ngModelChange)="onValueChange(getRowIndex(i), col, $event)">
 
-    <!-- Tree View -->
-    <ng-container *ngIf="isTree">
-      <ng-container *ngTemplateOutlet="treeTemplate; context: { $implicit: data, level: 0 }">
-      </ng-container>
-    </ng-container>
+            <!-- Number Input -->
+            <input *ngSwitchCase="'number'" type="number" [ngModel]="row[col]"
+              (ngModelChange)="onValueChange(getRowIndex(i), col, $event)">
+
+            <!-- Enum Select -->
+            <select *ngSwitchCase="'enum'" [ngModel]="row[col]"
+              (ngModelChange)="onValueChange(getRowIndex(i), col, $event)">
+              <option *ngFor="let opt of columnConfigs?.[col]?.enumValues" [ngValue]="opt.value">
+                {{opt.label}}
+              </option>
+            </select>
+
+            <!-- Custom Editor -->
+            <ng-container *ngSwitchCase="'custom'">
+              <ng-container *ngTemplateOutlet="customEditorTpl; context: {
+                 $implicit: getEditorComponent(columnConfigs?.[col]?.type),
+                 row: row,
+                 col: col,
+                 index: i,
+                 control: getEditControl(getRowIndex(i), col)
+               }">
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+          
+        <ng-template #displayValue>
+          <ng-container [ngSwitch]="columnConfigs?.[col]?.type">
+            <ng-container *ngSwitchCase="CoordinateEditorComponent">
+              {{formatCoordinate(row[col])}}
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              {{row[col]}}
+            </ng-container>
+          </ng-container>
+        </ng-template>
+      </div>
+       
+      <div class="ixt-matrix__cell">
+        <ng-container *ngIf="!isNewRow(i) && !editingRows.has(getRowIndex(i))">
+          <button class="ixt-matrix__action-button" (click)="startEditing(getRowIndex(i))">
+            <span class="material-icons">edit</span>
+          </button>
+        </ng-container>
+        <ng-container *ngIf="isNewRow(i) || editingRows.has(getRowIndex(i))">
+          <button class="ixt-matrix__action-button" (click)="cancelEditing(getRowIndex(i))">
+            <span class="material-icons">close</span>
+          </button>
+        </ng-container>
+      </div>
+    </div>
 
     <!-- Pagination -->
     <div class="ixt-matrix__footer" *ngIf="showPagination">
@@ -184,26 +176,7 @@
   </div>
 </ng-container>
 
-<!-- Tree Template -->
-<ng-template #treeTemplate let-nodes let-level="level">
-  <div class="ixt-matrix__row" *ngFor="let node of nodes; let i = index">
-    <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]"
-      [style.padding-left.px]="col === columns[0] ? level * 16 : null">
-      <button *ngIf="hasChildren(node)" class="ixt-matrix__toggle" (click)="toggleNode(i)">
-        <i [class.expanded]="isExpanded(i)"></i>
-      </button>
-      {{node[col]}}
-    </div>
-  </div>
-  <ng-container *ngFor="let node of nodes; let i = index">
-    <ng-container *ngIf="hasChildren(node) && isExpanded(i)">
-      <ng-container *ngTemplateOutlet="treeTemplate; context: { $implicit: node.children, level: level + 1 }">
-      </ng-container>
-    </ng-container>
-  </ng-container>
-</ng-template>
-
-<!-- Custom Editor Template -->
+<!-- Add this after your main content but before the noData template -->
 <ng-template #customEditorTpl let-editor let-row="row" let-col="col" let-index="index" let-control="control">
   <coordinate-editor
     *ngIf="editor?.component === CoordinateEditorComponent"

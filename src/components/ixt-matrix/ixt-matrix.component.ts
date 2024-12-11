@@ -17,15 +17,12 @@ export type SortDirection = 'asc' | 'desc' | null;
 })
 export class IxtMatrixComponent implements OnInit {
   @Input() data: MatrixNode[] = [];
-  //@Input() columnFilters?: ColumnFilterConfig;
   @Input() columnConfigs?: Record<string, ColumnConfig>;
-  @ViewChild('noData') noDataTemplate!: TemplateRef<any>;  // Add this line
+  @ViewChild('noData') noDataTemplate!: TemplateRef<any>; 
+  @ViewChild('customEditorTpl') customEditorTpl!: TemplateRef<any>;  
 
   newRows: MatrixNode[] = [];
-
   columns: string[] = [];
-  isTree: boolean = false;
-  expandedNodes: Set<number> = new Set();
 
   pageSizeControl = new FormControl<number | 'all'>(10);
   protected readonly Math = Math;
@@ -75,7 +72,6 @@ export class IxtMatrixComponent implements OnInit {
 
   ngOnInit() {
     this.columns = this.getColumns(this.data);
-    this.isTree = this.isTreeData(this.data);
 
     this.pageSizeControl.valueChanges.subscribe(value => {
       if (value) {
@@ -101,14 +97,6 @@ export class IxtMatrixComponent implements OnInit {
     return !!this.data?.length;
   }
 
-  // Existing methods - unchanged
-  public hasChildren(node: MatrixNode): boolean {
-    return Array.isArray(node?.children) && node.children.length > 0;
-  }
-
-  public isTreeData(data: MatrixNode[]): boolean {
-    return Array.isArray(data) && data.some(item => this.hasChildren(item));
-  }
 
   public getColumns(data: MatrixNode[]): string[] {
     if (!data?.length) return [];
@@ -116,25 +104,13 @@ export class IxtMatrixComponent implements OnInit {
     return Object.keys(firstRow).filter(key => key !== 'children');
   }
 
-  toggleNode(index: number): void {
-    if (this.expandedNodes.has(index)) {
-      this.expandedNodes.delete(index);
-    } else {
-      this.expandedNodes.add(index);
-    }
-  }
-
-  isExpanded(index: number): boolean {
-    return this.expandedNodes.has(index);
-  }
-
   get totalPages(): number {
-    if (this.isTree || this.pageSize === 'all' || this.data.length <= 50) return 1;
+    if (this.pageSize === 'all' || this.data.length <= 50) return 1;
     return Math.ceil(this.data.length / +this.pageSize);
   }
 
   get showPagination(): boolean {
-    return !this.isTree && this.data.length > 50;
+    return this.data.length > 50;  // Removed isTree check
   }
 
   get visiblePages(): number[] {
@@ -365,7 +341,7 @@ export class IxtMatrixComponent implements OnInit {
     }
 
     // Apply pagination
-    if (this.isTree || this.pageSize === 'all' || allData.length <= 50) {
+    if (this.pageSize === 'all' || allData.length <= 50) {  // Removed isTree check
       return allData;
     }
 
@@ -373,7 +349,7 @@ export class IxtMatrixComponent implements OnInit {
     const end = start + (+this.pageSize);
     return allData.slice(start, end);
   }
-
+  
   // Helper to get real index
   getRowIndex(displayIndex: number): number {
     return displayIndex - this.newRows.length;
