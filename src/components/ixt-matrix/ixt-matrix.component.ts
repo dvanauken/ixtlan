@@ -6,6 +6,7 @@ import { MatrixEditor } from './matrix-editors/editor.interface';
 import { IxtDialogService } from '../ixt-dialog/ixt-dialog.index';
 import { AirportCodeEditorComponent } from './matrix-editors/airport-code/airport-code-editor.component';
 import { CoordinateEditorComponent } from './matrix-editors/coordinate/coordinate-editor.component';
+import { PaginationService } from './services/pagination.service';
 
 
 export type SortDirection = 'asc' | 'desc' | null;
@@ -18,23 +19,14 @@ export type SortDirection = 'asc' | 'desc' | null;
 export class IxtMatrixComponent implements OnInit {
   @Input() data: MatrixNode[] = [];
   @Input() columnConfigs?: Record<string, ColumnConfig>;
-  @ViewChild('noData') noDataTemplate!: TemplateRef<any>; 
-  @ViewChild('customEditorTpl') customEditorTpl!: TemplateRef<any>;  
+  @ViewChild('noData') noDataTemplate!: TemplateRef<any>;
+  @ViewChild('customEditorTpl') customEditorTpl!: TemplateRef<any>;
 
   newRows: MatrixNode[] = [];
   columns: string[] = [];
 
   pageSizeControl = new FormControl<number | 'all'>(10);
   protected readonly Math = Math;
-
-  // Pagination additions
-  currentPage = 1;
-  pageSize: number | 'all' = 10;
-  pageSizes: PageSize[] = [
-    { value: 10, label: '10' },
-    { value: 100, label: '100' },
-    { value: 'all', label: 'All' }
-  ];
 
   // Filter additions
   showFilters = false;
@@ -67,19 +59,27 @@ export class IxtMatrixComponent implements OnInit {
 
   constructor(
     private dialogService: IxtDialogService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private paginationService: PaginationService  // Add this
   ) { }
 
   ngOnInit() {
     this.columns = this.getColumns(this.data);
 
+    // Initialize pagination
+    this.paginationService.initialize(this.data.length);
+
+    // Subscribe to pagination changes
+    this.paginationService.state$.subscribe(() => {
+      this.changeDetectorRef.markForCheck();
+    });
+
     this.pageSizeControl.valueChanges.subscribe(value => {
       if (value) {
-        this.onPageSizeChange(value);
+        this.paginationService.onPageSizeChange(value);
       }
     });
 
-    // Initialize filter controls if filters configured
     if (this.columnConfigs) {
       Object.entries(this.columnConfigs).forEach(([field, config]) => {
         const control = new FormControl('');
@@ -102,59 +102,6 @@ export class IxtMatrixComponent implements OnInit {
     if (!data?.length) return [];
     const firstRow = data[0];
     return Object.keys(firstRow).filter(key => key !== 'children');
-  }
-
-  get totalPages(): number {
-    if (this.pageSize === 'all' || this.data.length <= 50) return 1;
-    return Math.ceil(this.data.length / +this.pageSize);
-  }
-
-  get showPagination(): boolean {
-    return this.data.length > 50;  // Removed isTree check
-  }
-
-  get visiblePages(): number[] {
-    const pages: number[] = [];
-    if (this.totalPages <= 1) return pages;
-
-    // Always add first page
-    pages.push(1);
-
-    let start = Math.max(2, this.currentPage - 4);
-    let end = Math.min(this.totalPages - 1, this.currentPage + 4);
-
-    // Add ellipsis after 1 if needed
-    if (start > 2) {
-      pages.push(-1); // -1 represents ellipsis
-    }
-
-    // Add pages around current page
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-
-    // Add ellipsis before last page if needed
-    if (end < this.totalPages - 1) {
-      pages.push(-1);
-    }
-
-    // Always add last page if more than one page
-    if (this.totalPages > 1) {
-      pages.push(this.totalPages);
-    }
-
-    return pages;
-  }
-
-  onPageChange(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-    }
-  }
-
-  onPageSizeChange(size: number | 'all'): void {
-    this.pageSize = size;
-    this.currentPage = 1;
   }
 
   private matchesFilter(value: any, filter: FilterState): boolean {
@@ -307,6 +254,37 @@ export class IxtMatrixComponent implements OnInit {
     return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
   }
 
+  get currentPage(): number {
+    return this.paginationService.getCurrentPage();
+  }
+
+  get pageSizes(): PageSize[] {
+    return this.paginationService.getPageSizes();
+  }
+
+  get totalPages(): number {
+    return this.paginationService.getTotalPages();
+  }
+
+  get showPagination(): boolean {
+    return this.paginationService.shouldShowPagination();
+  }
+
+  get visiblePages(): number[] {
+    return this.paginationService.getVisiblePages();
+  }
+
+  onPageChange(page: number): void {
+    this.paginationService.onPageChange(page);
+  }
+
+  onPageSizeChange(size: number | 'all'): void {
+    this.paginationService.onPageSizeChange(size);
+  }
+
+
+
+  // UPDATE the paginatedData getter:
   get paginatedData(): MatrixNode[] {
     // Start with combined data
     let allData = [...this.newRows, ...this.data];
@@ -340,16 +318,10 @@ export class IxtMatrixComponent implements OnInit {
       });
     }
 
-    // Apply pagination
-    if (this.pageSize === 'all' || allData.length <= 50) {  // Removed isTree check
-      return allData;
-    }
-
-    const start = (this.currentPage - 1) * (+this.pageSize);
-    const end = start + (+this.pageSize);
-    return allData.slice(start, end);
+    // Apply pagination using service
+    return this.paginationService.getPaginatedData(allData);
   }
-  
+
   // Helper to get real index
   getRowIndex(displayIndex: number): number {
     return displayIndex - this.newRows.length;
