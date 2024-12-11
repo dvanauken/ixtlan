@@ -7,6 +7,7 @@ import { IxtDialogService } from '../ixt-dialog/ixt-dialog.index';
 import { AirportCodeEditorComponent } from './matrix-editors/airport-code/airport-code-editor.component';
 import { CoordinateEditorComponent } from './matrix-editors/coordinate/coordinate-editor.component';
 import { PaginationService } from './services/pagination.service';
+import { FilterService } from './services/filter/filter.service';
 
 
 export type SortDirection = 'asc' | 'desc' | null;
@@ -27,13 +28,6 @@ export class IxtMatrixComponent implements OnInit {
 
   pageSizeControl = new FormControl<number | 'all'>(10);
   protected readonly Math = Math;
-
-  // Filter additions
-  showFilters = false;
-  activeFilters = new Map<string, FilterState>();
-  filterControls = new Map<string, FormControl>();
-  activeFilterColumn?: string;  // For tracking which column is being filtered
-  filterOperatorControls = new Map<string, FormControl<string>>();  // For number operators
 
   // Add new properties for sorting
   private sortColumn: string | null = null;
@@ -60,7 +54,8 @@ export class IxtMatrixComponent implements OnInit {
   constructor(
     private dialogService: IxtDialogService,
     private changeDetectorRef: ChangeDetectorRef,
-    private paginationService: PaginationService  // Add this
+    private paginationService: PaginationService,
+    private filterService: FilterService
   ) { }
 
   ngOnInit() {
@@ -69,29 +64,41 @@ export class IxtMatrixComponent implements OnInit {
     // Initialize pagination
     this.paginationService.initialize(this.data.length);
 
+    // Initialize filters
+    if (this.columnConfigs) {
+      Object.entries(this.columnConfigs).forEach(([field, config]) => {
+        this.filterService.initializeFilter(field, config);
+
+        // Get the control from service and subscribe to changes
+        const control = this.filterService.getFilterControl(field);
+        if (control) {
+          control.valueChanges.pipe(
+            debounceTime(config.debounceTime || 300),
+            distinctUntilChanged()
+          ).subscribe(value => {
+            this.filterService.onFilterChange(field, value, config);
+          });
+        }
+      });
+    }
+
+    // Subscribe to filter changes
+    this.filterService.filtersChanged$.subscribe(() => {
+      this.changeDetectorRef.markForCheck();
+    });
+
     // Subscribe to pagination changes
     this.paginationService.state$.subscribe(() => {
       this.changeDetectorRef.markForCheck();
     });
 
+    // Subscribe to page size changes
     this.pageSizeControl.valueChanges.subscribe(value => {
       if (value) {
         this.paginationService.onPageSizeChange(value);
       }
     });
-
-    if (this.columnConfigs) {
-      Object.entries(this.columnConfigs).forEach(([field, config]) => {
-        const control = new FormControl('');
-        control.valueChanges.pipe(
-          debounceTime(config.debounceTime || 300),
-          distinctUntilChanged()
-        ).subscribe(value => this.onFilterChange(field, value));
-        this.filterControls.set(field, control);
-      });
-    }
   }
-
   // Add this getter
   get hasData(): boolean {
     return !!this.data?.length;
@@ -104,130 +111,31 @@ export class IxtMatrixComponent implements OnInit {
     return Object.keys(firstRow).filter(key => key !== 'children');
   }
 
-  private matchesFilter(value: any, filter: FilterState): boolean {
-    if (value === undefined || value === null) return false;
-
-    const config = this.columnConfigs?.[filter.field];
-
-    // Debug log
-    console.log('matchesFilter:', {
-      field: filter.field,
-      operator: filter.operator,
-      filterValue: filter.value,
-      itemValue: value,
-      config: config
-    });
-
-    // Handle numeric comparisons for number type
-    if (config?.type === 'number') {
-      const numValue = Number(value);
-      const numFilterValue = Number(filter.value);
-      return this.handleNumericComparison(numValue, numFilterValue, filter.operator);
-    }
-
-    // String handling
-    const itemValue = String(value).toLowerCase();
-    const filterValue = String(filter.value).toLowerCase();
-
-    // Debug log string comparison
-    console.log('String comparison:', {
-      itemValue,
-      filterValue,
-      operator: filter.operator,
-      includes: itemValue.includes(filterValue),
-      startsWith: itemValue.startsWith(filterValue),
-      equals: itemValue === filterValue
-    });
-
-    switch (filter.operator) {
-      case 'startsWith':
-        return itemValue.startsWith(filterValue);
-      case 'equals':
-        return itemValue === filterValue;
-      case '!=':
-        return itemValue !== filterValue;
-      default:
-        return itemValue.includes(filterValue);
-    }
+  get showFilters(): boolean {
+    return this.filterService.isShowingFilters;
   }
 
-  // Helper method for numeric comparisons
-  private handleNumericComparison(numValue: number, numFilterValue: number, operator: FilterOperator): boolean {
-    switch (operator) {
-      case '>': return numValue > numFilterValue;
-      case '<': return numValue < numFilterValue;
-      case '>=': return numValue >= numFilterValue;
-      case '<=': return numValue <= numFilterValue;
-      case '!=': return numValue !== numFilterValue;
-      case 'equals': return numValue === numFilterValue;
-      case 'between': return false; // Handle between case if needed
-      default: return true;
-    }
+  get activeFilterColumn(): string | undefined {
+    return this.filterService.activeColumn;
   }
 
-  // In ixt-matrix.component.ts
-  onFilterChange(field: string, value: any): void {
-    if (value || value === 0) {
-      const config = this.columnConfigs?.[field];
-
-      // Use the proper FilterOperator type
-      const defaultOperator: FilterOperator = config?.type === 'number' ? 'equals' : 'contains';
-      const operator = this.filterOperatorControls.get(field)?.value || defaultOperator;
-
-      if (config) {
-        this.activeFilters.set(field, {
-          field,
-          operator: operator as FilterOperator,
-          value: config.type === 'number' ? Number(value) : value
-        });
-      }
-    } else {
-      this.activeFilters.delete(field);
-    }
-  }
-
-  onOperatorChange(field: string): void {
-    // Get current filter value
-    const currentValue = this.filterControls.get(field)?.value;
-    // If we have a value, update the filter with new operator
-    if (currentValue || currentValue === 0) {
-      this.onFilterChange(field, currentValue);
-    }
-  }
-
-  clearAllFilters(): void {
-    this.activeFilters.clear();
-    this.filterControls.forEach(control => control.reset());
-  }
-
-  // Update your toggleFilters method to handle column-specific toggling
-  toggleFilters(col: string): void {
-    if (this.activeFilterColumn === col) {
-      this.activeFilterColumn = undefined;
-      this.showFilters = false;
-    } else {
-      this.activeFilterColumn = col;
-      this.showFilters = true;
-    }
-  }
-
+  // UPDATE getFilterControl and getOperatorControl to use non-null assertion:
   getFilterControl(col: string): FormControl<any> {
-    let control = this.filterControls.get(col);
-    if (!control) {
-      control = new FormControl<any>('');
-      this.filterControls.set(col, control);
-    }
-    return control;
+    return this.filterService.getFilterControl(col)!;
   }
 
   getOperatorControl(col: string): FormControl<string> {
-    let control = this.filterOperatorControls.get(col);
-    if (!control) {
-      control = new FormControl<string>('=', { nonNullable: true });
-      this.filterOperatorControls.set(col, control);
-    }
-    return control;
+    return this.filterService.getOperatorControl(col)!;
   }
+
+  toggleFilters(col: string): void {
+    this.filterService.toggleFilters(col);
+  }
+
+  onOperatorChange(field: string): void {
+    this.filterService.onOperatorChange(field);
+  }
+
 
   // Add new methods for sorting
   toggleSort(column: string): void {
@@ -282,18 +190,16 @@ export class IxtMatrixComponent implements OnInit {
     this.paginationService.onPageSizeChange(size);
   }
 
-
-
-  // UPDATE the paginatedData getter:
   get paginatedData(): MatrixNode[] {
     // Start with combined data
     let allData = [...this.newRows, ...this.data];
 
-    // Apply filters (skip new rows)
-    if (this.activeFilters.size > 0) {
+    // Apply filters
+    if (this.filterService.hasActiveFilters()) {
+      const activeFilters = this.filterService.getActiveFilters();
       const filteredExisting = this.data.filter(item =>
-        Array.from(this.activeFilters.values()).every(filter =>
-          this.matchesFilter(item[filter.field], filter)
+        Array.from(activeFilters.values()).every(filter =>
+          this.filterService.matchesFilter(item[filter.field], filter)
         )
       );
       allData = [...this.newRows, ...filteredExisting];
@@ -318,7 +224,6 @@ export class IxtMatrixComponent implements OnInit {
       });
     }
 
-    // Apply pagination using service
     return this.paginationService.getPaginatedData(allData);
   }
 
@@ -524,5 +429,4 @@ export class IxtMatrixComponent implements OnInit {
     }
     this.allSelected = selected;
   }
-
 }

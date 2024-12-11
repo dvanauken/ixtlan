@@ -1,4 +1,3 @@
-<!-- ixt-matrix.component.html - Remove tree-related markup -->
 <div class="ixt-matrix__toolbar">
   <button class="ixt-matrix__action-button" (click)="addNewRow()">
     <span class="material-icons">add</span>
@@ -71,6 +70,7 @@
           </ng-container>
         </ng-container>
       </div>
+      <div class="ixt-matrix__cell"></div>
     </div>
 
     <!-- Data Rows -->
@@ -160,8 +160,9 @@
           <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
             <span class="material-icons">chevron_left</span>
           </button>
-          <button *ngFor="let page of visiblePages" [class.active]="page === currentPage" [class.ellipsis]="page === -1"
-            [disabled]="page === -1" (click)="onPageChange(page)">
+          <button *ngFor="let page of visiblePages" [class.active]="page === currentPage" 
+                  [class.ellipsis]="page === -1" [disabled]="page === -1" 
+                  (click)="onPageChange(page)">
             {{page === -1 ? '...' : page}}
           </button>
           <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages">
@@ -176,7 +177,7 @@
   </div>
 </ng-container>
 
-<!-- Add this after your main content but before the noData template -->
+<!-- Custom Editor Template -->
 <ng-template #customEditorTpl let-editor let-row="row" let-col="col" let-index="index" let-control="control">
   <coordinate-editor
     *ngIf="editor?.component === CoordinateEditorComponent"
