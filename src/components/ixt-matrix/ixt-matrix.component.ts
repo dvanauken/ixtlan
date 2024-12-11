@@ -7,8 +7,9 @@ import { MatrixEditor } from './matrix-editors/editor.interface';
 import { IxtDialogService } from '../ixt-dialog/ixt-dialog.index';
 import { AirportCodeEditorComponent } from './matrix-editors/airport-code/airport-code-editor.component';
 import { CoordinateEditorComponent } from './matrix-editors/coordinate/coordinate-editor.component';
-import { MatrixDataService } from './matrix-data.service';
-import { Subject } from 'rxjs';
+import { MatrixDataService, PaginationState } from './matrix-data.service';
+import { Observable, Subject } from 'rxjs';
+
 
 export type SortDirection = 'asc' | 'desc' | null;
 
@@ -28,6 +29,7 @@ export class IxtMatrixComponent implements OnInit {
   get data(): MatrixRow[] {
     return this._data;
   }
+  private _data: MatrixRow[] = [];
 
 
   @Input() columnConfigs?: Record<string, ColumnConfig>;
@@ -40,8 +42,8 @@ export class IxtMatrixComponent implements OnInit {
   protected readonly Math = Math;
 
   // Pagination additions
-  currentPage = 1;
-  pageSize: number | 'all' = 10;
+  //currentPage = 1;
+  //pageSize: number | 'all' = 10;
   pageSizes: PageSize[] = [
     { value: 10, label: '10' },
     { value: 100, label: '100' },
@@ -77,20 +79,37 @@ export class IxtMatrixComponent implements OnInit {
   readonly AirportCodeEditorComponent = AirportCodeEditorComponent;
   readonly CoordinateEditorComponent = CoordinateEditorComponent;
 
-  private _data: MatrixRow[] = [];
-  paginationState$ = this.matrixDataService.getPaginationState();
-  paginatedData$ = this.matrixDataService.getPaginatedData();
+
+  // Observable streams
+  paginatedData$: Observable<MatrixRow[]>;
+  paginationState$: Observable<PaginationState>;
+
+  // Add to your class properties
+  private currentPaginationState: PaginationState = {
+    currentPage: 1,
+    pageSize: 10,
+    totalPages: 1
+  };
+
 
   constructor(
     private dialogService: IxtDialogService,
     private changeDetectorRef: ChangeDetectorRef,
     private matrixDataService: MatrixDataService  // Add this
-  ) { }
+  ) {
+    this.paginatedData$ = this.matrixDataService.getPaginatedData();
+    this.paginationState$ = this.matrixDataService.getPaginationState();
+  }
 
   ngOnInit() {
     this.columns = this.getColumns(this.data);
 
-    // Subscribe to page size changes
+    this.matrixDataService.setPaginationState({
+      pageSize: this.pageSize,
+      currentPage: this.currentPage
+    });
+
+    // Single subscription to page size changes with cleanup
     this.pageSizeControl.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(value => {
@@ -98,23 +117,27 @@ export class IxtMatrixComponent implements OnInit {
           this.onPageSizeChange(value);
         }
       });
-    // Subscribe to page size changes
-    this.pageSizeControl.valueChanges.subscribe(value => {
-      if (value) {
-        this.onPageSizeChange(value);
-      }
-    });
 
+    // Filter controls initialization
     if (this.columnConfigs) {
       Object.entries(this.columnConfigs).forEach(([field, config]) => {
         const control = new FormControl('');
         control.valueChanges.pipe(
           debounceTime(config.debounceTime || 300),
-          distinctUntilChanged()
+          distinctUntilChanged(),
+          takeUntil(this.destroy$)  // Add cleanup to these subscriptions too
         ).subscribe(value => this.onFilterChange(field, value));
         this.filterControls.set(field, control);
       });
     }
+
+    this.paginationState$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(state => {
+        this.currentPaginationState = state;
+      });
+
+
   }
 
   // Add this getter
@@ -128,10 +151,6 @@ export class IxtMatrixComponent implements OnInit {
     return Object.keys(firstRow);
   }
 
-  get totalPages(): number {
-    if (this.pageSize === 'all' || this.data.length <= 50) return 1;
-    return Math.ceil(this.data.length / +this.pageSize);
-  }
 
   get showPagination(): boolean {
     return this.data.length > 50;
@@ -170,23 +189,18 @@ export class IxtMatrixComponent implements OnInit {
     return pages;
   }
 
-  // Update pagination methods to use service
   onPageChange(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page; // Keep current behavior
-      this.matrixDataService.setPaginationState({ currentPage: page }); // Add service update
-    }
+    this.matrixDataService.setPaginationState({
+      currentPage: page
+    });
   }
 
   onPageSizeChange(size: number | 'all'): void {
-    this.pageSize = size; // Keep current behavior
-    this.currentPage = 1;
-    this.matrixDataService.setPaginationState({ // Add service update
+    this.matrixDataService.setPaginationState({
       pageSize: size,
       currentPage: 1
     });
   }
-
 
   private matchesFilter(value: any, filter: FilterState): boolean {
     if (value === undefined || value === null) return false;
@@ -316,7 +330,6 @@ export class IxtMatrixComponent implements OnInit {
   // Add new methods for sorting
   toggleSort(column: string): void {
     if (this.sortColumn === column) {
-      // Cycle through: null -> asc -> desc -> null
       if (this.sortDirection === null) {
         this.sortDirection = 'asc';
       } else if (this.sortDirection === 'asc') {
@@ -329,6 +342,27 @@ export class IxtMatrixComponent implements OnInit {
       this.sortColumn = column;
       this.sortDirection = 'asc';
     }
+
+    // Remove this for now
+    // this.matrixDataService.updateSort({
+    //   column: this.sortColumn,
+    //   direction: this.sortDirection
+    // });
+  }
+
+
+
+  // Update the getters to use the local state
+  get totalPages(): number {
+    return this.currentPaginationState.totalPages;
+  }
+
+  get currentPage(): number {
+    return this.currentPaginationState.currentPage;
+  }
+
+  get pageSize(): number | 'all' {
+    return this.currentPaginationState.pageSize;
   }
 
   getSortIcon(column: string): string {
@@ -581,10 +615,10 @@ export class IxtMatrixComponent implements OnInit {
     this.allSelected = selected;
   }
 
-    // Add destroy handler
-    ngOnDestroy() {
-      this.destroy$.next();
-      this.destroy$.complete();
-    }
+  // Add destroy handler
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
 }
