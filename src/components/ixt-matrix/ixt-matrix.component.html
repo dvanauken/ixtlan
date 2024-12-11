@@ -73,8 +73,8 @@
     </div>
 
     <!-- Data Rows -->
-    <ng-container>
-      <div class="ixt-matrix__row" *ngFor="let row of paginatedData; let i = index" 
+    <ng-container *ngIf="paginatedData$ | async as paginatedRows">
+      <div class="ixt-matrix__row" *ngFor="let row of paginatedRows; let i = index" 
            [class.ixt-matrix__row--selected]="selectedRows.has(getRowIndex(i))">
         <div class="ixt-matrix__cell">
           <binary-editor
@@ -126,7 +126,6 @@
               </ng-container>
             </ng-container>
           </ng-template>
-         
         </div>
          
         <div class="ixt-matrix__cell">
@@ -156,22 +155,24 @@
           rows per page
         </div>
         <div class="ixt-matrix__controls">
-          <button (click)="onPageChange(1)" [disabled]="currentPage === 1">
-            <span class="material-icons">first_page</span>
-          </button>
-          <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
-            <span class="material-icons">chevron_left</span>
-          </button>
-          <button *ngFor="let page of visiblePages" [class.active]="page === currentPage" [class.ellipsis]="page === -1"
-            [disabled]="page === -1" (click)="onPageChange(page)">
-            {{page === -1 ? '...' : page}}
-          </button>
-          <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages">
-            <span class="material-icons">chevron_right</span>
-          </button>
-          <button (click)="onPageChange(totalPages)" [disabled]="currentPage === totalPages">
-            <span class="material-icons">last_page</span>
-          </button>
+          <ng-container *ngIf="paginationState$ | async as state">
+            <button (click)="onPageChange(1)" [disabled]="state.currentPage === 1">
+              <span class="material-icons">first_page</span>
+            </button>
+            <button (click)="onPageChange(state.currentPage - 1)" [disabled]="state.currentPage === 1">
+              <span class="material-icons">chevron_left</span>
+            </button>
+            <button *ngFor="let page of visiblePages" [class.active]="page === state.currentPage"
+              [class.ellipsis]="page === -1" [disabled]="page === -1" (click)="onPageChange(page)">
+              {{page === -1 ? '...' : page}}
+            </button>
+            <button (click)="onPageChange(state.currentPage + 1)" [disabled]="state.currentPage === state.totalPages">
+              <span class="material-icons">chevron_right</span>
+            </button>
+            <button (click)="onPageChange(state.totalPages)" [disabled]="state.currentPage === state.totalPages">
+              <span class="material-icons">last_page</span>
+            </button>
+          </ng-container>
         </div>
       </div>
     </div>

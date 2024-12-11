@@ -18,9 +18,7 @@ export type SortDirection = 'asc' | 'desc' | null;
   styleUrls: ['./ixt-matrix.component.scss']
 })
 export class IxtMatrixComponent implements OnInit {
-  private _data: MatrixRow[] = [];
   private destroy$ = new Subject<void>();
-
 
   @Input() set data(value: MatrixRow[]) {
     this._data = value; // Keep existing behavior
@@ -79,7 +77,9 @@ export class IxtMatrixComponent implements OnInit {
   readonly AirportCodeEditorComponent = AirportCodeEditorComponent;
   readonly CoordinateEditorComponent = CoordinateEditorComponent;
 
+  private _data: MatrixRow[] = [];
   paginationState$ = this.matrixDataService.getPaginationState();
+  paginatedData$ = this.matrixDataService.getPaginatedData();
 
   constructor(
     private dialogService: IxtDialogService,
