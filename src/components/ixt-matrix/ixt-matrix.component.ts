@@ -2,12 +2,13 @@ import { ChangeDetectorRef, Component, Input, OnInit, TemplateRef, ViewChild, Ty
 import { FormControl } from '@angular/forms';
 import { ColumnConfig, FilterOperator, FilterState, PageSize, RowChanges } from './ixt-matrix.interfaces';
 import { MatrixRow } from './matrix-base.type';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { MatrixEditor } from './matrix-editors/editor.interface';
 import { IxtDialogService } from '../ixt-dialog/ixt-dialog.index';
 import { AirportCodeEditorComponent } from './matrix-editors/airport-code/airport-code-editor.component';
 import { CoordinateEditorComponent } from './matrix-editors/coordinate/coordinate-editor.component';
 import { MatrixDataService } from './matrix-data.service';
+import { Subject } from 'rxjs';
 
 export type SortDirection = 'asc' | 'desc' | null;
 
@@ -17,7 +18,20 @@ export type SortDirection = 'asc' | 'desc' | null;
   styleUrls: ['./ixt-matrix.component.scss']
 })
 export class IxtMatrixComponent implements OnInit {
-  @Input() data: MatrixRow[] = [];
+  private _data: MatrixRow[] = [];
+  private destroy$ = new Subject<void>();
+
+
+  @Input() set data(value: MatrixRow[]) {
+    this._data = value; // Keep existing behavior
+    this.matrixDataService.setData(value); // Add service notification
+  }
+
+  get data(): MatrixRow[] {
+    return this._data;
+  }
+
+
   @Input() columnConfigs?: Record<string, ColumnConfig>;
   @ViewChild('noData') noDataTemplate!: TemplateRef<any>;  // Add this line
 
@@ -65,6 +79,8 @@ export class IxtMatrixComponent implements OnInit {
   readonly AirportCodeEditorComponent = AirportCodeEditorComponent;
   readonly CoordinateEditorComponent = CoordinateEditorComponent;
 
+  paginationState$ = this.matrixDataService.getPaginationState();
+
   constructor(
     private dialogService: IxtDialogService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -74,13 +90,14 @@ export class IxtMatrixComponent implements OnInit {
   ngOnInit() {
     this.columns = this.getColumns(this.data);
 
-
-    // Initialize pagination state
-    this.matrixDataService.setPaginationState({
-      pageSize: this.pageSize,
-      currentPage: this.currentPage
-    });
-
+    // Subscribe to page size changes
+    this.pageSizeControl.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        if (value) {
+          this.onPageSizeChange(value);
+        }
+      });
     // Subscribe to page size changes
     this.pageSizeControl.valueChanges.subscribe(value => {
       if (value) {
@@ -153,20 +170,18 @@ export class IxtMatrixComponent implements OnInit {
     return pages;
   }
 
+  // Update pagination methods to use service
   onPageChange(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.matrixDataService.setPaginationState({
-        currentPage: page
-      });
+      this.currentPage = page; // Keep current behavior
+      this.matrixDataService.setPaginationState({ currentPage: page }); // Add service update
     }
   }
 
-  // Update these two methods to use the service
   onPageSizeChange(size: number | 'all'): void {
-    this.pageSize = size;
+    this.pageSize = size; // Keep current behavior
     this.currentPage = 1;
-    this.matrixDataService.setPaginationState({
+    this.matrixDataService.setPaginationState({ // Add service update
       pageSize: size,
       currentPage: 1
     });
@@ -566,5 +581,10 @@ export class IxtMatrixComponent implements OnInit {
     this.allSelected = selected;
   }
 
+    // Add destroy handler
+    ngOnDestroy() {
+      this.destroy$.next();
+      this.destroy$.complete();
+    }
 
 }
