@@ -8,6 +8,8 @@ import { AirportCodeEditorComponent } from './matrix-editors/airport-code/airpor
 import { CoordinateEditorComponent } from './matrix-editors/coordinate/coordinate-editor.component';
 import { PaginationService } from './services/pagination.service';
 import { FilterService } from './services/filter/filter.service';
+import { SortService } from './services/sort/sort.service';
+import { SelectionService } from './services/selection/selection.service';
 
 
 export type SortDirection = 'asc' | 'desc' | null;
@@ -29,10 +31,6 @@ export class IxtMatrixComponent implements OnInit {
   pageSizeControl = new FormControl<number | 'all'>(10);
   protected readonly Math = Math;
 
-  // Add new properties for sorting
-  private sortColumn: string | null = null;
-  private sortDirection: SortDirection = null;
-
   // Add new properties for editing
   editingRows = new Set<number>();  // Track which rows are being edited
   rowChanges = new Map<number, RowChanges>();  // Track changes per row
@@ -41,9 +39,6 @@ export class IxtMatrixComponent implements OnInit {
   noData = true; // or make it a getter based on your needs
 
   editControls = new Map<string, FormControl>();
-
-  selectedRows = new Set<number>();
-  allSelected = false;
 
 
   private _editorInstance: MatrixEditor | null = null;
@@ -55,7 +50,9 @@ export class IxtMatrixComponent implements OnInit {
     private dialogService: IxtDialogService,
     private changeDetectorRef: ChangeDetectorRef,
     private paginationService: PaginationService,
-    private filterService: FilterService
+    private filterService: FilterService,
+    private sortService: SortService,
+    private selectionService: SelectionService
   ) { }
 
   ngOnInit() {
@@ -136,30 +133,13 @@ export class IxtMatrixComponent implements OnInit {
     this.filterService.onOperatorChange(field);
   }
 
-
-  // Add new methods for sorting
+  // ADD these methods:
   toggleSort(column: string): void {
-    if (this.sortColumn === column) {
-      // Cycle through: null -> asc -> desc -> null
-      if (this.sortDirection === null) {
-        this.sortDirection = 'asc';
-      } else if (this.sortDirection === 'asc') {
-        this.sortDirection = 'desc';
-      } else {
-        this.sortDirection = null;
-        this.sortColumn = null;
-      }
-    } else {
-      this.sortColumn = column;
-      this.sortDirection = 'asc';
-    }
+    this.sortService.toggleSort(column);
   }
 
   getSortIcon(column: string): string {
-    if (this.sortColumn !== column) {
-      return 'unfold_more';
-    }
-    return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
+    return this.sortService.getSortIcon(column);
   }
 
   get currentPage(): number {
@@ -190,6 +170,7 @@ export class IxtMatrixComponent implements OnInit {
     this.paginationService.onPageSizeChange(size);
   }
 
+  // UPDATE paginatedData getter:
   get paginatedData(): MatrixNode[] {
     // Start with combined data
     let allData = [...this.newRows, ...this.data];
@@ -206,24 +187,9 @@ export class IxtMatrixComponent implements OnInit {
     }
 
     // Apply sorting
-    if (this.sortColumn && this.sortDirection) {
-      allData.sort((a, b) => {
-        const aVal = a[this.sortColumn!];
-        const bVal = b[this.sortColumn!];
+    allData = this.sortService.sortData(allData);
 
-        if (aVal == null) return 1;
-        if (bVal == null) return -1;
-
-        if (typeof aVal === 'string') {
-          const comparison = String(aVal).toLowerCase().localeCompare(String(bVal).toLowerCase());
-          return this.sortDirection === 'asc' ? comparison : -comparison;
-        } else {
-          const comparison = aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);
-          return this.sortDirection === 'asc' ? comparison : -comparison;
-        }
-      });
-    }
-
+    // Apply pagination
     return this.paginationService.getPaginatedData(allData);
   }
 
@@ -401,32 +367,43 @@ export class IxtMatrixComponent implements OnInit {
     return value.toFixed(1);
   }
 
-  // Methods for external components
+
+  // ADD these methods:
   getSelectedRows(): MatrixNode[] {
-    return this.data.filter((_, index) => this.selectedRows.has(index));
+    return Array.from(this.selectionService.getSelectedRows())
+      .map(index => this.data[index])
+      .filter(row => row !== undefined);
   }
 
   setSelectedRows(indices: number[]): void {
-    this.selectedRows.clear();
-    indices.forEach(i => this.selectedRows.add(i));
+    this.selectionService.setSelectedRows(indices);
   }
 
   selectRow(index: number, selected = true): void {
-    if (selected) {
-      this.selectedRows.add(index);
-    } else {
-      this.selectedRows.delete(index);
-    }
+    this.selectionService.selectRow(index, selected);
   }
 
-
-  // Handle master checkbox
   toggleAllRows(selected: boolean): void {
-    if (selected) {
-      this.data.forEach((_, index) => this.selectedRows.add(index));
-    } else {
-      this.selectedRows.clear();
-    }
-    this.allSelected = selected;
+    this.selectionService.toggleAllRows(selected, this.data.length);
   }
+
+
+  get hasSelectedRows(): boolean {
+    return this.selectionService.getSelectedCount() > 0;
+  }
+
+  // UPDATE the allSelected getter to include a setter
+  get allSelected(): boolean {
+    return this.selectionService.isAllSelected();
+  }
+
+  set allSelected(value: boolean) {
+    this.selectionService.toggleAllRows(value, this.data.length);
+  }
+
+  // Add this method to the component class:
+  isRowSelected(index: number): boolean {
+    return this.selectionService.isSelected(index);
+  }
+
 }

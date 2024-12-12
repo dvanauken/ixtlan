@@ -75,11 +75,11 @@
 
     <!-- Data Rows -->
     <div class="ixt-matrix__row" *ngFor="let row of paginatedData; let i = index" 
-         [class.ixt-matrix__row--selected]="selectedRows.has(getRowIndex(i))">
+         [class.ixt-matrix__row--selected]="isRowSelected(getRowIndex(i))">
       <div class="ixt-matrix__cell">
         <binary-editor
           [config]="{ rowIndex: getRowIndex(i), rowData: row }"
-          [ngModel]="selectedRows.has(getRowIndex(i))"
+          [ngModel]="isRowSelected(getRowIndex(i))"
           (selectionChange)="selectRow(getRowIndex(i), $event.selected)">
         </binary-editor>
       </div>
