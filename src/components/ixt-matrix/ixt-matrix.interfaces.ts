@@ -23,26 +23,17 @@ export interface FilterState {
 export interface ColumnConfig {
   type: 'text' | 'number' | 'enum' | Type<MatrixEditor> | MatrixEditor;  
   field: string;
-  label?: string;  // Add this line
+  label?: string;
   operator?: FilterOperator;
   enumValues?: { value: any, label: string }[];
   placeholder?: string;
   debounceTime?: number;
   editable?: boolean;
-  config?: any; // Add this line to support editor-specific configuration
-}
-
-export interface FilterState {
-  field: string;
-  operator: FilterOperator;
-  value: any;
-  secondaryValue?: any;
+  config?: any;
 }
 
 export interface RowChanges {
   [key: string]: any;
 }
-
-
 
 export type ColumnConfigs = Record<string, ColumnConfig>;
