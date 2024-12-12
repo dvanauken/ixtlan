@@ -10,6 +10,7 @@ import { PaginationService } from './services/pagination.service';
 import { FilterService } from './services/filter/filter.service';
 import { SortService } from './services/sort/sort.service';
 import { SelectionService } from './services/selection/selection.service';
+import { EditService } from './services/edit/edit.service';
 
 
 export type SortDirection = 'asc' | 'desc' | null;
@@ -25,24 +26,8 @@ export class IxtMatrixComponent implements OnInit {
   @ViewChild('noData') noDataTemplate!: TemplateRef<any>;
   @ViewChild('customEditorTpl') customEditorTpl!: TemplateRef<any>;
 
-  newRows: MatrixNode[] = [];
   columns: string[] = [];
-
   pageSizeControl = new FormControl<number | 'all'>(10);
-  protected readonly Math = Math;
-
-  // Add new properties for editing
-  editingRows = new Set<number>();  // Track which rows are being edited
-  rowChanges = new Map<number, RowChanges>();  // Track changes per row
-
-  // Add this template reference
-  noData = true; // or make it a getter based on your needs
-
-  editControls = new Map<string, FormControl>();
-
-
-  private _editorInstance: MatrixEditor | null = null;
-
   readonly AirportCodeEditorComponent = AirportCodeEditorComponent;
   readonly CoordinateEditorComponent = CoordinateEditorComponent;
 
@@ -52,7 +37,8 @@ export class IxtMatrixComponent implements OnInit {
     private paginationService: PaginationService,
     private filterService: FilterService,
     private sortService: SortService,
-    private selectionService: SelectionService
+    private selectionService: SelectionService,
+    private editService: EditService  
   ) { }
 
   ngOnInit() {
@@ -105,7 +91,7 @@ export class IxtMatrixComponent implements OnInit {
   public getColumns(data: MatrixNode[]): string[] {
     if (!data?.length) return [];
     const firstRow = data[0];
-    return Object.keys(firstRow).filter(key => key !== 'children');
+    return Object.keys(firstRow);
   }
 
   get showFilters(): boolean {
@@ -170,141 +156,99 @@ export class IxtMatrixComponent implements OnInit {
     this.paginationService.onPageSizeChange(size);
   }
 
-  // UPDATE paginatedData getter:
-  get paginatedData(): MatrixNode[] {
-    // Start with combined data
-    let allData = [...this.newRows, ...this.data];
-
-    // Apply filters
-    if (this.filterService.hasActiveFilters()) {
-      const activeFilters = this.filterService.getActiveFilters();
-      const filteredExisting = this.data.filter(item =>
-        Array.from(activeFilters.values()).every(filter =>
-          this.filterService.matchesFilter(item[filter.field], filter)
-        )
-      );
-      allData = [...this.newRows, ...filteredExisting];
-    }
-
-    // Apply sorting
-    allData = this.sortService.sortData(allData);
-
-    // Apply pagination
-    return this.paginationService.getPaginatedData(allData);
+  // in ixt-matrix.component.ts
+  getCodes(data: MatrixNode[]): string[] {
+    if (!data) return [];
+    return data.map(row => row['code']?.toString() || '');
   }
 
-  // Helper to get real index
+  formatCoordinate(value: number): string {
+    return value.toFixed(1);
+  }
+
+  // selection methods:
+  getSelectedRows(): MatrixNode[] {
+    return Array.from(this.selectionService.getSelectedRows())
+      .map(index => this.data[index])
+      .filter(row => row !== undefined);
+  }
+
+  setSelectedRows(indices: number[]): void {
+    this.selectionService.setSelectedRows(indices);
+  }
+
+  selectRow(index: number, selected = true): void {
+    this.selectionService.selectRow(index, selected);
+  }
+
+  toggleAllRows(selected: boolean): void {
+    this.selectionService.toggleAllRows(selected, this.data.length);
+  }
+
+  get hasSelectedRows(): boolean {
+    return this.selectionService.getSelectedCount() > 0;
+  }
+
+  // UPDATE the allSelected getter to include a setter
+  get allSelected(): boolean {
+    return this.selectionService.isAllSelected();
+  }
+
+  set allSelected(value: boolean) {
+    this.selectionService.toggleAllRows(value, this.data.length);
+  }
+
+  // Add this method to the component class:
+  isRowSelected(index: number): boolean {
+    return this.selectionService.isSelected(index);
+  }
+
+  //editor code - start
   getRowIndex(displayIndex: number): number {
-    return displayIndex - this.newRows.length;
+    return this.editService.getRowIndex(displayIndex);
   }
-
-  // Helper to check if row is new
+  
   isNewRow(displayIndex: number): boolean {
-    return displayIndex < this.newRows.length;
+    return this.editService.isNewRow(displayIndex);
   }
-
-  // Method to start editing a row
+  
   startEditing(rowIndex: number): void {
-    this.editingRows.add(rowIndex);
+    this.editService.startEditing(rowIndex);
   }
-
-  // Method to cancel editing a row
+  
   cancelEditing(rowIndex: number): void {
-    this.editingRows.delete(rowIndex);
-    this.rowChanges.delete(rowIndex);
+    this.editService.cancelEditing(rowIndex);
   }
-
-
-  onValueChange(rowIndex: number, column: string, value: any): void {
-    let changes = this.rowChanges.get(rowIndex) || {};
-    changes[column] = value;
-    this.rowChanges.set(rowIndex, changes);
+  
+  onValueChange(rowIndex: number, field: string, value: any): void {
+    this.editService.onValueChange({ rowIndex, field, value });
   }
-
-  // Method to check if there are any pending changes
+  
   get hasChanges(): boolean {
-    return this.rowChanges.size > 0;
+    return this.editService.hasChanges();
   }
-
-  // Method to check if sorting/filtering should be disabled
-  get isEditingDisabled(): boolean {
-    return this.editingRows.size > 0;
-  }
-
-  private getDefaultValueForType(type: string | MatrixEditor | Type<MatrixEditor>): any {
-    // Handle string types
-    if (typeof type === 'string') {
-      switch (type) {
-        case 'number':
-          return 0;
-        case 'enum':
-          return '';
-        case 'text':
-          return '';
-        default:
-          return '';
-      }
-    }
-
-    // Handle editor component types
-    if (type === CoordinateEditorComponent) {
-      return 0; // Default value for coordinates
-    }
-    if (type === AirportCodeEditorComponent) {
-      return ''; // Default value for airport codes
-    }
-
-    // Handle editor instances (when type is MatrixEditor)
-    if (typeof type === 'object' && 'getDefaultValue' in type) {
-      return type.getDefaultValue?.() ?? '';
-    }
-
-    return '';
-  }
-
-  // Add new row method
+  
   addNewRow(): void {
-    const newRow: MatrixNode = {};
-    if (this.columnConfigs) {
-      Object.entries(this.columnConfigs).forEach(([field, config]) => {
-        newRow[field] = this.getDefaultValueForType(config.type);
-      });
-    } else {
-      this.columns.forEach(col => newRow[col] = '');
-    }
-
-    this.newRows.unshift(newRow);
-    this.editingRows.add(-this.newRows.length);
+    this.editService.addNewRow(this.columnConfigs || {});
   }
-
+  
   saveChanges(): void {
-    this.rowChanges.forEach((changes, rowIndex) => {
-      if (rowIndex >= 0) {
-        const row = this.data[rowIndex];
-        Object.assign(row, changes);
-      } else {
-        const newRowIndex = Math.abs(rowIndex) - 1;
-        Object.assign(this.newRows[newRowIndex], changes);
-      }
-    });
-
-    if (this.newRows.length) {
-      this.data.unshift(...this.newRows);
-    }
-
-    // Clear states AFTER data is updated
-    this.editingRows.clear();
-    this.rowChanges.clear();
-    this.newRows = [];
-    this.changeDetectorRef.detectChanges();
+    this.data = this.editService.saveChanges(this.data);
+    this.changeDetectorRef.markForCheck();
+  }
+  
+  getEditControl(rowIndex: number, field: string): FormControl {
+    return this.editService.getEditControl(rowIndex, field);
   }
 
-  // Add validation stub
-  validateRow(row: MatrixNode): boolean {
-    return true; // TODO: Implement validation
+  get newRowsLength(): number {
+    return this.editService.getNewRows().length;
+  }
+  
+  isEditing(index: number): boolean {
+    return this.editService.isEditing(index);
   }
 
-  // In ixt-matrix.component.ts
   getEditorType(type: any): string {
     console.log('getEditorType called with:', {
       type,
@@ -340,70 +284,29 @@ export class IxtMatrixComponent implements OnInit {
     return null;
   }
 
-
-  getEditControl(rowIndex: number, field: string): FormControl {
-    const key = `${rowIndex}-${field}`;
-    let control = this.editControls.get(key);
-    if (!control) {
-      control = new FormControl('');
-      // Add subscription to handle value changes
-      control.valueChanges.subscribe(value => {
-        console.log(`Form control change - rowIndex: ${rowIndex}, field: ${field}, value:`, value);
-        this.onValueChange(rowIndex, field, value);
-      });
-      this.editControls.set(key, control);
+  //editor code end
+  
+  // UPDATE paginatedData getter:
+  get paginatedData(): MatrixNode[] {
+    // Start with combined data
+    let allData = [...this.editService.getNewRows(), ...this.data];
+  
+    // Apply filters
+    if (this.filterService.hasActiveFilters()) {
+      const activeFilters = this.filterService.getActiveFilters();
+      const filteredExisting = this.data.filter(item =>
+        Array.from(activeFilters.values()).every(filter =>
+          this.filterService.matchesFilter(item[filter.field], filter)
+        )
+      );
+      allData = [...this.editService.getNewRows(), ...filteredExisting];
     }
-    return control;
-  }
-
-
-  // in ixt-matrix.component.ts
-  getCodes(data: MatrixNode[]): string[] {
-    if (!data) return [];
-    return data.map(row => row['code']?.toString() || '');
-  }
-
-  formatCoordinate(value: number): string {
-    return value.toFixed(1);
-  }
-
-
-  // ADD these methods:
-  getSelectedRows(): MatrixNode[] {
-    return Array.from(this.selectionService.getSelectedRows())
-      .map(index => this.data[index])
-      .filter(row => row !== undefined);
-  }
-
-  setSelectedRows(indices: number[]): void {
-    this.selectionService.setSelectedRows(indices);
-  }
-
-  selectRow(index: number, selected = true): void {
-    this.selectionService.selectRow(index, selected);
-  }
-
-  toggleAllRows(selected: boolean): void {
-    this.selectionService.toggleAllRows(selected, this.data.length);
-  }
-
-
-  get hasSelectedRows(): boolean {
-    return this.selectionService.getSelectedCount() > 0;
-  }
-
-  // UPDATE the allSelected getter to include a setter
-  get allSelected(): boolean {
-    return this.selectionService.isAllSelected();
-  }
-
-  set allSelected(value: boolean) {
-    this.selectionService.toggleAllRows(value, this.data.length);
-  }
-
-  // Add this method to the component class:
-  isRowSelected(index: number): boolean {
-    return this.selectionService.isSelected(index);
+  
+    // Apply sorting
+    allData = this.sortService.sortData(allData);
+  
+    // Apply pagination
+    return this.paginationService.getPaginatedData(allData);
   }
 
 }

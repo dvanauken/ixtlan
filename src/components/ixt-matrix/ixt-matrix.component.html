@@ -2,7 +2,7 @@
   <button class="ixt-matrix__action-button" (click)="addNewRow()">
     <span class="material-icons">add</span>
   </button>
-  <button class="ixt-matrix__action-button" [disabled]="!hasChanges && newRows.length === 0" (click)="saveChanges()">
+  <button class="ixt-matrix__action-button" [disabled]="!hasChanges && newRowsLength === 0" (click)="saveChanges()">
     <span class="material-icons">save</span>
   </button>
 </div>
@@ -84,7 +84,7 @@
         </binary-editor>
       </div>
       <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
-        <ng-container *ngIf="isNewRow(i) || editingRows.has(getRowIndex(i)); else displayValue">
+        <ng-container *ngIf="isNewRow(i) || isEditing(getRowIndex(i)); else displayValue">
           <ng-container [ngSwitch]="getEditorType(columnConfigs?.[col]?.type)">
             <!-- Text Input -->
             <input *ngSwitchCase="'text'" type="text" [ngModel]="row[col]"
@@ -129,12 +129,12 @@
       </div>
        
       <div class="ixt-matrix__cell">
-        <ng-container *ngIf="!isNewRow(i) && !editingRows.has(getRowIndex(i))">
+        <ng-container *ngIf="!isNewRow(i) && !isEditing(getRowIndex(i))">
           <button class="ixt-matrix__action-button" (click)="startEditing(getRowIndex(i))">
             <span class="material-icons">edit</span>
           </button>
         </ng-container>
-        <ng-container *ngIf="isNewRow(i) || editingRows.has(getRowIndex(i))">
+        <ng-container *ngIf="isNewRow(i) || isEditing(getRowIndex(i))">
           <button class="ixt-matrix__action-button" (click)="cancelEditing(getRowIndex(i))">
             <span class="material-icons">close</span>
           </button>
