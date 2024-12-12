@@ -8,7 +8,6 @@ import { HttpClientModule } from '@angular/common/http';
 // Component Modules (alphabetized)
 import { IxtAutoCompleteModule } from '../components/ixt-auto-complete/ixt-auto-complete.module';
 import { IxtCalendarModule } from '../components/ixt-calendar/ixt-calendar.module';
-import { IxtDialogModule } from '../components/ixt-dialog/ixt-dialog.module';
 import { IxtExpressionBuilderModule } from '../components/ixt-expression-builder/ixt-expression-builder.module';
 import { IxtHolyGrailModule } from '../components/ixt-holy-grail/ixt-holy-grail.module';
 import { IxtLayerManagerModule } from '../components/ixt-layer-manager/ixt-layer-manager.module';
@@ -16,6 +15,7 @@ import { IxtTableModule } from '../components/ixt-table/ixt-table.module';
 import { IxtTabsetModule } from '../components/ixt-tabset/ixt-tabset.module';
 import { IxtTreeModule } from '../components/ixt-tree/ixt-tree.module';
 import { IxtMenuModule } from '../components/ixt-menu/ixt-menu.module';
+
 
 // Components
 import { AppComponent } from './app.component';
@@ -41,6 +41,7 @@ import { IxtAccordianModule } from 'src/components/ixt-accordian/accordian.modul
 
 import { IxtMapModule } from 'src/components/ixt-map/ixt-map.module';
 import { RouterModule } from '@angular/router';
+import { IxtDialogModule } from 'src/components/ixt-dialog/ixt-dialog.module';
 
 
 @NgModule({
@@ -56,7 +57,6 @@ import { RouterModule } from '@angular/router';
     IxtAccordianModule,  
     IxtAutoCompleteModule,
     IxtCalendarModule,
-    IxtDialogModule,
     IxtExpressionBuilderModule,
     IxtHolyGrailModule,
     IxtLayerManagerModule,
@@ -67,7 +67,8 @@ import { RouterModule } from '@angular/router';
     IxtSplitPaneModule,
     IxtPanelModule,
     IxtMenuModule,
-    IxtMapModule
+    IxtMapModule,
+    IxtDialogModule
   ],
   providers: [
     IxtAutocompleteHandler,

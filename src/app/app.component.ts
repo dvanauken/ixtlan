@@ -1,6 +1,5 @@
 // app.component.ts
-import { Component, ViewChild, AfterViewInit } from '@angular/core';
-import { IxtDialogComponent, DialogType, DialogButton, DialogResult } from '../components/ixt-dialog/ixt-dialog.index';
+import { Component, ViewChild, AfterViewInit, TemplateRef } from '@angular/core';
 import { Layer } from '../components/ixt-layer-manager/ixt-layer-manager.component';
 import { TreeNode } from '../components/ixt-tree/ixt-tree.component';
 import { AccordionPanel } from '../components/ixt-accordian/ixt-accordian.component';
@@ -23,6 +22,8 @@ import { IxtEmployeeFormHandler } from './form/ixt-employee-form.handler';
 import { IxtMatrixProvider } from './matrix/ixt-matrix.provider';
 import { IxtMenuProvider } from './menu/ixt-menu.provider';
 import { AccordianDataService } from './accordion/accordion.data';
+import { DynamicDialogContentComponent } from 'src/components/ixt-dialog/dynamic-dialog-content.component';
+import { IxtDialogService } from 'src/components/ixt-dialog/ixt-dialog.service';
 
 
 @Component({
@@ -48,8 +49,13 @@ import { AccordianDataService } from './accordion/accordion.data';
 })
 export class AppComponent implements AfterViewInit {
   [x: string]: any;
-  @ViewChild(IxtDialogComponent) dialog!: IxtDialogComponent;
+  @ViewChild('customDialogTemplate') customDialogTemplate!: TemplateRef<any>;
+
+  sampleInput: string = '';
+
   formData = this.employeeFormProvider.getCurrentForm();
+
+
 
   matrixTableData = this.matrixProvider.getTableData();
   matrixTreeData = this.matrixProvider.getTreeData();
@@ -59,6 +65,7 @@ export class AppComponent implements AfterViewInit {
   accordionPanels = this.accordianDataService.getAccordianPanels();
 
   constructor(
+    private dialogService: IxtDialogService,
     public tableProvider: IxtTableProvider,
     public tableHandler: IxtTableHandler,
     public layerProvider: IxtLayerProvider,
@@ -83,9 +90,6 @@ export class AppComponent implements AfterViewInit {
   }
   
   ngAfterViewInit() {
-    if (this.dialog) {
-      this.dialog.visible = false;
-    }
   }
 
   select(event: Event): void {
@@ -101,5 +105,102 @@ export class AppComponent implements AfterViewInit {
     // Handle the search term
     console.log('Search term:', searchTerm);
   }
+
+
+  //dialog -- start
+  showSuccessDialog() {
+    this.dialogService.alert({
+      title: 'Success',
+      content: 'Operation completed successfully!',
+      variant: 'success',
+      buttons: [
+        {
+          text: 'OK',
+          variant: 'success',
+          close: true
+        }
+      ]
+    });
+  }
+  
+  showErrorDialog() {
+    this.dialogService.alert({
+      title: 'Error',
+      message: 'Something went wrong. Please try again.',
+      variant: 'danger',
+    });
+  }
+
+  showConfirmDialog() {
+    this.dialogService.confirm({
+      title: 'Confirm Action',
+      content: 'Are you sure you want to proceed with this action?',
+      variant: 'warning',
+      buttons: [
+        {
+          text: 'Cancel',
+          variant: 'light',
+          close: true
+        },
+        {
+          text: 'Confirm',
+          variant: 'warning',
+          callback: () => {
+            console.log('Confirmed');
+          },
+          close: true
+        }
+      ]
+    });
+  }
+
+  showCustomDialog() {
+    const dialogData = {
+      message: 'This is a custom dialog with dynamic data',
+      input: ''
+    };
+
+    const dialogRef = this.dialogService.open({
+      title: 'Custom Dialog',
+      content: this.customDialogTemplate,
+      contentContext: { data: dialogData },
+      variant: 'info',
+      buttons: [
+        {
+          text: 'Cancel',
+          variant: 'light',
+          close: true
+        },
+        {
+          text: 'Save',
+          variant: 'primary',
+          callback: () => {
+            console.log('Saved data:', dialogData.input);
+            return true;
+          },
+          close: true
+        }
+      ]
+    });
+  }
+
+  showDynamicComponentDialog() {
+    const dialogRef = this.dialogService.open({
+      title: 'Dynamic Component',
+      content: DynamicDialogContentComponent,
+      variant: 'primary',
+      contentContext: {
+        data: {
+          message: 'This content is from a dynamic component'
+        }
+      }
+    });
+  }
+
+  saveTemplateDialog() {
+    console.log('Saving template dialog data:', this.sampleInput);
+    // Implement save logic here
+  }
+  //dialog end
 
 }

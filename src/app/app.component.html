@@ -42,6 +42,77 @@
             (hover)="highlight($event)"></ixt-layer>
         </ixt-map>
       </ixt-tab>
+
+      <!-- Dialog -->
+      <ixt-tab title="Dialog Example">
+        <div class="dialog-demo-container flex flex-col gap-4 p-4">
+          <!-- Service-based dialogs -->
+          <div class="flex flex-col gap-2">
+            <h3 class="text-lg font-semibold">Service-based Dialogs</h3>
+            <div class="flex flex-wrap gap-2">
+              <button (click)="showSuccessDialog()" class="px-4 py-2 bg-green-500 text-white rounded">
+                Success Dialog
+              </button>
+              
+              <button (click)="showErrorDialog()" class="px-4 py-2 bg-red-500 text-white rounded">
+                Error Dialog
+              </button>
+              
+              <button (click)="showConfirmDialog()" class="px-4 py-2 bg-blue-500 text-white rounded">
+                Confirm Dialog
+              </button>
+              
+              <button (click)="showCustomDialog()" class="px-4 py-2 bg-purple-500 text-white rounded">
+                Custom Dialog
+              </button>
+            </div>
+          </div>
+      
+          <!-- Template-based dialog example -->
+          <div class="flex flex-col gap-2 mt-4">
+            <h3 class="text-lg font-semibold">Template-based Dialog</h3>
+            <div class="flex flex-wrap gap-2">
+              <button (click)="templateDialog.open()" class="px-4 py-2 bg-gray-500 text-white rounded">
+                Open Template Dialog
+              </button>
+            </div>
+            
+            <ixt-dialog #templateDialog>
+              <ng-template #dialogContent>
+                <div class="p-4">
+                  <h2>Template Content</h2>
+                  <p>This dialog uses content projection and template reference.</p>
+                  <div class="form-group">
+                    <label for="exampleInput">Sample Input</label>
+                    <input type="text" id="exampleInput" [(ngModel)]="sampleInput" class="border p-2 mt-1 w-full">
+                  </div>
+                </div>
+              </ng-template>
+              
+              <div ixtDialogFooter>
+                <button (click)="templateDialog.close()" class="px-4 py-2 bg-gray-300 text-black rounded">
+                  Cancel
+                </button>
+                <button (click)="saveTemplateDialog()" class="px-4 py-2 bg-blue-500 text-white rounded ml-2">
+                  Save
+                </button>
+              </div>
+            </ixt-dialog>
+          </div>
+          
+          <!-- Dynamic Component Dialog -->
+          <div class="flex flex-col gap-2 mt-4">
+            <h3 class="text-lg font-semibold">Dynamic Component Dialog</h3>
+            <div class="flex flex-wrap gap-2">
+              <button (click)="showDynamicComponentDialog()" class="px-4 py-2 bg-orange-500 text-white rounded">
+                Open Dynamic Dialog
+              </button>
+            </div>
+          </div>
+        </div>
+      </ixt-tab>
+
+      <!-- Table --- soon to be removed  -->
       <ixt-tab title="Tab 1">
         <ixt-table [data]="tableProvider.employeeData" [config]="tableProvider.employeeConfig"></ixt-table>
       </ixt-tab>
@@ -165,4 +236,13 @@
   <footer>Footer</footer>
 </main>
 
-<ixt-dialog></ixt-dialog>
+<!-- Template for custom dialog content -->
+<ng-template #customDialogTemplate let-data>
+  <div class="p-4">
+    <p>Custom template with data: {{ data.message }}</p>
+    <div class="mt-2">
+      <input type="text" [(ngModel)]="data.input" class="border p-2 w-full">
+    </div>
+  </div>
+</ng-template>
+

@@ -10,6 +10,9 @@
     "@types/geojson",
     "d3",
     "geojson"
+  ],
+  "assets": [
+    "./src/theme/*.scss"
   ]
 }
 

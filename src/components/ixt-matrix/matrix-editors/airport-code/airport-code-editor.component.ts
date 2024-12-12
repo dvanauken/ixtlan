@@ -138,7 +138,7 @@ export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit,
       this.dialogService.show({
         title: 'Duplicate Code',
         message: `The code "${value}" already exists. Please enter a different code.`,
-        type: DialogType.WARNING
+        type: DialogType.Warning
       });
       return false;
     }

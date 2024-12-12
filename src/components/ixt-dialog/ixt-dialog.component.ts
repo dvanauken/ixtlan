@@ -1,96 +1,208 @@
-// ixt-dialog.component.ts
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
-import { DialogType, DialogButton, DialogConfig, DialogResult } from './ixt-dialog.interfaces';
-import { animate, style, transition, trigger } from '@angular/animations';
-import { IxtDialogService } from './ixt-dialog.service';
-import { Subscription } from 'rxjs';
+import { 
+  Component, 
+  Input, 
+  Output, 
+  EventEmitter, 
+  TemplateRef, 
+  Type, 
+  ViewChild, 
+  ElementRef, 
+  OnInit, 
+  OnDestroy 
+} from '@angular/core';
+import { baseThemeColors } from '../theme/theme.colors';
+import { ThemeVariant, ThemeColors } from '../theme/theme.types';
+import { IxtDialogButton } from 'dist/ixtlan';
+
+export interface IxtDialogConfig {
+  title?: string;
+  content?: string | TemplateRef<any> | Type<any>;
+  variant?: ThemeVariant;
+  isModal?: boolean;
+  showClose?: boolean;
+  backdropClose?: boolean;
+  contentContext?: any;
+}
 
 @Component({
   selector: 'ixt-dialog',
   templateUrl: './ixt-dialog.component.html',
-  styleUrls: ['./ixt-dialog.component.scss'],
-  animations: [
-    trigger('dialogAnimation', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(-20px)' }),
-        animate('200ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ]),
-      transition(':leave', [
-        animate('200ms ease-in', style({ opacity: 0, transform: 'translateY(-20px)' }))
-      ])
-    ])
-  ]
+  styleUrls: ['./ixt-dialog.component.scss']
 })
 export class IxtDialogComponent implements OnInit, OnDestroy {
-  @Input() config: DialogConfig = {
-    title: '',
-    message: '',
-    type: DialogType.INFO,
-    buttons: DialogButton.OK,
-    isModal: false
-  };
-  @Output() close = new EventEmitter<DialogResult>();
+  @Input() config: IxtDialogConfig = {};
+  @Input() isOpen = false;
+  @Output() isOpenChange = new EventEmitter<boolean>();
+  @Output() closed = new EventEmitter<void>();
+  
+  @ViewChild('dialogElement') dialogElement!: ElementRef;
+  
+  // Default values
+  public variant: ThemeVariant = 'default';
+  public title: string = '';
+  public isModal: boolean = true;
+  public showClose: boolean = true;
+  public backdropClose: boolean = true;
+  
+  // Theme-related properties
+  public themeColors = baseThemeColors;
+  
+  private previouslyFocusedElement: HTMLElement | null = null;
+  private focusableElements: HTMLElement[] = [];
 
-  DialogType = DialogType;
-  DialogButton = DialogButton;
-
-  visible = false;
-  private subscription: Subscription;
-
-  constructor(private dialogService: IxtDialogService) {
-    this.subscription = this.dialogService.dialogState$.subscribe(config => {
-      if (config) {
-        this.config = config;
-        this.visible = true;
-      } else {
-        this.visible = false;
+  public hasFooterContent = false;
+  
+  constructor() {}
+  
+  ngOnInit() {
+    this.initializeConfig();
+  }
+  
+  ngOnDestroy() {
+    this.restoreFocus();
+  }
+  
+  private initializeConfig() {
+    if (this.config) {
+      this.variant = this.config.variant || 'default';
+      this.title = this.config.title || '';
+      this.isModal = this.config.isModal ?? true;
+      this.showClose = this.config.showClose ?? true;
+      this.backdropClose = this.config.backdropClose ?? true;
+    }
+  }
+  
+  public open() {
+    this.isOpen = true;
+    this.isOpenChange.emit(true);
+    
+    if (this.isModal) {
+      this.setupModal();
+    }
+  }
+  
+  public close() {
+    this.isOpen = false;
+    this.isOpenChange.emit(false);
+    this.closed.emit();
+    
+    if (this.isModal) {
+      this.cleanupModal();
+    }
+  }
+  
+  private setupModal() {
+    // Store currently focused element
+    this.previouslyFocusedElement = document.activeElement as HTMLElement;
+    
+    // Set up focus trap
+    setTimeout(() => {
+      this.focusableElements = Array.from(
+        this.dialogElement.nativeElement.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+      );
+      
+      if (this.focusableElements.length) {
+        this.focusableElements[0].focus();
       }
     });
+    
+    // Add body class to prevent scrolling
+    document.body.classList.add('ixt-dialog-open');
+  }
+  
+  private cleanupModal() {
+    this.restoreFocus();
+    document.body.classList.remove('ixt-dialog-open');
+  }
+  
+  private restoreFocus() {
+    if (this.previouslyFocusedElement) {
+      this.previouslyFocusedElement.focus();
+      this.previouslyFocusedElement = null;
+    }
+  }
+  
+  public onBackdropClick(event: MouseEvent) {
+    if (
+      this.backdropClose &&
+      event.target === event.currentTarget
+    ) {
+      this.close();
+    }
+  }
+  
+  public onKeydown(event: KeyboardEvent) {
+    if (!this.isModal) return;
+    
+    if (event.key === 'Escape') {
+      this.close();
+      return;
+    }
+    
+    if (event.key === 'Tab') {
+      if (!this.focusableElements.length) return;
+      
+      const firstElement = this.focusableElements[0];
+      const lastElement = this.focusableElements[this.focusableElements.length - 1];
+      
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    }
+  }
+  
+  public isTemplateRef(content: any): content is TemplateRef<any> {
+    return content instanceof TemplateRef;
+  }
+  
+  public isComponent(content: any): content is Type<any> {
+    return content instanceof Type;
   }
 
-  ngOnInit() {
-    this.visible = false;
+  // Theme-related methods
+  public getHeaderClass(): string {
+    return `ixt-dialog__header--${this.variant}`;
   }
 
-  ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+  public getHeaderStyle(): { [key: string]: string } {
+    const variantColors = this.themeColors[this.variant];
+    return {
+      backgroundColor: variantColors.base,
+      color: variantColors.text
+    };
+  }
+
+  public getButtonStyle(variant: ThemeVariant = this.variant): { [key: string]: string } {
+    const variantColors = this.themeColors[variant];
+    return {
+      backgroundColor: variantColors.base,
+      color: variantColors.text
+    };
+  }
+
+
+  public handleButtonClick(button: IxtDialogButton): void {
+    if (button.callback) {
+      button.callback();
+    }
+    
+    if (button.close) {
+      this.close();
     }
   }
 
-  getIcon(): string {
-    switch (this.config.type) {
-      case DialogType.INFO: return 'info';
-      case DialogType.WARNING: return 'warning';
-      case DialogType.ERROR: return 'error';
-      case DialogType.SUCCESS: return 'check_circle';
-      case DialogType.QUESTION: return 'help';
-      default: return 'info';
-    }
+  public createInjector(context: any): any {
+    // This is needed for dynamic component content
+    return {
+      provide: 'dialogData',
+      useValue: context
+    };
   }
 
-  hasButton(button: DialogButton): boolean {
-    return (this.config.buttons! & button) === button;
-  }
-
-  // // ixt-dialog.component.ts
-  // onButtonClick(button: DialogButton) {
-  //   const result = { button };  // Create result object
-  //   this.dialogService.hide(result);  // Pass the result
-  //   this.close.emit(result);  // Keep existing emit
-  // }
-
-  // // ixt-dialog.component.ts 
-  // onButtonClick(button: DialogButton) {
-  //   const result = { button };
-  //   this.close.emit(result);  // Keep original emit
-  //   this.dialogService.dialogSubject.next(null);  // Directly clear the dialog state
-  // }
-
-  // ixt-dialog.component.ts 
-  onButtonClick(button: DialogButton) {
-    const result = { button };
-    this.close.emit(result);  // Keep original emit
-    this.visible = false;     // Set visibility directly
-  }
 }

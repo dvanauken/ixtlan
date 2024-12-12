@@ -2,8 +2,8 @@
 import { Injectable } from '@angular/core';
 import { IxtEmployeeFormProvider } from './ixt-employee-form.provider';
 import { IxtDialogService } from '../../components/ixt-dialog/ixt-dialog.service';
-import { DialogType, DialogButton } from '../../components/ixt-dialog/ixt-dialog.interfaces';
-import { EmployeeForm } from './ixt-employee-form.provider'; // Add this at top
+import { DialogType } from '../../components/ixt-dialog/ixt-dialog.interfaces';
+import { EmployeeForm } from './ixt-employee-form.provider';
 
 @Injectable()
 export class IxtEmployeeFormHandler {
@@ -20,8 +20,9 @@ export class IxtEmployeeFormHandler {
       this.dialogService.show({
         title: 'Validation Error',
         message: 'Please fill in all required fields.',
-        type: DialogType.ERROR,
-        buttons: DialogButton.OK,
+        type: DialogType.Error,
+        okText: 'OK',
+        showCancel: false,
         isModal: true
       });
       return;
@@ -34,8 +35,9 @@ export class IxtEmployeeFormHandler {
       this.dialogService.show({
         title: 'Success',
         message: 'Employee information saved successfully!',
-        type: DialogType.SUCCESS,
-        buttons: DialogButton.OK,
+        type: DialogType.Success,
+        okText: 'OK',
+        showCancel: false,
         isModal: true
       });
       
@@ -44,8 +46,9 @@ export class IxtEmployeeFormHandler {
       this.dialogService.show({
         title: 'Error',
         message: 'Failed to save employee information. Please try again.',
-        type: DialogType.ERROR,
-        buttons: DialogButton.OK,
+        type: DialogType.Error,
+        okText: 'OK',
+        showCancel: false,
         isModal: true
       });
     }
@@ -55,8 +58,10 @@ export class IxtEmployeeFormHandler {
     this.dialogService.show({
       title: 'Confirm Delete',
       message: 'Are you sure you want to delete this employee record?',
-      type: DialogType.QUESTION,
-      buttons: DialogButton.YES | DialogButton.NO,
+      type: DialogType.Question,
+      okText: 'Yes',
+      cancelText: 'No',
+      showCancel: true,
       isModal: true
     });
   }
@@ -95,8 +100,10 @@ export class IxtEmployeeFormHandler {
       this.dialogService.show({
         title: 'Unsaved Changes',
         message: 'You have unsaved changes. Do you want to continue?',
-        type: DialogType.WARNING,
-        buttons: DialogButton.YES | DialogButton.NO,
+        type: DialogType.Warning,
+        okText: 'Yes',
+        cancelText: 'No',
+        showCancel: true,
         isModal: true
       });
     });
@@ -106,8 +113,10 @@ export class IxtEmployeeFormHandler {
     this.dialogService.show({
       title: 'Confirm Reset',
       message: 'Are you sure you want to reset the form? All unsaved changes will be lost.',
-      type: DialogType.WARNING,
-      buttons: DialogButton.YES | DialogButton.NO,
+      type: DialogType.Warning,
+      okText: 'Yes',
+      cancelText: 'No',
+      showCancel: true,
       isModal: true
     });
   }

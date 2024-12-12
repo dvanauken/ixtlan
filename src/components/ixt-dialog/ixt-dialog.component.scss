@@ -1,64 +1,191 @@
-// ixt-dialog.component.scss
-.dialog-overlay {
+// src/components/ixt-dialog/ixt-dialog.component.scss
+
+// Dialog theme variables with defaults
+$dialog-primary-color: #4169E1 !default;
+$dialog-primary-text: #ffffff !default;
+$dialog-secondary-color: #6c757d !default;
+$dialog-secondary-text: #ffffff !default;
+$dialog-success-color: #28a745 !default;
+$dialog-success-text: #ffffff !default;
+$dialog-danger-color: #dc3545 !default;
+$dialog-danger-text: #ffffff !default;
+$dialog-warning-color: #ffc107 !default;
+$dialog-warning-text: #000000 !default;
+$dialog-info-color: #17a2b8 !default;
+$dialog-info-text: #ffffff !default;
+$dialog-light-color: #f8f9fa !default;
+$dialog-light-text: #000000 !default;
+$dialog-dark-color: #343a40 !default;
+$dialog-dark-text: #ffffff !default;
+$dialog-default-color: #ffffff !default;
+$dialog-default-text: #000000 !default;
+
+// Container
+.ixt-dialog-container {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  z-index: 1050;
+  overflow: hidden;
+  outline: 0;
+
+  &.is-open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &.is-modal {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+// Dialog
+.ixt-dialog {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 1rem;
+  background-color: white;
+  border-radius: 0.3rem;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+  transform: translate(0, 0);
+  transition: transform 0.3s ease-out;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+// Header variants using CSS classes
+.ixt-dialog__header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 1000;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
 
-  &.modal {
-    backdrop-filter: blur(2px);
+  &.ixt-dialog__header--primary {
+    background-color: $dialog-primary-color;
+    color: $dialog-primary-text;
+  }
+
+  &.ixt-dialog__header--secondary {
+    background-color: $dialog-secondary-color;
+    color: $dialog-secondary-text;
+  }
+
+  &.ixt-dialog__header--success {
+    background-color: $dialog-success-color;
+    color: $dialog-success-text;
+  }
+
+  &.ixt-dialog__header--danger {
+    background-color: $dialog-danger-color;
+    color: $dialog-danger-text;
+  }
+
+  &.ixt-dialog__header--warning {
+    background-color: $dialog-warning-color;
+    color: $dialog-warning-text;
+  }
+
+  &.ixt-dialog__header--info {
+    background-color: $dialog-info-color;
+    color: $dialog-info-text;
+  }
+
+  &.ixt-dialog__header--light {
+    background-color: $dialog-light-color;
+    color: $dialog-light-text;
+  }
+
+  &.ixt-dialog__header--dark {
+    background-color: $dialog-dark-color;
+    color: $dialog-dark-text;
+  }
+
+  &.ixt-dialog__header--default {
+    background-color: $dialog-default-color;
+    color: $dialog-default-text;
   }
 }
 
-.dialog-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  min-width: 300px;
-  max-width: 90vw;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
+.ixt-dialog__title {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.5;
 }
 
-.dialog-header {
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid #eee;
+.ixt-dialog__close {
+  padding: 0.5rem;
+  margin: -0.5rem -0.5rem -0.5rem auto;
+  background: transparent;
+  border: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: inherit;
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 0.15s;
 
-  mat-icon {
-    margin-right: 8px;
+  &:hover {
+    opacity: 1;
   }
 
-  h2 {
-    margin: 0;
-    flex: 1;
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }
-
-  &.info { color: #2196F3; }
-  &.warning { color: #FF9800; }
-  &.error { color: #F44336; }
-  &.success { color: #4CAF50; }
-  &.question { color: #9C27B0; }
 }
 
-.dialog-content {
-  padding: 24px;
+// Content
+.ixt-dialog__content {
+  position: relative;
+  padding: 1rem;
+  flex: 1 1 auto;
+  max-height: calc(100vh - 210px);
   overflow-y: auto;
-  flex: 1;
 }
 
-.dialog-actions {
-  padding: 8px 16px;
+// Footer
+.ixt-dialog__footer {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
-  gap: 8px;
-  border-top: 1px solid #eee;
+  padding: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom-left-radius: 0.3rem;
+  border-bottom-right-radius: 0.3rem;
+
+  > * + * {
+    margin-left: 0.5rem;
+  }
+}
+
+// Animation states
+.ixt-dialog-container:not(.is-open) .ixt-dialog {
+  transform: translate(0, -25%);
+  opacity: 0;
+}
+
+// Utility class for body
+:host-context(body.ixt-dialog-open) {
+  overflow: hidden;
+}
+
+// Responsive adjustments
+@media (max-width: 576px) {
+  .ixt-dialog {
+    margin: 0.5rem;
+  }
+
+  .ixt-dialog__content {
+    max-height: calc(100vh - 180px);
+  }
 }
