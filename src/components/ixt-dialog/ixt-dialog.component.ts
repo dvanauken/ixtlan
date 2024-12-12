@@ -12,17 +12,9 @@ import {
 } from '@angular/core';
 import { baseThemeColors } from '../theme/theme.colors';
 import { ThemeVariant, ThemeColors } from '../theme/theme.types';
-import { IxtDialogButton } from 'dist/ixtlan';
+import { IxtDialogButton, IxtDialogConfig } from './ixt-dialog.interfaces';
 
-export interface IxtDialogConfig {
-  title?: string;
-  content?: string | TemplateRef<any> | Type<any>;
-  variant?: ThemeVariant;
-  isModal?: boolean;
-  showClose?: boolean;
-  backdropClose?: boolean;
-  contentContext?: any;
-}
+
 
 @Component({
   selector: 'ixt-dialog',
@@ -186,16 +178,20 @@ export class IxtDialogComponent implements OnInit, OnDestroy {
     };
   }
 
-
-  public handleButtonClick(button: IxtDialogButton): void {
-    if (button.callback) {
-      button.callback();
-    }
-    
-    if (button.close) {
-      this.close();
-    }
+// ixt-dialog.component.ts
+public handleButtonClick(button: IxtDialogButton): void {
+  // Support both action and callback
+  if (button.action) {
+    button.action();
   }
+  if (button.callback) {
+    button.callback();
+  }
+  
+  if (button.close !== false) {  // Close by default unless explicitly set to false
+    this.close();
+  }
+}
 
   public createInjector(context: any): any {
     // This is needed for dynamic component content

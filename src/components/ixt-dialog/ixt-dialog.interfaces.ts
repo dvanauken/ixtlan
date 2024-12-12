@@ -18,10 +18,13 @@ export enum DialogType {
   Question = 'question'
 }
 
+// ixt-dialog.interfaces.ts
 export interface IxtDialogButton {
   text: string;
-  variant?: ThemeVariant;
-  callback?: () => boolean | void;
+  variant?: ThemeVariant;  // Remove string type, only allow ThemeVariant
+  action?: () => void;
+  callback?: () => void;
+  type?: 'primary' | 'secondary' | 'danger';
   close?: boolean;
 }
 
@@ -30,42 +33,41 @@ export interface IxtDialogRef {
   isOpen: boolean;
 }
 
-export interface IxtDialogOptions {
+// export interface IxtDialogConfig {
+//   title?: string;
+//   message?: string;
+//   content?: string | TemplateRef<any> | Type<any>;
+//   contentContext?: any;
+//   variant?: ThemeVariant;
+//   buttons?: IxtDialogButton[];
+//   cancelText?: string;
+//   okText?: string;
+//   type?: DialogType;
+//   data?: any;
+//   isModal?: boolean;
+//   showClose?: boolean;
+//   backdropClose?: boolean;
+// }
+
+// ixt-dialog.interfaces.ts
+export interface IxtDialogConfig {
   title?: string;
   message?: string;
   content?: string | TemplateRef<any> | Type<any>;
   contentContext?: any;
   variant?: ThemeVariant;
   buttons?: IxtDialogButton[];
-}
-
-export interface DialogConfig {
-  type?: DialogType;
-  title?: string;
-  message?: string;
-  component?: Type<any>;
-  data?: any;
-  okText?: string;
   cancelText?: string;
-  showCancel?: boolean;
-  variant?: ThemeVariant;
+  okText?: string;
+  type?: DialogType;
+  data?: any;
   isModal?: boolean;
+  showClose?: boolean;
+  backdropClose?: boolean;
+  showCancel?: boolean;  // Added this
 }
 
-export interface DialogResult<T = any> {
+export interface IxtDialogResult<T = any> {
   confirmed: boolean;
   data?: T;
-}
-
-// Add these to your IxtDialogConfig interface
-export interface IxtDialogButton {
-  text: string;
-  variant?: ThemeVariant;
-  //callback?: () => void;
-  close?: boolean;
-}
-
-export interface IxtDialogConfig {
-  // ... existing properties ...
-  buttons?: IxtDialogButton[];
 }

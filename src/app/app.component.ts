@@ -113,20 +113,20 @@ export class AppComponent implements AfterViewInit {
       title: 'Success',
       content: 'Operation completed successfully!',
       variant: 'success',
-      buttons: [
-        {
-          text: 'OK',
-          variant: 'success',
-          close: true
-        }
-      ]
+      // buttons: [
+      //   {
+      //     text: 'OK',
+      //     variant: 'success',
+      //     close: true
+      //   }
+      // ]
     });
   }
   
   showErrorDialog() {
     this.dialogService.alert({
       title: 'Error',
-      message: 'Something went wrong. Please try again.',
+      content: 'Something went wrong. Please try again.',
       variant: 'danger',
     });
   }

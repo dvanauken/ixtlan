@@ -1,3 +1,4 @@
+// ixt-dialog.service.ts
 import { 
   Injectable, 
   ComponentRef, 
@@ -8,8 +9,14 @@ import {
   Type 
 } from '@angular/core';
 import { IxtDialogComponent } from './ixt-dialog.component';
-import { IxtDialogOptions, IxtDialogRef, DialogType, DialogConfig, DialogResult } from './ixt-dialog.interfaces';
+import { 
+  IxtDialogConfig, 
+  IxtDialogRef, 
+  DialogType, 
+  IxtDialogResult 
+} from './ixt-dialog.interfaces';
 import { Observable, Subject } from 'rxjs';
+import { IxtDialogButton } from 'dist/ixtlan/components/ixt-dialog/ixt-dialog.interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -23,14 +30,14 @@ export class IxtDialogService {
     private injector: Injector
   ) {}
 
-  open = (options: IxtDialogOptions): IxtDialogRef => {
+  open(config: IxtDialogConfig): IxtDialogRef {
     this.closeExisting();
 
     const componentRef = this.componentFactoryResolver
       .resolveComponentFactory(IxtDialogComponent)
       .create(this.injector);
 
-    componentRef.instance.config = options;
+    componentRef.instance.config = config;
     componentRef.instance.isOpen = true;
 
     componentRef.instance.closed.subscribe(() => {
@@ -49,7 +56,7 @@ export class IxtDialogService {
     };
   }
 
-  close = (): void => {
+  close(): void {
     if (this.dialogComponentRef) {
       this.appRef.detachView(this.dialogComponentRef.hostView);
       this.dialogComponentRef.destroy();
@@ -57,33 +64,29 @@ export class IxtDialogService {
     }
   }
 
-  private closeExisting = (): void => {
+  private closeExisting(): void {
     if (this.dialogComponentRef) {
       this.close();
     }
   }
 
-  confirm = (options: Omit<IxtDialogOptions, 'buttons'>): IxtDialogRef => {
+  confirm = (options: IxtDialogConfig): IxtDialogRef => {
+    const defaultButtons: IxtDialogButton[] = [
+      {
+        text: options.okText || 'Confirm',
+        variant: options.variant || 'primary',
+        callback: () => true,
+        close: true
+      }
+    ];
+  
     return this.open({
       ...options,
-      variant: options.variant || 'primary',
-      buttons: [
-        {
-          text: 'Cancel',
-          variant: 'light',
-          close: true
-        },
-        {
-          text: 'Confirm',
-          variant: options.variant || 'primary',
-          callback: () => true,
-          close: true
-        }
-      ]
+      buttons: options.buttons || defaultButtons
     });
   }
 
-  alert = (options: Omit<IxtDialogOptions, 'buttons'>): IxtDialogRef => {
+  alert(options: Omit<IxtDialogConfig, 'buttons'>): IxtDialogRef {
     return this.open({
       ...options,
       variant: options.variant || 'primary',
@@ -97,8 +100,8 @@ export class IxtDialogService {
     });
   }
 
-  show = <T = any>(config: DialogConfig): Observable<DialogResult<T>> => {
-    const result = new Subject<DialogResult<T>>();
+  show<T = any>(config: IxtDialogConfig): Observable<IxtDialogResult<T>> {
+    const result = new Subject<IxtDialogResult<T>>();
     
     this.open({
       title: config.title,
@@ -109,7 +112,7 @@ export class IxtDialogService {
           text: config.cancelText || 'Cancel',
           variant: 'light',
           close: true,
-          callback: () => {
+          action: () => {
             result.next({ confirmed: false });
             result.complete();
           }
@@ -118,7 +121,7 @@ export class IxtDialogService {
           text: config.okText || 'OK',
           variant: 'primary',
           close: true,
-          callback: () => {
+          action: () => {
             result.next({ confirmed: true, data: config.data });
             result.complete();
           }
