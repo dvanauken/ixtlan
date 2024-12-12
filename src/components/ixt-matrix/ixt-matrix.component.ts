@@ -12,7 +12,6 @@ import { SortService } from './services/sort/sort.service';
 import { SelectionService } from './services/selection/selection.service';
 import { EditService } from './services/edit/edit.service';
 
-
 export type SortDirection = 'asc' | 'desc' | null;
 
 @Component({
@@ -82,171 +81,30 @@ export class IxtMatrixComponent implements OnInit {
       }
     });
   }
-  // Add this getter
-  get hasData(): boolean {
-    return !!this.data?.length;
-  }
 
-
-  public getColumns(data: MatrixNode[]): string[] {
-    if (!data?.length) return [];
-    const firstRow = data[0];
-    return Object.keys(firstRow);
-  }
-
-  get showFilters(): boolean {
-    return this.filterService.isShowingFilters;
-  }
-
-  get activeFilterColumn(): string | undefined {
-    return this.filterService.activeColumn;
-  }
-
-  // UPDATE getFilterControl and getOperatorControl to use non-null assertion:
-  getFilterControl(col: string): FormControl<any> {
-    return this.filterService.getFilterControl(col)!;
-  }
-
-  getOperatorControl(col: string): FormControl<string> {
-    return this.filterService.getOperatorControl(col)!;
-  }
-
-  toggleFilters(col: string): void {
-    this.filterService.toggleFilters(col);
-  }
-
-  onOperatorChange(field: string): void {
-    this.filterService.onOperatorChange(field);
-  }
-
-  // ADD these methods:
-  toggleSort(column: string): void {
-    this.sortService.toggleSort(column);
-  }
-
-  getSortIcon(column: string): string {
-    return this.sortService.getSortIcon(column);
-  }
-
-  get currentPage(): number {
-    return this.paginationService.getCurrentPage();
-  }
-
-  get pageSizes(): PageSize[] {
-    return this.paginationService.getPageSizes();
-  }
-
-  get totalPages(): number {
-    return this.paginationService.getTotalPages();
-  }
-
-  get showPagination(): boolean {
-    return this.paginationService.shouldShowPagination();
-  }
-
-  get visiblePages(): number[] {
-    return this.paginationService.getVisiblePages();
-  }
-
-  onPageChange(page: number): void {
-    this.paginationService.onPageChange(page);
-  }
-
-  onPageSizeChange(size: number | 'all'): void {
-    this.paginationService.onPageSizeChange(size);
-  }
-
-  // in ixt-matrix.component.ts
-  getCodes(data: MatrixNode[]): string[] {
-    if (!data) return [];
-    return data.map(row => row['code']?.toString() || '');
-  }
-
-  formatCoordinate(value: number): string {
-    return value.toFixed(1);
-  }
-
-  // selection methods:
-  getSelectedRows(): MatrixNode[] {
-    return Array.from(this.selectionService.getSelectedRows())
-      .map(index => this.data[index])
-      .filter(row => row !== undefined);
-  }
-
-  setSelectedRows(indices: number[]): void {
-    this.selectionService.setSelectedRows(indices);
-  }
-
-  selectRow(index: number, selected = true): void {
-    this.selectionService.selectRow(index, selected);
-  }
-
-  toggleAllRows(selected: boolean): void {
-    this.selectionService.toggleAllRows(selected, this.data.length);
-  }
-
-  get hasSelectedRows(): boolean {
-    return this.selectionService.getSelectedCount() > 0;
-  }
-
-  // UPDATE the allSelected getter to include a setter
-  get allSelected(): boolean {
-    return this.selectionService.isAllSelected();
-  }
-
-  set allSelected(value: boolean) {
-    this.selectionService.toggleAllRows(value, this.data.length);
-  }
-
-  // Add this method to the component class:
-  isRowSelected(index: number): boolean {
-    return this.selectionService.isSelected(index);
-  }
-
-  //editor code - start
-  getRowIndex(displayIndex: number): number {
-    return this.editService.getRowIndex(displayIndex);
-  }
-  
-  isNewRow(displayIndex: number): boolean {
-    return this.editService.isNewRow(displayIndex);
-  }
-  
-  startEditing(rowIndex: number): void {
-    this.editService.startEditing(rowIndex);
-  }
-  
-  cancelEditing(rowIndex: number): void {
-    this.editService.cancelEditing(rowIndex);
-  }
-  
-  onValueChange(rowIndex: number, field: string, value: any): void {
-    this.editService.onValueChange({ rowIndex, field, value });
-  }
-  
-  get hasChanges(): boolean {
-    return this.editService.hasChanges();
-  }
-  
+  // edit logic start
   addNewRow(): void {
     this.editService.addNewRow(this.columnConfigs || {});
   }
-  
-  saveChanges(): void {
-    this.data = this.editService.saveChanges(this.data);
-    this.changeDetectorRef.markForCheck();
-  }
-  
-  getEditControl(rowIndex: number, field: string): FormControl {
-    return this.editService.getEditControl(rowIndex, field);
+
+  cancelEditing(rowIndex: number): void {
+    this.editService.cancelEditing(rowIndex);
   }
 
-  get newRowsLength(): number {
-    return this.editService.getNewRows().length;
-  }
-  
-  isEditing(index: number): boolean {
-    return this.editService.isEditing(index);
+  getEditorComponent(type: any): MatrixEditor | null {
+    console.log('getEditorComponent called with:', {
+      type,
+      isCoordinate: type === CoordinateEditorComponent,
+      isAirport: type === AirportCodeEditorComponent
+    });
+
+    if (type === AirportCodeEditorComponent) {
+      return new AirportCodeEditorComponent(this.dialogService);
+    }
+    if (type === CoordinateEditorComponent) {
+      return new CoordinateEditorComponent(this.dialogService);
+    }
+    return null;
   }
 
   getEditorType(type: any): string {
@@ -268,25 +126,83 @@ export class IxtMatrixComponent implements OnInit {
     return 'text';
   }
 
-  getEditorComponent(type: any): MatrixEditor | null {
-    console.log('getEditorComponent called with:', {
-      type,
-      isCoordinate: type === CoordinateEditorComponent,
-      isAirport: type === AirportCodeEditorComponent
-    });
-
-    if (type === AirportCodeEditorComponent) {
-      return new AirportCodeEditorComponent(this.dialogService);
-    }
-    if (type === CoordinateEditorComponent) {
-      return new CoordinateEditorComponent(this.dialogService);
-    }
-    return null;
+  getEditControl(rowIndex: number, field: string): FormControl {
+    return this.editService.getEditControl(rowIndex, field);
   }
 
-  //editor code end
+  getRowIndex(displayIndex: number): number {
+    return this.editService.getRowIndex(displayIndex);
+  }
+
+  get hasChanges(): boolean {
+    return this.editService.hasChanges();
+  }
+
+  isEditing(index: number): boolean {
+    return this.editService.isEditing(index);
+  }
+
+  isNewRow(displayIndex: number): boolean {
+    return this.editService.isNewRow(displayIndex);
+  }
+
+  get newRowsLength(): number {
+    return this.editService.getNewRows().length;
+  }
+
+  onValueChange(rowIndex: number, field: string, value: any): void {
+    this.editService.onValueChange({ rowIndex, field, value });
+  }
+
+  saveChanges(): void {
+    this.data = this.editService.saveChanges(this.data);
+    this.changeDetectorRef.markForCheck();
+  }
+
+  startEditing(rowIndex: number): void {
+    this.editService.startEditing(rowIndex);
+  }
+  // edit logic end
+
+  // filter logic start
+  get activeFilterColumn(): string | undefined {
+    return this.filterService.activeColumn;
+  }
+
+  getFilterControl(col: string): FormControl<any> {
+    return this.filterService.getFilterControl(col)!;
+  }
+
+  getOperatorControl(col: string): FormControl<string> {
+    return this.filterService.getOperatorControl(col)!;
+  }
+
+  onOperatorChange(field: string): void {
+    this.filterService.onOperatorChange(field);
+  }
+
+  get showFilters(): boolean {
+    return this.filterService.isShowingFilters;
+  }
+
+  toggleFilters(col: string): void {
+    this.filterService.toggleFilters(col);
+  }
+  // filter logic end
   
-  // UPDATE paginatedData getter:
+  // pagination logic start
+  get currentPage(): number {
+    return this.paginationService.getCurrentPage();
+  }
+
+  onPageChange(page: number): void {
+    this.paginationService.onPageChange(page);
+  }
+
+  onPageSizeChange(size: number | 'all'): void {
+    this.paginationService.onPageSizeChange(size);
+  }
+
   get paginatedData(): MatrixNode[] {
     // Start with combined data
     let allData = [...this.editService.getNewRows(), ...this.data];
@@ -309,4 +225,89 @@ export class IxtMatrixComponent implements OnInit {
     return this.paginationService.getPaginatedData(allData);
   }
 
+  get pageSizes(): PageSize[] {
+    return this.paginationService.getPageSizes();
+  }
+
+  get showPagination(): boolean {
+    return this.paginationService.shouldShowPagination();
+  }
+
+  get totalPages(): number {
+    return this.paginationService.getTotalPages();
+  }
+
+  get visiblePages(): number[] {
+    return this.paginationService.getVisiblePages();
+  }
+  // pagination logic end
+
+  // selection logic start
+  get allSelected(): boolean {
+    return this.selectionService.isAllSelected();
+  }
+
+  set allSelected(value: boolean) {
+    this.selectionService.toggleAllRows(value, this.data.length);
+  }
+
+  getSelectedRows(): MatrixNode[] {
+    return Array.from(this.selectionService.getSelectedRows())
+      .map(index => this.data[index])
+      .filter(row => row !== undefined);
+  }
+
+  get hasSelectedRows(): boolean {
+    return this.selectionService.getSelectedCount() > 0;
+  }
+
+  isRowSelected(index: number): boolean {
+    return this.selectionService.isSelected(index);
+  }
+
+  selectRow(index: number, selected = true): void {
+    this.selectionService.selectRow(index, selected);
+  }
+
+  setSelectedRows(indices: number[]): void {
+    this.selectionService.setSelectedRows(indices);
+  }
+
+  toggleAllRows(selected: boolean): void {
+    this.selectionService.toggleAllRows(selected, this.data.length);
+  }
+  // selection logic end
+
+  // sort logic start
+  getSortIcon(column: string): string {
+    return this.sortService.getSortIcon(column);
+  }
+
+  toggleSort(column: string): void {
+    this.sortService.toggleSort(column);
+  }
+  // sort logic end
+
+  // i/o logic start
+  formatCoordinate(value: number): string {
+    return value.toFixed(1);
+  }
+
+  getCodes(data: MatrixNode[]): string[] {
+    if (!data) return [];
+    return data.map(row => row['code']?.toString() || '');
+  }
+  // i/o logic end
+
+  // config logic start
+  getColumns(data: MatrixNode[]): string[] {
+    if (!data?.length) return [];
+    const firstRow = data[0];
+    return Object.keys(firstRow);
+  }
+
+  get hasData(): boolean {
+    return !!this.data?.length;
+  }
+  // config logic end
 }
