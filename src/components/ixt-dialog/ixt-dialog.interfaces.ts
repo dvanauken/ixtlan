@@ -22,9 +22,10 @@ export enum DialogType {
 export interface IxtDialogButton {
   text: string;
   variant?: ThemeVariant;  // Remove string type, only allow ThemeVariant
-  action?: () => void;
+  //action?: () => void;
   callback?: () => void;
   type?: 'primary' | 'secondary' | 'danger';
+  action?: (formData: { [key: string]: any }) => void; // Updated to accept a generic form data object
   close?: boolean;
 }
 
@@ -53,6 +54,7 @@ export interface IxtDialogRef {
 export interface IxtDialogConfig {
   title?: string;
   message?: string;
+  fields?: IxtDialogField[]; // New fields array
   content?: string | TemplateRef<any> | Type<any>;
   contentContext?: any;
   variant?: ThemeVariant;
@@ -70,4 +72,13 @@ export interface IxtDialogConfig {
 export interface IxtDialogResult<T = any> {
   confirmed: boolean;
   data?: T;
+  close?: () => void; // Allow the dialog to be closed programmatically
+}
+
+export interface IxtDialogField {
+  name: string; // Field name
+  label: string; // Label for the field
+  type: 'text' | 'select'; // Field type
+  options?: string[]; // Options for select fields
+  value?: any; // Default value
 }

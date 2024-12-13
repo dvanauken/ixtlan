@@ -2,8 +2,10 @@
   <nav>
     <ixt-tabset title="Employee Form">
       <ixt-tab title="Tab 1">
-        <ixt-tree [nodes]="treeProvider.treeData" (nodeExpanded)="treeHandler.onNodeExpanded($event)"
-          (nodeCollapsed)="treeHandler.onNodeCollapsed($event)" (nodeSelected)="treeHandler.onNodeSelected($event)">
+        <ixt-tree [nodes]="treeProvider.treeData" 
+                  (nodeExpanded)="treeHandler.onNodeExpanded($event)"
+                  (nodeCollapsed)="treeHandler.onNodeCollapsed($event)" 
+                  (nodeSelected)="treeHandler.onNodeSelected($event)">
         </ixt-tree>
       </ixt-tab>
       <ixt-tab title="Tab 2">
@@ -28,22 +30,7 @@
 
   <section>
     <ixt-tabset>
-      <ixt-tab title="D3 Geo">
-        <ixt-map [width]="'100%'" [height]="'80%'" scale="1" translate="0,0">
-          <ixt-layer src="./../assets/countries.geojson" stroke="black" fill="gray"></ixt-layer>
-          <ixt-layer src="./../assets/flights.minified.geojson" stroke="red" fill="none" (click)="select($event)">
-            properties.airlineIata === 'F9'
-          </ixt-layer>
-          <ixt-layer src="./../assets/flights.minified.geojson" stroke="green" fill="none" (click)="select($event)">
-            properties.airlineIata === 'NK'
-          </ixt-layer>
-          <ixt-layer src="./../assets/lakes.geojson" stroke="black" fill="blue" (click)="select($event)"></ixt-layer>
-          <ixt-layer src="./../assets/rivers.geojson" stroke="purple" fill="none"
-            (hover)="highlight($event)"></ixt-layer>
-        </ixt-map>
-      </ixt-tab>
-
-      <!-- Dialog -->
+      <!-- Dialog Example -->
       <ixt-tab title="Dialog Example">
         <div class="dialog-demo-container flex flex-col gap-4 p-4">
           <!-- Service-based dialogs -->
@@ -58,48 +45,26 @@
                 Error Dialog
               </button>
               
-              <button (click)="showConfirmDialog()" class="px-4 py-2 bg-blue-500 text-white rounded">
-                Confirm Dialog
+              <button (click)="showInfoDialog()" class="px-4 py-2 bg-blue-500 text-white rounded">
+                Info Dialog
               </button>
               
-              <button (click)="showCustomDialog()" class="px-4 py-2 bg-purple-500 text-white rounded">
-                Custom Dialog
+              <button (click)="showConfirmDialog()" class="px-4 py-2 bg-yellow-500 text-white rounded">
+                Confirm Dialog
               </button>
             </div>
           </div>
-      
-          <!-- Template-based dialog example -->
+
+          <!-- Template-based dialog -->
           <div class="flex flex-col gap-2 mt-4">
             <h3 class="text-lg font-semibold">Template-based Dialog</h3>
             <div class="flex flex-wrap gap-2">
-              <button (click)="templateDialog.open()" class="px-4 py-2 bg-gray-500 text-white rounded">
+              <button (click)="showCustomTemplateDialog()" class="px-4 py-2 bg-gray-500 text-white rounded">
                 Open Template Dialog
               </button>
             </div>
-            
-            <ixt-dialog #templateDialog>
-              <ng-template #dialogContent>
-                <div class="p-4">
-                  <h2>Template Content</h2>
-                  <p>This dialog uses content projection and template reference.</p>
-                  <div class="form-group">
-                    <label for="exampleInput">Sample Input</label>
-                    <input type="text" id="exampleInput" [(ngModel)]="sampleInput" class="border p-2 mt-1 w-full">
-                  </div>
-                </div>
-              </ng-template>
-              
-              <div ixtDialogFooter>
-                <button (click)="templateDialog.close()" class="px-4 py-2 bg-gray-300 text-black rounded">
-                  Cancel
-                </button>
-                <button (click)="saveTemplateDialog()" class="px-4 py-2 bg-blue-500 text-white rounded ml-2">
-                  Save
-                </button>
-              </div>
-            </ixt-dialog>
           </div>
-          
+
           <!-- Dynamic Component Dialog -->
           <div class="flex flex-col gap-2 mt-4">
             <h3 class="text-lg font-semibold">Dynamic Component Dialog</h3>
@@ -111,132 +76,21 @@
           </div>
         </div>
       </ixt-tab>
-
-      <!-- Table --- soon to be removed  -->
-      <ixt-tab title="Tab 1">
-        <ixt-table [data]="tableProvider.employeeData" [config]="tableProvider.employeeConfig"></ixt-table>
-      </ixt-tab>
-      <ixt-tab title="Tab 2">
-        <ixt-table [data]="tableProvider.salesData" [config]="tableProvider.salesConfig"></ixt-table>
-      </ixt-tab>
-      <ixt-tab title="Tab 3">
-        <ixt-table [data]="tableProvider.inventoryData" [config]="tableProvider.inventoryConfig"></ixt-table>
-      </ixt-tab>
-
-      <ixt-tab title="Employee Form">
-        <form class="form-grid">
-          <h3>Personal Information</h3>
-          <div class="field">
-            <label>First Name</label>
-            <input type="text" [(ngModel)]="formData.firstName" name="firstName">
-          </div>
-          <div class="field">
-            <label>Last Name</label>
-            <input type="text" [(ngModel)]="formData.lastName" name="lastName">
-          </div>
-          <div class="field">
-            <label>Email</label>
-            <input type="email" [(ngModel)]="formData.email" name="email">
-          </div>
-          <h3>Employment Details</h3>
-          <div class="field">
-            <label>Department</label>
-            <input type="text" [(ngModel)]="formData.department" name="department">
-          </div>
-          <div class="field">
-            <label>Position</label>
-            <input type="text" [(ngModel)]="formData.position" name="position">
-          </div>
-          <div class="field">
-            <label>Start Date</label>
-            <input type="date" [(ngModel)]="formData.hireDate" name="hireDate">
-          </div>
-          <div class="actions">
-            <button type="button" (click)="employeeFormHandler.submitForm()">Save</button>
-            <button type="button" (click)="employeeFormHandler.resetForm()">Cancel</button>
-          </div>
-        </form>
-      </ixt-tab>
-
-
-
-      <ixt-tab title="Auto Complete">
-        <h2>Map Projection Selector</h2>
-        <ixt-auto-complete [options]="autocompleteProvider.projectionOptions" placeholder="Search projection..."
-          (valueChange)="autocompleteHandler.onValueChange($event)">
-        </ixt-auto-complete>
-      </ixt-tab>
-      <ixt-tab title="Calendar">
-        <ixt-calendar></ixt-calendar>
-      </ixt-tab>
-      <ixt-tab title="IxtMatrix">
-        <ixt-tabset>
-          <ixt-tab title="Standard Table">
-            <ixt-matrix [data]="matrixAirportData" [columnConfigs]="matrixColumnConfigs"
-              *ngIf="matrixAirportData.length">
-            </ixt-matrix>
-          </ixt-tab>
-          <ixt-tab title="Tree">
-            <ixt-matrix [data]="matrixTreeData"></ixt-matrix>
-          </ixt-tab>
-          <ixt-tab title="Table Tree">
-            <ixt-matrix [data]="matrixTableTreeData"></ixt-matrix>
-          </ixt-tab>
-        </ixt-tabset> </ixt-tab>
-      <ixt-tab title="IxtSplitPane">
-        <ixt-split-pane>
-          <div class="left-pane">
-            <h2>Left</h2>
-          </div>
-          <div class="right-pane">
-            <h2>Right</h2>
-          </div>
-        </ixt-split-pane>
-      </ixt-tab>
-      <ixt-tab title="Panels">
-        <h2>Examples</h2>
-        <div class="ixt-panel-container">
-          <div class="panel-grid">
-            <ixt-panel title="Basic Panel">
-              <div class="panel-content">
-                This is a basic panel with default settings (bordered=true, elevated=false)
-              </div>
-            </ixt-panel>
-
-            <ixt-panel title="Elevated Panel" [elevated]="true" caption="With caption text">
-              <div class="panel-content">
-                This panel has elevation enabled, creating a shadow effect
-              </div>
-            </ixt-panel>
-
-            <ixt-panel title="No Border Panel" [bordered]="false" [padding]="true">
-              <div class="panel-content">
-                This panel has borders disabled but keeps padding
-              </div>
-            </ixt-panel>
-
-            <ixt-panel [bordered]="false" [padding]="false" [elevated]="false">
-              <div class="panel-content">
-                A minimal panel without title, borders, elevation or padding
-              </div>
-            </ixt-panel>
-          </div>
-        </div>
-      </ixt-tab>
     </ixt-tabset>
   </section>
 
   <aside>
-    <ixt-layer-manager [layers]="layerProvider.mapLayers" (layerChange)="layerManager.onLayerChange($event)"
-      (layerOrderChange)="layerManager.onLayerOrderChange($event)">
+    <ixt-layer-manager [layers]="layerProvider.mapLayers" 
+                       (layerChange)="layerManager.onLayerChange($event)"
+                       (layerOrderChange)="layerManager.onLayerOrderChange($event)">
     </ixt-layer-manager>
-    <!-- Layer manager commented out -->
   </aside>
 
   <footer>Footer</footer>
 </main>
 
 <!-- Template for custom dialog content -->
+ <!--
 <ng-template #customDialogTemplate let-data>
   <div class="p-4">
     <p>Custom template with data: {{ data.message }}</p>
@@ -245,4 +99,16 @@
     </div>
   </div>
 </ng-template>
+-->
 
+<!--
+<ng-template #customDialogTemplate let-data="data">
+  <div class="p-4">
+    <p>{{ data.message }}</p>
+    <div class="form-group">
+      <label for="exampleInput">Input Fieldss:</label>
+      <input id="exampleInput" type="text" [(ngModel)]="data.input" class="form-control">
+    </div>
+  </div>
+</ng-template>
+-->

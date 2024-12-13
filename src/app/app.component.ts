@@ -88,7 +88,7 @@ export class AppComponent implements AfterViewInit {
       this.matrixAirportData = data;
     });
   }
-  
+
   ngAfterViewInit() {
   }
 
@@ -107,64 +107,86 @@ export class AppComponent implements AfterViewInit {
   }
 
 
-  //dialog -- start
   showSuccessDialog() {
-    this.dialogService.alert({
-      title: 'Success',
-      content: 'Operation completed successfully!',
-      variant: 'success',
-      // buttons: [
-      //   {
-      //     text: 'OK',
-      //     variant: 'success',
-      //     close: true
-      //   }
-      // ]
-    });
-  }
-  
-  showErrorDialog() {
-    this.dialogService.alert({
-      title: 'Error',
-      content: 'Something went wrong. Please try again.',
-      variant: 'danger',
-    });
-  }
-
-  showConfirmDialog() {
-    this.dialogService.confirm({
-      title: 'Confirm Action',
-      content: 'Are you sure you want to proceed with this action?',
-      variant: 'warning',
+    this.dialogService.showSuccessDialog({
+      title: 'Success Dialog',
+      content: 'Your operation was successful!',
       buttons: [
         {
-          text: 'Cancel',
-          variant: 'light',
-          close: true
+          text: 'Close',
+          variant: 'primary',
+          close: true, // Close the dialog when clicked
+          action: () => {
+            console.log('Close button clicked!');
+          }
         },
         {
-          text: 'Confirm',
-          variant: 'warning',
-          callback: () => {
-            console.log('Confirmed');
-          },
-          close: true
+          text: 'More Info',
+          variant: 'secondary',
+          close: false, // Keep the dialog open when clicked
+          action: () => {
+            alert('Here is more information about the success.');
+          }
         }
       ]
     });
   }
 
-  showCustomDialog() {
-    const dialogData = {
-      message: 'This is a custom dialog with dynamic data',
-      input: ''
-    };
+  showErrorDialog() {
+    this.dialogService.showErrorDialog({
+      title: 'Error Dialog',
+      content: 'Something went wrong. Please try again.'
+    });
+  }
 
-    const dialogRef = this.dialogService.open({
-      title: 'Custom Dialog',
+  showInfoDialog() {
+    this.dialogService.showInfoDialog({
+      title: 'Information Dialog',
+      content: 'This is an informational dialog with some helpful text.'
+    });
+  }
+
+  showConfirmDialog() {
+    this.dialogService.showConfirmDialog({
+      title: 'Confirmation Dialog',
+      content: 'Are you sure you want to perform this action?'
+    }).subscribe(result => {
+      if (result.confirmed) {
+        alert('User confirmed the action.');
+      } else {
+        alert('User canceled the action.');
+      }
+    });
+  }
+
+  // Dynamic Component Dialog
+  showDynamicComponentDialog() {
+    this.dialogService.showDynamicDialog({
+      title: 'Title Dynamic Dialog',
+      content: DynamicDialogContentComponent,
+      contentContext: { message: 'This is a dynamic message passed to the component.' }
+    }).subscribe(result => {
+      if (result.confirmed) {
+        alert('Dynamic dialog action confirmed.');
+      } else {
+        alert('Dynamic dialog action canceled.');
+      }
+    });
+  }
+
+
+
+
+
+
+
+
+  // Template-based dialog
+  showCustomTemplateDialogOriginal() {
+    this.dialogService.showDynamicDialog({
+      title: 'Custom Template Dialog 2222',
       content: this.customDialogTemplate,
-      contentContext: { data: dialogData },
-      variant: 'info',
+      contentContext: { data: { message: 'Hello from the template!', input: 'xxx' } }, // Wrap in "data"
       buttons: [
         {
           text: 'Cancel',
@@ -174,33 +196,49 @@ export class AppComponent implements AfterViewInit {
         {
           text: 'Save',
           variant: 'primary',
-          callback: () => {
-            console.log('Saved data:', dialogData.input);
-            return true;
-          },
+          close: false,
+          action: () => {
+            alert('Template dialog saved!');
+          }
+        }
+      ]
+    }).subscribe(result => {
+      if (result && result.data) {
+        alert('Template dialog saved with input: ' + result.data.input);
+      } else {
+        alert('Template dialog canceled.');
+      }
+    });
+  }
+
+
+  // Template-based dialog
+  showCustomTemplateDialog() {
+    this.dialogService.showDynamicDialog({
+      title: 'Custom Form Dialog',
+      fields: [
+        { name: 'inputField', label: 'Input Field', type: 'text', value: 'Default Text' },
+        { name: 'dropdown', label: 'Select Option', type: 'select', options: ['Option 1', 'Option 2'], value: 'Option 1' }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          variant: 'light',
           close: true
+        },
+        {
+          text: 'Save',
+          variant: 'primary',
+          close: false,
+          action: (formData) => {
+            alert('Form Data: ' + JSON.stringify(formData));
+          }
         }
       ]
     });
   }
 
-  showDynamicComponentDialog() {
-    const dialogRef = this.dialogService.open({
-      title: 'Dynamic Component',
-      content: DynamicDialogContentComponent,
-      variant: 'primary',
-      contentContext: {
-        data: {
-          message: 'This content is from a dynamic component'
-        }
-      }
-    });
-  }
 
-  saveTemplateDialog() {
-    console.log('Saving template dialog data:', this.sampleInput);
-    // Implement save logic here
-  }
-  //dialog end
+
 
 }

@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { IxtDialogComponent } from './ixt-dialog.component';
 import { IxtDialogService } from './ixt-dialog.service';  // Add this
 import { DynamicDialogContentComponent } from './dynamic-dialog-content.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { DynamicDialogContentComponent } from './dynamic-dialog-content.componen
   imports: [
     CommonModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    FormsModule
   ],
   exports: [IxtDialogComponent],
   providers: [IxtDialogService]  // Add this

@@ -17,14 +17,14 @@ export class IxtEmployeeFormHandler {
     
     // Validate form
     if (!this.validateForm(form)) {
-      this.dialogService.show({
-        title: 'Validation Error',
-        message: 'Please fill in all required fields.',
-        type: DialogType.Error,
-        okText: 'OK',
-        showCancel: false,
-        isModal: true
-      });
+      // this.dialogService.show({
+      //   title: 'Validation Error',
+      //   message: 'Please fill in all required fields.',
+      //   type: DialogType.Error,
+      //   okText: 'OK',
+      //   showCancel: false,
+      //   isModal: true
+      // });
       return;
     }
 
@@ -32,38 +32,38 @@ export class IxtEmployeeFormHandler {
       // Simulate API call
       await this.saveEmployee(form);
       
-      this.dialogService.show({
-        title: 'Success',
-        message: 'Employee information saved successfully!',
-        type: DialogType.Success,
-        okText: 'OK',
-        showCancel: false,
-        isModal: true
-      });
+      // this.dialogService.show({
+      //   title: 'Success',
+      //   message: 'Employee information saved successfully!',
+      //   type: DialogType.Success,
+      //   okText: 'OK',
+      //   showCancel: false,
+      //   isModal: true
+      // });
       
       this.provider.resetForm();
     } catch (error) {
-      this.dialogService.show({
-        title: 'Error',
-        message: 'Failed to save employee information. Please try again.',
-        type: DialogType.Error,
-        okText: 'OK',
-        showCancel: false,
-        isModal: true
-      });
+      // this.dialogService.show({
+      //   title: 'Error',
+      //   message: 'Failed to save employee information. Please try again.',
+      //   type: DialogType.Error,
+      //   okText: 'OK',
+      //   showCancel: false,
+      //   isModal: true
+      // });
     }
   }
 
   confirmDelete(employeeId: number) {
-    this.dialogService.show({
-      title: 'Confirm Delete',
-      message: 'Are you sure you want to delete this employee record?',
-      type: DialogType.Question,
-      okText: 'Yes',
-      cancelText: 'No',
-      showCancel: true,
-      isModal: true
-    });
+    // this.dialogService.show({
+    //   title: 'Confirm Delete',
+    //   message: 'Are you sure you want to delete this employee record?',
+    //   type: DialogType.Question,
+    //   okText: 'Yes',
+    //   cancelText: 'No',
+    //   showCancel: true,
+    //   isModal: true
+    // });
   }
 
   updateField(field: keyof EmployeeForm, value: any) {
@@ -97,27 +97,27 @@ export class IxtEmployeeFormHandler {
 
   showUnsavedChangesDialog(): Promise<boolean> {
     return new Promise((resolve) => {
-      this.dialogService.show({
-        title: 'Unsaved Changes',
-        message: 'You have unsaved changes. Do you want to continue?',
-        type: DialogType.Warning,
-        okText: 'Yes',
-        cancelText: 'No',
-        showCancel: true,
-        isModal: true
-      });
+      // this.dialogService.show({
+      //   title: 'Unsaved Changes',
+      //   message: 'You have unsaved changes. Do you want to continue?',
+      //   type: DialogType.Warning,
+      //   okText: 'Yes',
+      //   cancelText: 'No',
+      //   showCancel: true,
+      //   isModal: true
+      // });
     });
   }
 
   resetForm() {
-    this.dialogService.show({
-      title: 'Confirm Reset',
-      message: 'Are you sure you want to reset the form? All unsaved changes will be lost.',
-      type: DialogType.Warning,
-      okText: 'Yes',
-      cancelText: 'No',
-      showCancel: true,
-      isModal: true
-    });
+    // this.dialogService.show({
+    //   title: 'Confirm Reset',
+    //   message: 'Are you sure you want to reset the form? All unsaved changes will be lost.',
+    //   type: DialogType.Warning,
+    //   okText: 'Yes',
+    //   cancelText: 'No',
+    //   showCancel: true,
+    //   isModal: true
+    // });
   }
 }

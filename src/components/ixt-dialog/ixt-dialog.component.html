@@ -56,6 +56,30 @@
         </ng-container>
       </ng-container>
 
+      <!-- Dynamic Form Fields -->
+      <table border="1">
+      
+      <div *ngIf="config.fields && config.fields.length" class="ixt-dialog__fields">
+        <div *ngFor="let field of config.fields" class="form-group">
+          <label [for]="field.name">{{ field.label }}</label>
+          <input 
+            *ngIf="field.type === 'text'" 
+            [id]="field.name" 
+            [(ngModel)]="field.value" 
+            class="form-control" 
+            type="text">
+          
+          <select 
+            *ngIf="field.type === 'select'" 
+            [id]="field.name" 
+            [(ngModel)]="field.value" 
+            class="form-control">
+            <option *ngFor="let option of field.options" [value]="option">{{ option }}</option>
+          </select>
+        </div>
+      </div>
+    </table>
+
       <!-- Default content projection -->
       <ng-content></ng-content>
     </div>

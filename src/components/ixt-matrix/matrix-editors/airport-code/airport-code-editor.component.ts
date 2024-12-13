@@ -135,7 +135,7 @@ export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit,
     if (this.config?.existingValues?.includes(value)) {
       this.hasError = true;
       this.errorMessage = 'This code already exists';
-      this.dialogService.show({
+      this.dialogService.showErrorDialog({
         title: 'Duplicate Code',
         message: `The code "${value}" already exists. Please enter a different code.`,
         type: DialogType.Warning
