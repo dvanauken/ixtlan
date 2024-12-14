@@ -141,77 +141,142 @@ export class LunchFormComponent implements OnInit {
     isTakeout: false
   };
 
-  constructor(private dialogService: IxtDialogService) {}
+  constructor(private dialogService: IxtDialogService) { }
 
   ngOnInit(): void {
     this.init.emit(this);
   }
 
+  // public showLunchOrderDialog(): Promise<any> {
+  //   return new Promise((resolve, reject) => {
+  //     this.dialogService.template('Lunch Order', this.lunchOrderTemplate, {
+  //       buttons: [
+  //         {
+  //           text: 'Place Order',
+  //           action: () => {
+  //             const formData = this.getFormData(); // Get the form data
+  //             resolve(formData); // Resolves the promise with form data
+  //             return formData; // Required by the dialogService to process the action
+  //           },
+  //           close: true, // Ensure dialog closes
+  //         },
+  //         {
+  //           text: 'Cancel',
+  //           action: () => {
+  //             reject('User cancelled'); // Rejects the promise on cancel
+  //           },
+  //           close: true,
+  //         },
+  //       ],
+  //     }).subscribe({
+  //       complete: () => {
+  //         console.log('Dialog closed'); // Ensure the dialog completes properly
+  //       },
+  //     });
+  //   });
+  // }
 
-
-async showLunchOrderDialog(): Promise<LunchOrder | null> {
-  try {
-    const result = await firstValueFrom(
-      this.dialogService.template<LunchOrder>(
-        'Lunch Menu Order',
-        this.lunchOrderTemplate,
-        {
-          buttons: [
-            {
-              text: 'Cancel',
-              variant: 'light',
-              close: true,
-              action: () => null
-            },
-            {
-              text: 'Place Order',
-              variant: 'primary',
-              close: true,
-              action: () => {
-                if (this.orderForm?.valid) {
-                  const orderData = { ...this.orderData };
-                  return orderData;
-                }
-                this.dialogService.warning('Please fill out all required fields');
-                return false;
-              }
-            }
-          ]
-        }
-      )
-    );
-
-    if (result) {
-      await this.dialogService.success(
-        'Order placed successfully:\n' + JSON.stringify(result, null, 2)
-      );
-      
-      // Reset form
-      this.orderData = {
-        sandwich: '',
-        side: '',
-        drink: '',
-        customerName: '',
-        isTakeout: false
-      };
-      
-      return result;  // Return the result to the caller
-    }
-    
-    return null;  // Return null if no result (e.g., canceled)
-    
-  } catch (error: unknown) {
-    console.error('Dialog error:', error);
-    if (error instanceof Error && error.message !== 'no elements in sequence') {
-      await this.dialogService.error('An error occurred while processing your order.');
-    }
-    return null;  // Return null on error
+  private getFormData(): LunchOrder {
+    return {
+      sandwich: this.orderData.sandwich, // Bound to the "Sandwich" field
+      side: this.orderData.side,         // Bound to the "Side" field
+      drink: this.orderData.drink,       // Bound to the "Drink" field
+      customerName: this.orderData.customerName, // Bound to the "Name for order" field
+      isTakeout: this.orderData.isTakeout, // Bound to the "Takeout?" checkbox
+    };
   }
-}
 
+  private resetForm(): void {
+    // Reset the form fields to default values
+    this.orderData = {
+      sandwich: '',
+      side: '',
+      drink: '',
+      customerName: '',
+      isTakeout: false,
+    };
+  
+    // Reset the form state if it exists
+    if (this.orderForm) {
+      this.orderForm.resetForm(this.orderData);
+    }
+  }
 
+  // public showLunchOrderDialog(): Promise<any> {
+  //   // Reset form data and state
+  //   this.resetForm();
+  
+  //   return new Promise((resolve, reject) => {
+  //     this.dialogService.template('Lunch Order', this.lunchOrderTemplate, {
+  //       buttons: [
+  //         {
+  //           text: 'Place Order',
+  //           action: () => {
+  //             if (this.orderForm?.valid) {
+  //               const formData = this.getFormData(); // Get the form data
+  //               resolve(formData); // Resolves the promise with form data
+  //               return formData; // Required by the dialogService to process the action
+  //             } else {
+  //               this.dialogService.warning('Please fill out all required fields');
+  //               return false; // Prevent the dialog from closing
+  //             }
+  //           },
+  //           close: true, // Ensure dialog closes
+  //         },
+  //         {
+  //           text: 'Cancel',
+  //           action: () => {
+  //             reject('User cancelled'); // Rejects the promise on cancel
+  //           },
+  //           close: true,
+  //         },
+  //       ],
+  //     }).subscribe({
+  //       complete: () => {
+  //         console.log('Dialog closed'); // Ensure the dialog completes properly
+  //       },
+  //     });
+  //   });
+  // }
 
-
+  public showLunchOrderDialog(): Promise<{ status: 'OK' | 'Cancel'; data?: LunchOrder }> {
+    // Reset form data and state
+    this.resetForm();
+  
+    return new Promise((resolve) => {
+      this.dialogService.template('Lunch Order', this.lunchOrderTemplate, {
+        buttons: [
+          {
+            text: 'Place Order',
+            action: () => {
+              if (this.orderForm?.valid) {
+                const formData = this.getFormData(); // Get the form data
+                resolve({ status: 'OK', data: formData }); // Resolve with structured success result
+                return formData; // Required by the dialogService to process the action
+              } else {
+                this.dialogService.warning('Please fill out all required fields');
+                return false; // Prevent dialog from closing if validation fails
+              }
+            },
+            close: true, // Ensure dialog closes
+          },
+          {
+            text: 'Cancel',
+            action: () => {
+              resolve({ status: 'Cancel' }); // Resolve with cancel status
+            },
+            close: true, // Ensure dialog closes
+          },
+        ],
+      }).subscribe({
+        complete: () => {
+          console.log('Dialog closed'); // Ensure the dialog completes properly
+        },
+      });
+    });
+  }
+  
+  
 
 
 }

@@ -179,7 +179,7 @@ export class IxtDialogService {
   
     // Handle dialog closing and result
     componentRef.instance.closed.subscribe((result) => {
-      console.log('Dialog closed with result:', result); // Debug log
+      //console.log('Dialog closed with result:', result); // Debug log
       subject.next(result);  // Emit the result
       subject.complete();
       this.close();
@@ -210,45 +210,91 @@ export class IxtDialogService {
 
 
 
-  template<T>(title: string, templateRef: TemplateRef<any>, config: Partial<IxtDialogConfig> = {}): Observable<T | null> {
+  // template<T>(title: string, templateRef: TemplateRef<any>, config: Partial<IxtDialogConfig> = {}): Observable<T | null> {
+  //   const subject = new Subject<T | null>();
+  
+  //   const buttons = config.buttons?.map(button => ({
+  //     ...button,
+  //     action: (args: any) => {
+  //       const result = button.action ? button.action(args) : null;
+  //       subject.next(result as T);
+  //       subject.complete(); // Complete after emitting the value
+  //       if (button.close) {
+  //         this.close();
+  //       }
+  //       return result;
+  //     }
+  //   })) || [
+  //     // Default button if none provided
+  //     {
+  //       text: 'Close',
+  //       variant: 'light',
+  //       action: () => {
+  //         subject.next(null);
+  //         subject.complete();
+  //         this.close();
+  //         return null;
+  //       }
+  //     }
+  //   ];
+  
+  //   const dialogConfig = {
+  //     title,
+  //     content: templateRef,
+  //     contentContext: { data: {} },
+  //     buttons,
+  //     ...config
+  //   };
+  
+  //   this.openDialog(dialogConfig);
+  
+  //   return subject.asObservable();
+  // }
+
+
+  template<T>(
+    title: string,
+    templateRef: TemplateRef<any>,
+    config: Partial<IxtDialogConfig> = {}
+  ): Observable<T | null> {
     const subject = new Subject<T | null>();
   
-    const buttons = config.buttons?.map(button => ({
+    const buttons = config.buttons?.map((button) => ({
       ...button,
       action: (args: any) => {
-        const result = button.action ? button.action(args) : null;
-        subject.next(result as T);
-        subject.complete(); // Complete after emitting the value
-        if (button.close) {
-          this.close();
+        try {
+          const result = button.action ? button.action(args) : null;
+          if (button.close) {
+            this.close();
+            subject.next(result as T);
+            subject.complete();
+          }
+          return result; // Ensure action result is returned
+        } catch (error) {
+          subject.error(error); // Handles unexpected errors
         }
-        return result;
-      }
+      },
     })) || [
-      // Default button if none provided
       {
         text: 'Close',
-        variant: 'light',
         action: () => {
           subject.next(null);
           subject.complete();
           this.close();
-          return null;
-        }
-      }
+        },
+      },
     ];
   
     const dialogConfig = {
+      ...config,
       title,
       content: templateRef,
-      contentContext: { data: {} },
       buttons,
-      ...config
     };
   
     this.openDialog(dialogConfig);
   
     return subject.asObservable();
   }
-
+  
 }

@@ -99,22 +99,55 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  // async openLunchOrderDialog() {
+  //   console.log('Starting openLunchOrderDialog');  // Debug point 1
+  //   if (!this.lunchForm) {
+  //     console.error('Lunch form component not found');
+  //     return;
+  //   }
+  
+  //   try {
+  //     console.log('About to call showLunchOrderDialog');  // Debug point 2
+  //     const result = await this.lunchForm.showLunchOrderDialog();
+  //     console.log('Lunch order result:', result);
+  //     console.log('Lunch order result:\n', JSON.stringify(result, null, 2));
+  //   } catch (error) {
+  //     console.error('Error in lunch order:', error);
+  //   }
+  //   console.log("test");
+  // }
+  
   async openLunchOrderDialog() {
-    console.log('Starting openLunchOrderDialog');  // Debug point 1
+    console.log('Starting openLunchOrderDialog'); // Debug point 1
+  
     if (!this.lunchForm) {
       console.error('Lunch form component not found');
       return;
     }
   
     try {
-      console.log('About to call showLunchOrderDialog');  // Debug point 2
+      console.log('About to call showLunchOrderDialog'); // Debug point 2
       const result = await this.lunchForm.showLunchOrderDialog();
-      console.log('Lunch order result:', result);
-      console.log('Lunch order result:\n', JSON.stringify(result, null, 2));
+  
+      switch (result.status) {
+        case 'OK':
+          console.log('Lunch order placed:', result.data);
+          console.log('Formatted JSON:', JSON.stringify(result.data, null, 2));
+          break;
+  
+        case 'Cancel':
+          console.log('Lunch order was cancelled');
+          break;
+  
+        default:
+          console.error('Unexpected dialog result:', result);
+          break;
+      }
     } catch (error) {
-      console.error('Error in lunch order:', error);
+      console.error('Error in lunch order dialog:', error);
     }
-    console.log("test");
+  
+    console.log('Test'); // Ensure this runs after everything
   }
-
+  
 }

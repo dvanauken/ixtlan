@@ -205,23 +205,6 @@ export class IxtDialogComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
 
-  // // ixt-dialog.component.ts
-  // public handleButtonClick(button: IxtDialogButton): void {
-  //   if (button.action) {
-  //     const formData = (this.config.fields || []).reduce((acc, field) => {
-  //       acc[field.name] = field.value;
-  //       return acc;
-  //     }, {} as { [key: string]: any });
-
-  //     button.action(formData); // Ensure formData is always defined
-  //   }
-
-  //   if (button.close !== false) {
-  //     this.close();
-  //   }
-  // }
-
-
   public handleButtonClick(button: IxtDialogButton): void {
     console.log('Button clicked:', button);
 
@@ -232,7 +215,7 @@ export class IxtDialogComponent implements OnInit, OnDestroy, AfterViewInit {
       }, {} as { [key: string]: any });
 
       const result = button.action(formData);
-      console.log('Action result:', result);
+      //console.log('Action result:', result);
 
       // Check if result is specifically false
       if (result !== undefined && result !== false) {
@@ -244,7 +227,7 @@ export class IxtDialogComponent implements OnInit, OnDestroy, AfterViewInit {
       this.close();
     }
   }
-  
+
   public createInjector(context: any): Injector {
     if (!context) {
       console.warn('No context provided for dynamic content.');
