@@ -1,0 +1,103 @@
+<button 
+(click)="showLunchOrderDialog()"
+class="place-order px-4 py-2 rounded"
+>
+Place Lunch Order
+</button>
+
+<ng-template #lunchOrderTemplate>
+<form #orderForm="ngForm">
+  <div class="space-y-4">
+    <div class="form-group">
+      <label class="block text-sm font-medium text-gray-700">Sandwich:</label>
+      <select 
+        name="sandwich" 
+        [(ngModel)]="orderData.sandwich"
+        required
+        #sandwichField="ngModel"
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+      >
+        <option value="">Select a sandwich</option>
+        <option>grilled cheese</option>
+        <option>roast beef</option>
+        <option>hamburger</option>
+      </select>
+      <div *ngIf="sandwichField.invalid && sandwichField.touched" class="text-red-500 text-sm">
+        Please select a sandwich
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="block text-sm font-medium text-gray-700">Side:</label>
+      <select 
+        name="side" 
+        [(ngModel)]="orderData.side"
+        required
+        #sideField="ngModel"
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+      >
+        <option value="">Select a side</option>
+        <option>French fries</option>
+        <option>Onion Rings</option>
+        <option>Salad</option>
+      </select>
+      <div *ngIf="sideField.invalid && sideField.touched" class="text-red-500 text-sm">
+        Please select a side
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="block text-sm font-medium text-gray-700">Drink:</label>
+      <select 
+        name="drink" 
+        [(ngModel)]="orderData.drink"
+        required
+        #drinkField="ngModel"
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+      >
+        <option value="">Select a drink</option>
+        <option>Coke</option>
+        <option>Coffee</option>
+        <option>Juice</option>
+      </select>
+      <div *ngIf="drinkField.invalid && drinkField.touched" class="text-red-500 text-sm">
+        Please select a drink
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="block text-sm font-medium text-gray-700">Name for order:</label>
+      <input 
+        name="customerName" 
+        [(ngModel)]="orderData.customerName"
+        required
+        minlength="2"
+        #nameField="ngModel"
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+        placeholder="Enter your name"
+      >
+      <div *ngIf="nameField.invalid && nameField.touched" class="text-red-500 text-sm">
+        Please enter a name (minimum 2 characters)
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Takeout?</label>
+      <div>
+        <input 
+          type="checkbox" 
+          name="isTakeout" 
+          [(ngModel)]="orderData.isTakeout"
+        >
+      </div>
+    </div>
+
+    <!-- Debug info during development -->
+    <div class="mt-4 text-sm text-gray-500">
+      Form Valid: {{orderForm.valid}}
+      <br>
+      Form Values: {{orderData | json}}
+    </div>
+</div>
+</form>
+</ng-template>

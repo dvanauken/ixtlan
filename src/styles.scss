@@ -38,9 +38,6 @@ section { grid-area: section; }
 aside { grid-area: aside; }
 footer { grid-area: footer; }
 
-
-
-
 .form-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -139,4 +136,22 @@ h3 {
       grid-template-columns: repeat(2, 1fr);
       gap: 24px;
   }
+}
+
+
+:root {
+  /* Primary Theme */
+  --primary-base: #4169E1;
+  --primary-hover: #2850c9;
+  --primary-text: #ffffff;
+  --primary-input-border: #2850c9;
+  --primary-label-text: #2850c9;
+
+  /* Secondary Theme */
+  --secondary-base: #6c757d;
+  --secondary-hover: #5c636a;
+  --secondary-text: #ffffff;
+
+  /* Danger Theme */
+  --danger-text: #dc3545;
 }

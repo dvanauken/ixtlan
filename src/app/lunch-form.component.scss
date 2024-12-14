@@ -1,0 +1,70 @@
+.form-group {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: baseline;
+  }
+  
+  .form-group label {
+    min-width: 120px;
+    text-align: right;
+    margin-right: 1rem;
+    color: var(--primary-label-text);
+  }
+  
+  select, input[type="text"] {
+    border: 1px solid var(--primary-input-border);
+    color: #000000; // Changed to black for readability
+  }
+  
+  .text-red-500 {
+    color: var(--danger-text);
+  }
+  
+  button.place-order {
+    background-color: var(--primary-base);
+    color: var(--primary-text);
+  }
+  
+  button.place-order:hover {
+    background-color: var(--primary-hover);
+  }
+  
+  button.cancel {
+    background-color: var(--secondary-base);
+    color: var(--secondary-text);
+  }
+  
+  button.cancel:hover {
+    background-color: var(--secondary-hover);
+  }
+  
+  .mt-4 {
+    display: none;
+  }
+
+  button.place-order {
+    background-color: var(--primary-base);
+    color: var(--primary-text);
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button.place-order:hover {
+    background-color: var(--primary-hover);
+  }
+  
+  button.cancel {
+    background-color: var(--secondary-base);
+    color: var(--secondary-text);
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 8px;  // Add some space between buttons
+  }
+  
+  button.cancel:hover {
+    background-color: var(--secondary-hover);
+  }
