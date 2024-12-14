@@ -97,16 +97,15 @@ interface LunchOrder {
             </div>
           </div>
 
-          <div class="form-check">
-            <label class="inline-flex items-center">
+          <div class="form-group">
+            <label>Takeout?</label>
+            <div>
               <input 
                 type="checkbox" 
                 name="isTakeout" 
                 [(ngModel)]="orderData.isTakeout"
-                class="rounded border-gray-300 text-blue-600 shadow-sm"
               >
-              <span class="ml-2">Takeout?</span>
-            </label>
+            </div>
           </div>
 
           <!-- Debug info during development -->
@@ -115,18 +114,28 @@ interface LunchOrder {
             <br>
             Form Values: {{orderData | json}}
           </div>
-        </div>
+      </div>
       </form>
     </ng-template>
   `,
   styles: [`
     .form-group {
       margin-bottom: 1rem;
+      display: flex;
+      align-items: baseline;
     }
-    .form-check {
-      margin-top: 1rem;
+
+    .form-group label {
+      min-width: 120px;
+      text-align: right;
+      margin-right: 1rem;
+    }
+
+    .mt-4 {
+      display: none;
     }
   `]
+
 })
 export class LunchFormComponent implements OnInit {
   @Output() init = new EventEmitter<LunchFormComponent>();
@@ -147,34 +156,6 @@ export class LunchFormComponent implements OnInit {
     this.init.emit(this);
   }
 
-  // public showLunchOrderDialog(): Promise<any> {
-  //   return new Promise((resolve, reject) => {
-  //     this.dialogService.template('Lunch Order', this.lunchOrderTemplate, {
-  //       buttons: [
-  //         {
-  //           text: 'Place Order',
-  //           action: () => {
-  //             const formData = this.getFormData(); // Get the form data
-  //             resolve(formData); // Resolves the promise with form data
-  //             return formData; // Required by the dialogService to process the action
-  //           },
-  //           close: true, // Ensure dialog closes
-  //         },
-  //         {
-  //           text: 'Cancel',
-  //           action: () => {
-  //             reject('User cancelled'); // Rejects the promise on cancel
-  //           },
-  //           close: true,
-  //         },
-  //       ],
-  //     }).subscribe({
-  //       complete: () => {
-  //         console.log('Dialog closed'); // Ensure the dialog completes properly
-  //       },
-  //     });
-  //   });
-  // }
 
   private getFormData(): LunchOrder {
     return {
@@ -195,54 +176,17 @@ export class LunchFormComponent implements OnInit {
       customerName: '',
       isTakeout: false,
     };
-  
+
     // Reset the form state if it exists
     if (this.orderForm) {
       this.orderForm.resetForm(this.orderData);
     }
   }
 
-  // public showLunchOrderDialog(): Promise<any> {
-  //   // Reset form data and state
-  //   this.resetForm();
-  
-  //   return new Promise((resolve, reject) => {
-  //     this.dialogService.template('Lunch Order', this.lunchOrderTemplate, {
-  //       buttons: [
-  //         {
-  //           text: 'Place Order',
-  //           action: () => {
-  //             if (this.orderForm?.valid) {
-  //               const formData = this.getFormData(); // Get the form data
-  //               resolve(formData); // Resolves the promise with form data
-  //               return formData; // Required by the dialogService to process the action
-  //             } else {
-  //               this.dialogService.warning('Please fill out all required fields');
-  //               return false; // Prevent the dialog from closing
-  //             }
-  //           },
-  //           close: true, // Ensure dialog closes
-  //         },
-  //         {
-  //           text: 'Cancel',
-  //           action: () => {
-  //             reject('User cancelled'); // Rejects the promise on cancel
-  //           },
-  //           close: true,
-  //         },
-  //       ],
-  //     }).subscribe({
-  //       complete: () => {
-  //         console.log('Dialog closed'); // Ensure the dialog completes properly
-  //       },
-  //     });
-  //   });
-  // }
-
   public showLunchOrderDialog(): Promise<{ status: 'OK' | 'Cancel'; data?: LunchOrder }> {
     // Reset form data and state
     this.resetForm();
-  
+
     return new Promise((resolve) => {
       this.dialogService.template('Lunch Order', this.lunchOrderTemplate, {
         buttons: [
@@ -275,8 +219,8 @@ export class LunchFormComponent implements OnInit {
       });
     });
   }
-  
-  
+
+
 
 
 }
