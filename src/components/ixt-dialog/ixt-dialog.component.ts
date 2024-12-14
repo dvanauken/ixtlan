@@ -78,7 +78,7 @@ export class IxtDialogComponent implements OnInit, OnDestroy, AfterViewInit {
       this.showClose = this.config.showClose ?? true;
       this.backdropClose = this.config.backdropClose ?? true;
       this.config.fields = this.config.fields || [];
-  
+
       // Ensure buttons array is initialized
       if (!this.config.buttons || this.config.buttons.length === 0) {
         this.config.buttons = [
@@ -87,7 +87,7 @@ export class IxtDialogComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
-  
+
 
   public open() {
     this.isOpen = true;
@@ -205,24 +205,46 @@ export class IxtDialogComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
 
-  // ixt-dialog.component.ts
+  // // ixt-dialog.component.ts
+  // public handleButtonClick(button: IxtDialogButton): void {
+  //   if (button.action) {
+  //     const formData = (this.config.fields || []).reduce((acc, field) => {
+  //       acc[field.name] = field.value;
+  //       return acc;
+  //     }, {} as { [key: string]: any });
+
+  //     button.action(formData); // Ensure formData is always defined
+  //   }
+
+  //   if (button.close !== false) {
+  //     this.close();
+  //   }
+  // }
+
+
   public handleButtonClick(button: IxtDialogButton): void {
+    console.log('Button clicked:', button);
+
     if (button.action) {
       const formData = (this.config.fields || []).reduce((acc, field) => {
         acc[field.name] = field.value;
         return acc;
       }, {} as { [key: string]: any });
-  
-      button.action(formData); // Ensure formData is always defined
+
+      const result = button.action(formData);
+      console.log('Action result:', result);
+
+      // Check if result is specifically false
+      if (result !== undefined && result !== false) {
+        this.closed.emit(result);
+      }
     }
-  
+
     if (button.close !== false) {
       this.close();
     }
   }
   
-  
-
   public createInjector(context: any): Injector {
     if (!context) {
       console.warn('No context provided for dynamic content.');
@@ -234,9 +256,9 @@ export class IxtDialogComponent implements OnInit, OnDestroy, AfterViewInit {
       parent: Injector.NULL // Pass the application's root injector if needed
     });
   }
-  
+
   ngOnDestroy() {
     this.restoreFocus();
   }
-  
+
 }

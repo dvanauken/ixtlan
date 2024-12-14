@@ -2,10 +2,8 @@
   <nav>
     <ixt-tabset title="Employee Form">
       <ixt-tab title="Tab 1">
-        <ixt-tree [nodes]="treeProvider.treeData" 
-                  (nodeExpanded)="treeHandler.onNodeExpanded($event)"
-                  (nodeCollapsed)="treeHandler.onNodeCollapsed($event)" 
-                  (nodeSelected)="treeHandler.onNodeSelected($event)">
+        <ixt-tree [nodes]="treeProvider.treeData" (nodeExpanded)="treeHandler.onNodeExpanded($event)"
+          (nodeCollapsed)="treeHandler.onNodeCollapsed($event)" (nodeSelected)="treeHandler.onNodeSelected($event)">
         </ixt-tree>
       </ixt-tab>
       <ixt-tab title="Tab 2">
@@ -16,15 +14,8 @@
   </nav>
 
   <header>
-    <ixt-menu 
-      src="./../assets/menu.json"
-      brandName="Your Brand"
-      brandLogo="./../assets/logo.png"
-      brandLink="/"
-      variant="default"
-      [showSearch]="true"
-      searchPlaceholder="Search products..."
-      (searchSubmitted)="onSearch($event)">
+    <ixt-menu src="./../assets/menu.json" brandName="Your Brand" brandLogo="./../assets/logo.png" brandLink="/"
+      variant="default" [showSearch]="true" searchPlaceholder="Search products..." (searchSubmitted)="onSearch($event)">
     </ixt-menu>
   </header>
 
@@ -40,37 +31,25 @@
               <button (click)="showSuccessDialog()" class="px-4 py-2 bg-green-500 text-white rounded">
                 Success Dialog
               </button>
-              
+
               <button (click)="showErrorDialog()" class="px-4 py-2 bg-red-500 text-white rounded">
                 Error Dialog
               </button>
-              
+
               <button (click)="showInfoDialog()" class="px-4 py-2 bg-blue-500 text-white rounded">
                 Info Dialog
               </button>
-              
+
               <button (click)="showConfirmDialog()" class="px-4 py-2 bg-yellow-500 text-white rounded">
                 Confirm Dialog
               </button>
             </div>
           </div>
-
-          <!-- Template-based dialog -->
           <div class="flex flex-col gap-2 mt-4">
             <h3 class="text-lg font-semibold">Template-based Dialog</h3>
             <div class="flex flex-wrap gap-2">
-              <button (click)="showCustomTemplateDialog()" class="px-4 py-2 bg-gray-500 text-white rounded">
-                Open Template Dialog
-              </button>
-            </div>
-          </div>
-
-          <!-- Dynamic Component Dialog -->
-          <div class="flex flex-col gap-2 mt-4">
-            <h3 class="text-lg font-semibold">Dynamic Component Dialog</h3>
-            <div class="flex flex-wrap gap-2">
-              <button (click)="showDynamicComponentDialog()" class="px-4 py-2 bg-orange-500 text-white rounded">
-                Open Dynamic Dialog
+              <button (click)="openLunchOrderDialog()" class="px-4 py-2 bg-blue-500 text-white rounded">
+                Place Lunch Order 2
               </button>
             </div>
           </div>
@@ -80,35 +59,12 @@
   </section>
 
   <aside>
-    <ixt-layer-manager [layers]="layerProvider.mapLayers" 
-                       (layerChange)="layerManager.onLayerChange($event)"
-                       (layerOrderChange)="layerManager.onLayerOrderChange($event)">
+    <ixt-layer-manager [layers]="layerProvider.mapLayers" (layerChange)="layerManager.onLayerChange($event)"
+      (layerOrderChange)="layerManager.onLayerOrderChange($event)">
     </ixt-layer-manager>
   </aside>
 
   <footer>Footer</footer>
 </main>
 
-<!-- Template for custom dialog content -->
- <!--
-<ng-template #customDialogTemplate let-data>
-  <div class="p-4">
-    <p>Custom template with data: {{ data.message }}</p>
-    <div class="mt-2">
-      <input type="text" [(ngModel)]="data.input" class="border p-2 w-full">
-    </div>
-  </div>
-</ng-template>
--->
-
-<!--
-<ng-template #customDialogTemplate let-data="data">
-  <div class="p-4">
-    <p>{{ data.message }}</p>
-    <div class="form-group">
-      <label for="exampleInput">Input Fieldss:</label>
-      <input id="exampleInput" type="text" [(ngModel)]="data.input" class="form-control">
-    </div>
-  </div>
-</ng-template>
--->
+<app-lunch-form></app-lunch-form>

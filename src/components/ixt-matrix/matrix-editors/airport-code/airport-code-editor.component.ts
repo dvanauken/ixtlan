@@ -1,9 +1,7 @@
-// src/components/ixt-matrix/matrix-editors/airport-code/airport-code-editor.component.ts
 import { Component, Input, forwardRef, OnInit, Type } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl } from '@angular/forms';
 import { IxtDialogService } from '../../../ixt-dialog/ixt-dialog.service';
 import { MatrixEditor, MatrixEditorConfig } from '../editor.interface';
-import { DialogType } from '../../../ixt-dialog/ixt-dialog.interfaces';
 
 @Component({
   selector: 'airport-code-editor',
@@ -15,7 +13,7 @@ import { DialogType } from '../../../ixt-dialog/ixt-dialog.interfaces';
         class="w-24 px-2 py-1 border rounded"
         [class.border-red-500]="hasError"
         [attr.maxlength]="config?.['maxLength'] || 3"
-        (blur)="onBlur()"
+        (blur)="onTouched()"
       />
       <div *ngIf="hasError" class="text-red-500 text-sm mt-1">
         {{ errorMessage }}
@@ -38,8 +36,6 @@ import { DialogType } from '../../../ixt-dialog/ixt-dialog.interfaces';
 export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit, MatrixEditor {
   @Input() config?: MatrixEditorConfig;
   @Input() existingCodes: string[] = [];
-
-  // airport-code-editor.component.ts
   @Input() field: string = 'code';
 
   inputControl = new FormControl('');
@@ -49,10 +45,11 @@ export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit,
   // MatrixEditor implementation
   component: Type<any> = AirportCodeEditorComponent;
 
-  private onChange: (value: string) => void = () => { };
-  private onTouch: () => void = () => { };
+  // ControlValueAccessor implementations
+  public onChanged: (value: string) => void = () => {};
+  public onTouched: () => void = () => {};
 
-  constructor(private dialogService: IxtDialogService) { }
+  constructor(private dialogService: IxtDialogService) {}
 
   ngOnInit() {
     this.setupValueChanges();
@@ -84,36 +81,22 @@ export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit,
     return value ? String(value).toUpperCase() : '';
   }
 
-
-
-  // private setupValueChanges() {
-  //   debugger;
-  //   this.inputControl.valueChanges.subscribe(value => {
-  //     if (value !== null) {
-  //       const upperValue = value.toUpperCase();
-  //       if (this.validateValue(upperValue)) {
-  //         this.onChange(upperValue);
-  //       }
-  //     }
-  //   });
-  // }
-
-  private setupValueChanges() {
-    this.inputControl.valueChanges.subscribe(value => {
+  private async setupValueChanges() {
+    this.inputControl.valueChanges.subscribe(async value => {
       if (value !== null) {
         const upperValue = value.toUpperCase();
         if (upperValue !== value) {
           this.inputControl.setValue(upperValue, { emitEvent: false });
         }
-        if (this.validateValue(upperValue)) {
+        if (await this.validateValue(upperValue)) {
           console.log('Editor emitting code change:', upperValue);
-          this.onChange(upperValue);  // This triggers the form control change
+          this.onChanged(upperValue);
         }
       }
     });
   }
 
-  private validateValue(value: string): boolean {
+  private async validateValue(value: string): Promise<boolean> {
     this.hasError = false;
     this.errorMessage = '';
 
@@ -135,44 +118,29 @@ export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit,
     if (this.config?.existingValues?.includes(value)) {
       this.hasError = true;
       this.errorMessage = 'This code already exists';
-      this.dialogService.showErrorDialog({
-        title: 'Duplicate Code',
-        message: `The code "${value}" already exists. Please enter a different code.`,
-        type: DialogType.Warning
-      });
+      await this.dialogService.warning(
+        `The code "${value}" already exists. Please enter a different code.`,
+        'Duplicate Code'
+      );
       return false;
     }
 
     return true;
   }
 
-  // // ControlValueAccessor methods
-  // writeValue(value: string): void {
-  //   this.inputControl.setValue(value, { emitEvent: false });
-  // }
-
-  // registerOnChange(fn: any): void {
-  //   this.onChange = fn;
-  // }
-
-
-  // These methods are already in your component at the bottom
+  // ControlValueAccessor interface implementation
   writeValue(value: string): void {
     console.log('AirportCodeEditor writeValue:', value);
     this.inputControl.setValue(value, { emitEvent: false });
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: string) => void): void {
     console.log('AirportCodeEditor registerOnChange');
-    this.onChange = fn;
+    this.onChanged = fn;
   }
 
-  registerOnTouched(fn: any): void {
-    this.onTouch = fn;
-  }
-
-  onBlur(): void {
-    this.onTouch();
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
   }
 
   setDisabledState(isDisabled: boolean): void {

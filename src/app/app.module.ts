@@ -42,11 +42,13 @@ import { IxtAccordianModule } from 'src/components/ixt-accordian/accordian.modul
 import { IxtMapModule } from 'src/components/ixt-map/ixt-map.module';
 import { RouterModule } from '@angular/router';
 import { IxtDialogModule } from 'src/components/ixt-dialog/ixt-dialog.module';
+import { LunchFormComponent } from './lunch-form.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LunchFormComponent
   ],
   imports: [
     RouterModule.forRoot([]),  // No routes defined, but RouterModule is configured

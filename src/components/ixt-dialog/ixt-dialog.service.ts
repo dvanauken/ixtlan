@@ -1,20 +1,7 @@
-import {
-  Injectable,
-  ComponentRef,
-  ApplicationRef,
-  ComponentFactoryResolver,
-  Injector,
-  EmbeddedViewRef,
-  Type
-} from '@angular/core';
+import { Injectable, ComponentRef, ApplicationRef, ComponentFactoryResolver, Injector, EmbeddedViewRef, Type, TemplateRef } from '@angular/core';
 import { IxtDialogComponent } from './ixt-dialog.component';
-import {
-  IxtDialogConfig,
-  IxtDialogResult,
-  DialogType,
-} from './ixt-dialog.interfaces';
+import { IxtDialogConfig, IxtDialogResult, DialogType, IxtDialogField } from './ixt-dialog.interfaces';
 import { Observable, Subject } from 'rxjs';
-import { DynamicDialogContentComponent } from './dynamic-dialog-content.component';
 
 @Injectable({ providedIn: 'root' })
 export class IxtDialogService {
@@ -24,99 +11,163 @@ export class IxtDialogService {
     private componentFactoryResolver: ComponentFactoryResolver,
     private appRef: ApplicationRef,
     private injector: Injector
-  ) {}
+  ) { }
 
-  // Factory Methods
-  showSuccessDialog(configOverrides?: Partial<IxtDialogConfig>): IxtDialogResult {
-    const defaultConfig: IxtDialogConfig = {
-      title: 'Success',
-      message: 'Operation completed successfully.',
-      variant: 'success',
-      buttons: [{ text: 'OK', variant: 'primary', close: true }]
-    };
-    return this.open({ ...defaultConfig, ...configOverrides });
-  }
-
-  showErrorDialog(configOverrides?: Partial<IxtDialogConfig>): IxtDialogResult {
-    const defaultConfig: IxtDialogConfig = {
-      title: 'Error',
-      message: 'An error occurred.',
-      variant: 'danger',
-      buttons: [{ text: 'OK', variant: 'primary', close: true }]
-    };
-    return this.open({ ...defaultConfig, ...configOverrides });
-  }
-
-  showInfoDialog(configOverrides?: Partial<IxtDialogConfig>): IxtDialogResult {
-    const defaultConfig: IxtDialogConfig = {
-      title: 'Information',
-      message: 'This is an informational message.',
+  // Core dialog methods
+  alert(message: string, title: string = 'Alert'): Observable<void> {
+    return this.openDialog({
+      title,
+      content: message,
       variant: 'info',
       buttons: [{ text: 'OK', variant: 'primary', close: true }]
-    };
-    return this.open({ ...defaultConfig, ...configOverrides });
+    });
   }
 
-  showConfirmDialog(configOverrides?: Partial<IxtDialogConfig>): Observable<IxtDialogResult> {
-    const result = new Subject<IxtDialogResult>();
-    const defaultConfig: IxtDialogConfig = {
-      title: 'Confirm',
-      message: 'Are you sure?',
+  confirm(message: string, title: string = 'Confirm'): Observable<boolean> {
+    const subject = new Subject<boolean>();
+
+    this.openDialog({
+      title,
+      content: message,
       variant: 'warning',
       buttons: [
         {
           text: 'Cancel',
           variant: 'light',
-          close: true,
-          action: () => {
-            result.next({ confirmed: false });
-            result.complete();
-          }
-        },
-        {
-          text: 'Confirm',
-          variant: 'primary',
-          close: true,
-          action: () => {
-            result.next({ confirmed: true });
-            result.complete();
-          }
-        }
-      ]
-    };
-    this.open({ ...defaultConfig, ...configOverrides });
-    return result.asObservable();
-  }
-
-  showDynamicDialog(configOverrides?: Partial<IxtDialogConfig>): Observable<IxtDialogResult> {
-    const result = new Subject<IxtDialogResult>();
-    const defaultConfig: IxtDialogConfig = {
-      title: 'Dynamic Dialog',
-      content: DynamicDialogContentComponent,
-      contentContext: { message: 'Dynamic content message 11' },
-      variant: 'default',
-      buttons: [
-        {
-          text: 'Close',
-          variant: 'light',
+          action: () => subject.next(false),
           close: true
         },
         {
-          text: 'Confirm',
+          text: 'OK',
           variant: 'primary',
-          close: true,
-          action: () => {
-            alert('Action confirmed!');
-          }
+          action: () => subject.next(true),
+          close: true
         }
       ]
-    };
-    this.open({ ...defaultConfig, ...configOverrides });
-    return result.asObservable();
+    }).subscribe(() => subject.complete());
+
+    return subject.asObservable();
   }
 
-  // Utility: Open a dialog
-  private open(config: IxtDialogConfig): IxtDialogResult {
+  // Form dialog helper
+  openForm<T = any>(config: {
+    title: string;
+    fields: IxtDialogField[];
+    submitLabel?: string;
+    cancelLabel?: string;
+  }): Observable<T | null> {
+    const subject = new Subject<T | null>();
+
+    this.openDialog({
+      title: config.title,
+      fields: config.fields,
+      variant: 'default',
+      buttons: [
+        {
+          text: config.cancelLabel || 'Cancel',
+          variant: 'light',
+          action: () => subject.next(null),
+          close: true
+        },
+        {
+          text: config.submitLabel || 'Submit',
+          variant: 'primary',
+          action: (formData) => subject.next(formData as T),
+          close: true
+        }
+      ]
+    }).subscribe(() => subject.complete());
+
+    return subject.asObservable();
+  }
+
+  // Status notifications
+  success(message: string, title: string = 'Success'): Observable<void> {
+    return this.openDialog({
+      title,
+      content: message,
+      variant: 'success',
+      buttons: [{ text: 'OK', variant: 'primary', close: true }]
+    });
+  }
+
+  error(message: string, title: string = 'Error'): Observable<void> {
+    return this.openDialog({
+      title,
+      content: message,
+      variant: 'danger',
+      buttons: [{ text: 'OK', variant: 'primary', close: true }]
+    });
+  }
+
+  info(message: string, title: string = 'Information'): Observable<void> {
+    return this.openDialog({
+      title,
+      content: message,
+      variant: 'info',
+      buttons: [{ text: 'OK', variant: 'primary', close: true }]
+    });
+  }
+
+  warning(message: string, title: string = 'Warning'): Observable<void> {
+    return this.openDialog({
+      title,
+      content: message,
+      variant: 'warning',
+      buttons: [{ text: 'OK', variant: 'primary', close: true }]
+    });
+  }
+
+  // Advanced dialog methods
+  custom(config: IxtDialogConfig): Observable<any> {
+    return this.openDialog(config);
+  }
+
+  // Component dialog helper
+  component<T>(
+    component: Type<T>,
+    context?: any,
+    config: Partial<IxtDialogConfig> = {}
+  ): Observable<any> {
+    return this.openDialog({
+      ...config,
+      content: component,
+      contentContext: context
+    });
+  }
+
+  // // Private helper for opening dialogs
+  // private openDialog(config: IxtDialogConfig): Observable<any> {
+  //   const subject = new Subject<any>();
+
+  //   // Close any existing dialog
+  //   this.closeExisting();
+
+  //   const componentRef = this.componentFactoryResolver
+  //     .resolveComponentFactory(IxtDialogComponent)
+  //     .create(this.injector);
+
+  //   componentRef.instance.config = config;
+  //   componentRef.instance.isOpen = true;
+
+  //   // Handle dialog closing
+  //   componentRef.instance.closed.subscribe(() => {
+  //     subject.complete();
+  //     this.close();
+  //   });
+
+  //   this.appRef.attachView(componentRef.hostView);
+  //   const domElem = (componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0];
+  //   document.body.appendChild(domElem);
+
+  //   this.dialogComponentRef = componentRef;
+
+  //   return subject.asObservable();
+  // }
+
+  private openDialog(config: IxtDialogConfig): Observable<any> {
+    const subject = new Subject<any>();
+  
     this.closeExisting();
   
     const componentRef = this.componentFactoryResolver
@@ -126,7 +177,11 @@ export class IxtDialogService {
     componentRef.instance.config = config;
     componentRef.instance.isOpen = true;
   
-    componentRef.instance.closed.subscribe(() => {
+    // Handle dialog closing and result
+    componentRef.instance.closed.subscribe((result) => {
+      console.log('Dialog closed with result:', result); // Debug log
+      subject.next(result);  // Emit the result
+      subject.complete();
       this.close();
     });
   
@@ -136,13 +191,9 @@ export class IxtDialogService {
   
     this.dialogComponentRef = componentRef;
   
-    return {
-      confirmed: false, // Default; to be overridden by callback
-      close: () => this.close()
-    };
+    return subject.asObservable();
   }
 
-  // Utility: Close the current dialog
   private close(): void {
     if (this.dialogComponentRef) {
       this.appRef.detachView(this.dialogComponentRef.hostView);
@@ -151,10 +202,53 @@ export class IxtDialogService {
     }
   }
 
-  // Utility: Close existing dialog if open
   private closeExisting(): void {
     if (this.dialogComponentRef) {
       this.close();
     }
   }
+
+
+
+  template<T>(title: string, templateRef: TemplateRef<any>, config: Partial<IxtDialogConfig> = {}): Observable<T | null> {
+    const subject = new Subject<T | null>();
+  
+    const buttons = config.buttons?.map(button => ({
+      ...button,
+      action: (args: any) => {
+        const result = button.action ? button.action(args) : null;
+        subject.next(result as T);
+        subject.complete(); // Complete after emitting the value
+        if (button.close) {
+          this.close();
+        }
+        return result;
+      }
+    })) || [
+      // Default button if none provided
+      {
+        text: 'Close',
+        variant: 'light',
+        action: () => {
+          subject.next(null);
+          subject.complete();
+          this.close();
+          return null;
+        }
+      }
+    ];
+  
+    const dialogConfig = {
+      title,
+      content: templateRef,
+      contentContext: { data: {} },
+      buttons,
+      ...config
+    };
+  
+    this.openDialog(dialogConfig);
+  
+    return subject.asObservable();
+  }
+
 }

@@ -24,6 +24,9 @@ import { IxtMenuProvider } from './menu/ixt-menu.provider';
 import { AccordianDataService } from './accordion/accordion.data';
 import { DynamicDialogContentComponent } from 'src/components/ixt-dialog/dynamic-dialog-content.component';
 import { IxtDialogService } from 'src/components/ixt-dialog/ixt-dialog.service';
+import { firstValueFrom } from 'rxjs';
+import { NgForm } from '@angular/forms';
+import { LunchFormComponent } from './lunch-form.component';
 
 
 @Component({
@@ -48,197 +51,70 @@ import { IxtDialogService } from 'src/components/ixt-dialog/ixt-dialog.service';
   ]
 })
 export class AppComponent implements AfterViewInit {
-  [x: string]: any;
-  @ViewChild('customDialogTemplate') customDialogTemplate!: TemplateRef<any>;
-
-  sampleInput: string = '';
-
-  formData = this.employeeFormProvider.getCurrentForm();
-
-
-
-  matrixTableData = this.matrixProvider.getTableData();
-  matrixTreeData = this.matrixProvider.getTreeData();
-  matrixTableTreeData = this.matrixProvider.getTableTreeData();
+  // Properties for other components
   matrixAirportData: any[] = [];
-  matrixColumnConfigs = this.matrixProvider.getAirportColumnConfigs();
   accordionPanels = this.accordianDataService.getAccordianPanels();
+  @ViewChild(LunchFormComponent) lunchForm!: LunchFormComponent;
+
 
   constructor(
-    private dialogService: IxtDialogService,
-    public tableProvider: IxtTableProvider,
-    public tableHandler: IxtTableHandler,
-    public layerProvider: IxtLayerProvider,
-    public layerManager: IxtLayerManager,
+    private dialog: IxtDialogService,
     public treeProvider: IxtTreeProvider,
     public treeHandler: IxtTreeHandler,
-    public expressionProvider: IxtExpressionProvider,
-    public expressionHelper: IxtExpressionHelper,
-    public autocompleteProvider: IxtAutocompleteProvider,
-    public autocompleteHandler: IxtAutocompleteHandler,
-    public employeeFormProvider: IxtEmployeeFormProvider,
-    public employeeFormHandler: IxtEmployeeFormHandler,
-    public matrixProvider: IxtMatrixProvider,
+    public layerProvider: IxtLayerProvider,
+    public layerManager: IxtLayerManager,
     public menuProvider: IxtMenuProvider,
     private accordianDataService: AccordianDataService
-  ) { }
-
-  ngOnInit() {
-    this.matrixProvider.getAirportData().subscribe(data => {
-      this.matrixAirportData = data;
-    });
-  }
+  ) {}
 
   ngAfterViewInit() {
+    console.log('View init - Lunch form component:', this.lunchForm); // Debug point 3
   }
 
-  select(event: Event): void {
-    console.log('Selected:', event);
-  }
-
-  highlight(event: Event): void {
-    console.log('Highlighted:', event);
-  }
-
-
+  // Event handlers for other components
   onSearch(searchTerm: string) {
-    // Handle the search term
     console.log('Search term:', searchTerm);
   }
 
-
-  showSuccessDialog() {
-    this.dialogService.showSuccessDialog({
-      title: 'Success Dialog',
-      content: 'Your operation was successful!',
-      buttons: [
-        {
-          text: 'Close',
-          variant: 'primary',
-          close: true, // Close the dialog when clicked
-          action: () => {
-            console.log('Close button clicked!');
-          }
-        },
-        {
-          text: 'More Info',
-          variant: 'secondary',
-          close: false, // Keep the dialog open when clicked
-          action: () => {
-            alert('Here is more information about the success.');
-          }
-        }
-      ]
-    });
+  // Dialog examples using improved service
+  async showSuccessDialog() {
+    await this.dialog.success('Your operation was successful!', 'Success Dialog');
   }
 
-  showErrorDialog() {
-    this.dialogService.showErrorDialog({
-      title: 'Error Dialog',
-      content: 'Something went wrong. Please try again.'
-    });
+  async showErrorDialog() {
+    await this.dialog.error('Something went wrong. Please try again.');
   }
 
-  showInfoDialog() {
-    this.dialogService.showInfoDialog({
-      title: 'Information Dialog',
-      content: 'This is an informational dialog with some helpful text.'
-    });
+  async showInfoDialog() {
+    await this.dialog.info('This is an informational dialog with some helpful text.');
   }
 
-  showConfirmDialog() {
-    this.dialogService.showConfirmDialog({
-      title: 'Confirmation Dialog',
-      content: 'Are you sure you want to perform this action?'
-    }).subscribe(result => {
-      if (result.confirmed) {
-        alert('User confirmed the action.');
-      } else {
-        alert('User canceled the action.');
-      }
-    });
+  async showConfirmDialog() {
+    const confirmed = await firstValueFrom(
+      this.dialog.confirm('Are you sure you want to perform this action?')
+    );
+    
+    if (confirmed) {
+      await this.dialog.success('Action confirmed!');
+    }
   }
 
-  // Dynamic Component Dialog
-  showDynamicComponentDialog() {
-    this.dialogService.showDynamicDialog({
-      title: 'Title Dynamic Dialog',
-      content: DynamicDialogContentComponent,
-      contentContext: { message: 'This is a dynamic message passed to the component.' }
-    }).subscribe(result => {
-      if (result.confirmed) {
-        alert('Dynamic dialog action confirmed.');
-      } else {
-        alert('Dynamic dialog action canceled.');
-      }
-    });
+  async openLunchOrderDialog() {
+    console.log('Starting openLunchOrderDialog');  // Debug point 1
+    if (!this.lunchForm) {
+      console.error('Lunch form component not found');
+      return;
+    }
+  
+    try {
+      console.log('About to call showLunchOrderDialog');  // Debug point 2
+      const result = await this.lunchForm.showLunchOrderDialog();
+      console.log('Lunch order result:', result);
+      console.log('Lunch order result:\n', JSON.stringify(result, null, 2));
+    } catch (error) {
+      console.error('Error in lunch order:', error);
+    }
+    console.log("test");
   }
-
-
-
-
-
-
-
-
-  // Template-based dialog
-  showCustomTemplateDialogOriginal() {
-    this.dialogService.showDynamicDialog({
-      title: 'Custom Template Dialog 2222',
-      content: this.customDialogTemplate,
-      contentContext: { data: { message: 'Hello from the template!', input: 'xxx' } }, // Wrap in "data"
-      buttons: [
-        {
-          text: 'Cancel',
-          variant: 'light',
-          close: true
-        },
-        {
-          text: 'Save',
-          variant: 'primary',
-          close: false,
-          action: () => {
-            alert('Template dialog saved!');
-          }
-        }
-      ]
-    }).subscribe(result => {
-      if (result && result.data) {
-        alert('Template dialog saved with input: ' + result.data.input);
-      } else {
-        alert('Template dialog canceled.');
-      }
-    });
-  }
-
-
-  // Template-based dialog
-  showCustomTemplateDialog() {
-    this.dialogService.showDynamicDialog({
-      title: 'Custom Form Dialog',
-      fields: [
-        { name: 'inputField', label: 'Input Field', type: 'text', value: 'Default Text' },
-        { name: 'dropdown', label: 'Select Option', type: 'select', options: ['Option 1', 'Option 2'], value: 'Option 1' }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          variant: 'light',
-          close: true
-        },
-        {
-          text: 'Save',
-          variant: 'primary',
-          close: false,
-          action: (formData) => {
-            alert('Form Data: ' + JSON.stringify(formData));
-          }
-        }
-      ]
-    });
-  }
-
-
-
 
 }
