@@ -1,12 +1,4 @@
-// app.component.ts
-import { Component, ViewChild, AfterViewInit, TemplateRef } from '@angular/core';
-import { Layer } from '../components/ixt-layer-manager/ixt-layer-manager.component';
-import { TreeNode } from '../components/ixt-tree/ixt-tree.component';
-import { AccordionPanel } from '../components/ixt-accordian/ixt-accordian.component';
-
-import { Expression, ExpressionGroup } from '../components/ixt-expression-builder/ixt-expression-builder.interfaces';
-import { AutocompleteOption } from '../components/ixt-auto-complete/ixt-auto-complete.component';
-
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { IxtTableProvider } from './table/ixt-table.provider';
 import { IxtTableHandler } from './table/ixt-table.handler';
 import { IxtLayerProvider } from './layer/ixt-layer.provider';
@@ -22,12 +14,10 @@ import { IxtEmployeeFormHandler } from './form/ixt-employee-form.handler';
 import { IxtMatrixProvider } from './matrix/ixt-matrix.provider';
 import { IxtMenuProvider } from './menu/ixt-menu.provider';
 import { AccordianDataService } from './accordion/accordion.data';
-import { DynamicDialogContentComponent } from 'src/components/ixt-dialog/dynamic-dialog-content.component';
 import { IxtDialogService } from 'src/components/ixt-dialog/ixt-dialog.service';
 import { firstValueFrom } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { LunchFormComponent } from './lunch-form.component';
-
 
 @Component({
   selector: 'app-root',
@@ -51,32 +41,60 @@ import { LunchFormComponent } from './lunch-form.component';
   ]
 })
 export class AppComponent implements AfterViewInit {
-  // Properties for other components
-  matrixAirportData: any[] = [];
-  accordionPanels = this.accordianDataService.getAccordianPanels();
-  @ViewChild(LunchFormComponent) lunchForm!: LunchFormComponent;
+  @ViewChild(LunchFormComponent, { static: true }) lunchForm!: LunchFormComponent;
 
+
+
+  formData = this.employeeFormProvider.getCurrentForm();
+  matrixTableData = this.matrixProvider.getTableData();
+  matrixTreeData = this.matrixProvider.getTreeData();
+  matrixTableTreeData = this.matrixProvider.getTableTreeData();
+  matrixAirportData: any[] = [];
+  matrixColumnConfigs = this.matrixProvider.getAirportColumnConfigs();
+  accordionPanels = this.accordianDataService.getAccordianPanels();
 
   constructor(
     private dialog: IxtDialogService,
-    public treeProvider: IxtTreeProvider,
-    public treeHandler: IxtTreeHandler,
+    public tableProvider: IxtTableProvider,
+    public tableHandler: IxtTableHandler,
     public layerProvider: IxtLayerProvider,
     public layerManager: IxtLayerManager,
+    public treeProvider: IxtTreeProvider,
+    public treeHandler: IxtTreeHandler,
+    public expressionProvider: IxtExpressionProvider,
+    public expressionHelper: IxtExpressionHelper,
+    public autocompleteProvider: IxtAutocompleteProvider,
+    public autocompleteHandler: IxtAutocompleteHandler,
+    public employeeFormProvider: IxtEmployeeFormProvider,
+    public employeeFormHandler: IxtEmployeeFormHandler,
+    public matrixProvider: IxtMatrixProvider,
     public menuProvider: IxtMenuProvider,
     private accordianDataService: AccordianDataService
-  ) {}
+  ) { }
 
+  ngOnInit() {
+    this.matrixProvider.getAirportData().subscribe(data => {
+      this.matrixAirportData = data;
+    });
+  }
+  
   ngAfterViewInit() {
-    console.log('View init - Lunch form component:', this.lunchForm); // Debug point 3
   }
 
-  // Event handlers for other components
+  select(event: Event): void {
+    console.log('Selected:', event);
+  }
+
+  highlight(event: Event): void {
+    console.log('Highlighted:', event);
+  }
+
   onSearch(searchTerm: string) {
     console.log('Search term:', searchTerm);
   }
 
-  // Dialog examples using improved service
+
+  // Dialog examples using improved service ------------------------------------------------------
   async showSuccessDialog() {
     await this.dialog.success('Your operation was successful!', 'Success Dialog');
   }
@@ -99,24 +117,6 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  // async openLunchOrderDialog() {
-  //   console.log('Starting openLunchOrderDialog');  // Debug point 1
-  //   if (!this.lunchForm) {
-  //     console.error('Lunch form component not found');
-  //     return;
-  //   }
-  
-  //   try {
-  //     console.log('About to call showLunchOrderDialog');  // Debug point 2
-  //     const result = await this.lunchForm.showLunchOrderDialog();
-  //     console.log('Lunch order result:', result);
-  //     console.log('Lunch order result:\n', JSON.stringify(result, null, 2));
-  //   } catch (error) {
-  //     console.error('Error in lunch order:', error);
-  //   }
-  //   console.log("test");
-  // }
-  
   async openLunchOrderDialog() {
     console.log('Starting openLunchOrderDialog'); // Debug point 1
   
@@ -149,5 +149,4 @@ export class AppComponent implements AfterViewInit {
   
     console.log('Test'); // Ensure this runs after everything
   }
-  
 }

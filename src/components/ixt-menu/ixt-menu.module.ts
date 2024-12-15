@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { RouterModule } from '@angular/router';
 import { IxtMenuComponent } from './ixt-menu.component';
 
@@ -12,7 +11,6 @@ import { IxtMenuComponent } from './ixt-menu.component';
   imports: [
     CommonModule,
     FormsModule,
-    FlexLayoutModule,
     RouterModule
   ],
   exports: [

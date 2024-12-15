@@ -44,7 +44,6 @@ import { RouterModule } from '@angular/router';
 import { IxtDialogModule } from 'src/components/ixt-dialog/ixt-dialog.module';
 import { LunchFormComponent } from './lunch-form.component';
 
-
 @NgModule({
   declarations: [
     AppComponent,
