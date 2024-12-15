@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { baseThemeColors } from '../theme/theme.colors';
+import { baseThemeColors, unitedThemeColors } from '../theme/theme.colors';
 import { ThemeVariant, ThemeColors } from '../theme/theme.types';
 
 interface MenuItem {
@@ -27,8 +27,8 @@ export class IxtMenuComponent implements OnInit {
   @Input() searchPlaceholder: string = 'Search...';
   
   // Theme inputs
-  @Input() variant: ThemeVariant = 'primary';
-  @Input() theme: ThemeColors = baseThemeColors;
+  @Input() variant: ThemeVariant = 'tertiary';
+  @Input() theme: ThemeColors = unitedThemeColors;
   
   @Output() searchSubmitted = new EventEmitter<string>();
 

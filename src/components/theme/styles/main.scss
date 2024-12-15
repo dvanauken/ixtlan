@@ -1,0 +1,21 @@
+/**
+ * File: main.scss
+ * Location: src/components/theme/styles/main.scss
+ * Purpose: Main entry point for all styles
+ */
+
+// Foundation
+@import 'theme-colors';    // Theme color definitions
+@import 'variables';       // Global variables and tokens
+@import 'reset';          // CSS reset and normalization
+
+// Core
+@import 'base';           // Base element styles
+
+// Component Categories
+@import 'components';     // Core components (button, accordion, panel)
+@import 'navigation';     // Navigation components (menu, breadcrumb)
+@import 'form';          // Form input components
+@import 'data-display';  // Data presentation components
+@import 'layout';        // Layout components
+@import 'special';       // Special purpose components

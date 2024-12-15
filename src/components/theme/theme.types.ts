@@ -2,6 +2,7 @@
 export type ThemeVariant = 
   | 'primary'    // Main brand color, key actions
   | 'secondary'  // Supporting color
+  | 'tertiary'
   | 'success'    // Positive actions/states
   | 'danger'     // Errors, destructive actions
   | 'warning'    // Caution states

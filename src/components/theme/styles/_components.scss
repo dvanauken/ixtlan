@@ -1,0 +1,914 @@
+/**
+ * File: _components.scss
+ * Location: src/components/theme/styles/_components.scss
+ * Purpose: Core component styles
+ */
+
+//button begin ------------------------------------------------------------------
+ixt-button {
+    display: inline-block;
+  
+    button {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: map-get($spacers, 2);
+      min-width: 64px;
+      padding: map-get($spacers, 2) map-get($spacers, 3);
+      border: none;
+      border-radius: $border-radius;
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      font-weight: 500;
+      line-height: 1.75;
+      letter-spacing: 0.02857em;
+      transition: $transition-base;
+      cursor: pointer;
+  
+      &:hover:not(:disabled) {
+        background-color: var(--color-primary-hover);
+      }
+  
+      &:active:not(:disabled) {
+        background-color: var(--color-primary-active);
+      }
+  
+      &:disabled {
+        background-color: var(--color-light);
+        color: var(--color-dark);
+        cursor: not-allowed;
+        opacity: 0.65;
+      }
+  
+      .ixt-button__spinner {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+  
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+  
+      .ixt-button__content {
+        &.invisible {
+          visibility: hidden;
+        }
+      }
+    }
+  }
+  //button end --------------------------------------------------------------------
+  
+  //accordion begin --------------------------------------------------------------
+  ixt-accordion {
+    display: block;
+    border: $border-width solid var(--color-light);
+    border-radius: $border-radius;
+    overflow: hidden;
+  
+    .accordion-panel {
+      border-bottom: $border-width solid var(--color-light);
+  
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: map-get($spacers, 3);
+      background-color: var(--color-default);
+      cursor: pointer;
+      transition: $transition-base;
+  
+      &:hover {
+        background-color: var(--color-light);
+      }
+  
+      .panel-title {
+        font-weight: 500;
+        color: var(--color-dark);
+      }
+  
+      .material-icons {
+        transition: transform 0.2s ease;
+        color: var(--color-dark);
+  
+        &.open {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  
+    .panel-content {
+      padding: map-get($spacers, 3);
+      background-color: var(--color-default);
+      color: var(--color-dark);
+      overflow: hidden;
+    }
+  }
+  //accordion end ----------------------------------------------------------------
+  
+  //panel begin -----------------------------------------------------------------
+  ixt-panel {
+    display: block;
+    background-color: var(--color-default);
+    
+    &.bordered {
+      border: $border-width solid var(--color-light);
+      border-radius: $border-radius;
+    }
+  
+    &.elevated {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  
+    .panel-title {
+      padding: map-get($spacers, 3);
+      font-size: 1.125rem;
+      font-weight: 500;
+      color: var(--color-dark);
+      border-bottom: $border-width solid var(--color-light);
+    }
+  
+    .panel-content {
+      &.with-padding {
+        padding: map-get($spacers, 3);
+      }
+    }
+  
+    .panel-caption {
+      padding: map-get($spacers, 2) map-get($spacers, 3);
+      font-size: 0.875rem;
+      color: var(--color-secondary);
+      border-top: $border-width solid var(--color-light);
+    }
+  }
+  //panel end -------------------------------------------------------------------
+
+  /**
+ * File: _navigation.scss
+ * Location: src/components/theme/styles/_navigation.scss
+ * Purpose: Navigation component styles
+ */
+
+//menu begin -------------------------------------------------------------------
+ixt-menu {
+    display: block;
+  
+    .navbar {
+      display: flex;
+      align-items: center;
+      padding: map-get($spacers, 3);
+      background-color: var(--color-dark);
+      color: var(--color-dark-text);
+    }
+  
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: map-get($spacers, 2);
+      text-decoration: none;
+      color: inherit;
+  
+      .brand-logo {
+        height: 32px;
+        width: auto;
+      }
+  
+      .brand-name {
+        font-size: 1.25rem;
+        font-weight: 500;
+      }
+    }
+  
+    .nav-items {
+      display: flex;
+      align-items: center;
+      gap: map-get($spacers, 4);
+      margin: 0 map-get($spacers, 4);
+    }
+  
+    .nav-link {
+      color: var(--color-dark-text);
+      text-decoration: none;
+      padding: map-get($spacers, 2);
+      transition: $transition-base;
+      position: relative;
+  
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: var(--color-primary);
+        transform: scaleX(0);
+        transition: transform 0.2s ease;
+      }
+  
+      &:hover, &.active {
+        color: var(--color-primary);
+  
+        &::after {
+          transform: scaleX(1);
+        }
+      }
+    }
+  
+    .search-container {
+      margin-left: auto;
+      
+      .search-form {
+        display: flex;
+        align-items: center;
+      }
+  
+      .input-group {
+        display: flex;
+        gap: map-get($spacers, 2);
+      }
+  
+      input {
+        padding: map-get($spacers, 2);
+        border: 1px solid var(--color-light);
+        border-radius: $border-radius;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--color-dark-text);
+  
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.7);
+        }
+  
+        &:focus {
+          outline: none;
+          background-color: rgba(255, 255, 255, 0.15);
+        }
+      }
+  
+      button {
+        padding: map-get($spacers, 2) map-get($spacers, 3);
+        background-color: var(--color-primary);
+        color: var(--color-primary-text);
+        border: none;
+        border-radius: $border-radius;
+        cursor: pointer;
+        transition: $transition-base;
+  
+        &:hover {
+          background-color: var(--color-primary-hover);
+        }
+      }
+    }
+  }
+  //menu end ---------------------------------------------------------------------
+  
+  //breadcrumb begin ------------------------------------------------------------
+  ixt-breadcrumb {
+    display: block;
+  
+    nav {
+      padding: map-get($spacers, 3) 0;
+    }
+  
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      flex-wrap: wrap;
+    }
+  
+    .breadcrumb-item {
+      display: flex;
+      align-items: center;
+      color: var(--color-dark);
+  
+      a {
+        color: var(--color-primary);
+        text-decoration: none;
+        transition: $transition-base;
+  
+        &:hover {
+          color: var(--color-primary-hover);
+          text-decoration: underline;
+        }
+      }
+  
+      &.active {
+        color: var(--color-secondary);
+      }
+  
+      // Add separator between items
+      &:not(:first-child) {
+        &::before {
+          content: 'chevron_right'; // Material Icons font
+          font-family: 'Material Icons';
+          padding: 0 map-get($spacers, 2);
+          color: var(--color-secondary);
+          font-size: 1.25rem;
+          line-height: 1;
+        }
+      }
+    }
+  }
+  //breadcrumb end --------------------------------------------------------------
+
+  /**
+ * File: _form-components.scss
+ * Location: src/components/theme/styles/_form-components.scss
+ * Purpose: Form component styles using Grid and Flex
+ */
+
+//autocomplete begin ----------------------------------------------------------
+ixt-autocomplete {
+    display: block;
+  
+    .ixt-autocomplete-container {
+      display: grid;
+      gap: map-get($spacers, 1);
+    }
+  
+    .ixt-autocomplete-input {
+      width: 100%;
+      padding: map-get($spacers, 2);
+      border: $border-width solid var(--color-light);
+      border-radius: $border-radius;
+      background-color: var(--color-default);
+      color: var(--color-dark);
+      transition: $transition-base;
+  
+      &:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 1px var(--color-primary);
+      }
+    }
+  
+    .ixt-autocomplete-dropdown {
+      display: grid;
+      gap: map-get($spacers, 1);
+      padding: map-get($spacers, 1);
+      background-color: var(--color-default);
+      border: $border-width solid var(--color-light);
+      border-radius: $border-radius;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  
+    .ixt-autocomplete-option {
+      display: flex;
+      align-items: center;
+      padding: map-get($spacers, 2);
+      cursor: pointer;
+      transition: $transition-base;
+  
+      &:hover {
+        background-color: var(--color-light);
+      }
+    }
+  }
+  //autocomplete end ------------------------------------------------------------
+  
+  //select begin ---------------------------------------------------------------
+  ixt-select {
+    display: block;
+  
+    .ixt-select-container {
+      display: grid;
+      gap: map-get($spacers, 1);
+    }
+  
+    .ixt-select-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: map-get($spacers, 2);
+      border: $border-width solid var(--color-light);
+      border-radius: $border-radius;
+      background-color: var(--color-default);
+      cursor: pointer;
+  
+      .material-icons {
+        font-size: 1.25rem;
+      }
+    }
+  
+    .ixt-select-dropdown {
+      display: grid;
+      gap: map-get($spacers, 1);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  
+    .ixt-select-option {
+      display: flex;
+      align-items: center;
+      padding: map-get($spacers, 2);
+      cursor: pointer;
+      transition: $transition-base;
+  
+      &:hover {
+        background-color: var(--color-light);
+      }
+  
+      &.selected {
+        background-color: var(--color-primary);
+        color: var(--color-primary-text);
+      }
+    }
+  }
+  //select end -----------------------------------------------------------------
+  
+  //text begin -----------------------------------------------------------------
+  ixt-text {
+    display: block;
+  
+    .ixt-text-container {
+      display: grid;
+      gap: map-get($spacers, 1);
+    }
+  
+    .ixt-text-input {
+      width: 100%;
+      padding: map-get($spacers, 2);
+      border: $border-width solid var(--color-light);
+      border-radius: $border-radius;
+      background-color: var(--color-default);
+      color: var(--color-dark);
+      transition: $transition-base;
+  
+      &:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 1px var(--color-primary);
+      }
+    }
+  }
+  //text end -------------------------------------------------------------------
+  
+  //text-editor begin ----------------------------------------------------------
+  ixt-text-editor {
+    display: block;
+  
+    .ixt-editor-container {
+      display: grid;
+      gap: map-get($spacers, 2);
+      border: $border-width solid var(--color-light);
+      border-radius: $border-radius);
+    }
+  
+    .ixt-editor-toolbar {
+      display: flex;
+      gap: map-get($spacers, 2);
+      padding: map-get($spacers, 2);
+      border-bottom: $border-width solid var(--color-light);
+  
+      button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: map-get($spacers, 1);
+        border: none;
+        background: none;
+        color: var(--color-dark);
+        cursor: pointer;
+        border-radius: $border-radius;
+        transition: $transition-base;
+  
+        &:hover {
+          background-color: var(--color-light);
+        }
+  
+        &.active {
+          background-color: var(--color-primary);
+          color: var(--color-primary-text);
+        }
+  
+        .material-icons {
+          font-size: 1.25rem;
+        }
+      }
+    }
+  
+    .ixt-editor-content {
+      display: block;
+      min-height: 200px;
+      padding: map-get($spacers, 2);
+      outline: none;
+    }
+  }
+  //text-editor end ------------------------------------------------------------
+
+  /**
+ * File: _data-display.scss
+ * Location: src/components/theme/styles/_data-display.scss
+ * Purpose: Styles for data presentation components using Grid and Flex
+ */
+
+//table begin -----------------------------------------------------------------
+ixt-table {
+    display: block;
+  
+    .table-container {
+      display: grid;
+      gap: map-get($spacers, 3);
+    }
+  
+    .toolbar {
+      display: flex;
+      gap: map-get($spacers, 2);
+      padding: map-get($spacers, 2);
+      background-color: var(--color-light);
+      border-radius: $border-radius;
+    }
+  
+    table {
+      display: table;
+      width: 100%;
+      border-collapse: collapse;
+    }
+  
+    thead {
+      background-color: var(--color-light);
+  
+      tr {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      }
+    }
+  
+    tbody {
+      tr {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        border-bottom: $border-width solid var(--color-light);
+        transition: $transition-base;
+  
+        &:hover {
+          background-color: var(--color-light);
+        }
+  
+        &.selected {
+          background-color: rgba(var(--color-primary), 0.1);
+        }
+      }
+    }
+  
+    th, td {
+      display: flex;
+      align-items: center;
+      padding: map-get($spacers, 2);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: map-get($spacers, 2);
+    }
+  }
+  //table end -------------------------------------------------------------------
+  
+  //tree begin ------------------------------------------------------------------
+  ixt-tree {
+    display: block;
+  
+    .tree-container {
+      display: grid;
+      gap: map-get($spacers, 1);
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+  
+    .tree-node {
+      .node-content {
+        display: flex;
+        align-items: center;
+        gap: map-get($spacers, 2);
+        padding: map-get($spacers, 1) map-get($spacers, 2);
+        cursor: pointer;
+        transition: $transition-base;
+  
+        &:hover {
+          background-color: var(--color-light);
+        }
+      }
+  
+      .icon-container {
+        display: flex;
+        align-items: center;
+        gap: map-get($spacers, 1);
+  
+        .material-icons {
+          font-size: 1.25rem;
+          transition: transform 0.2s ease;
+        }
+  
+        .expanded {
+          transform: rotate(90deg);
+        }
+      }
+    }
+  
+    .tree-children {
+      display: grid;
+      gap: map-get($spacers, 1);
+      padding-left: map-get($spacers, 4);
+      margin: 0;
+      list-style: none;
+    }
+  }
+  //tree end --------------------------------------------------------------------
+  
+  //matrix begin ----------------------------------------------------------------
+  ixt-matrix {
+    display: block;
+  
+    .ixt-matrix {
+      display: grid;
+      gap: map-get($spacers, 2);
+    }
+  
+    .ixt-matrix__toolbar {
+      display: flex;
+      gap: map-get($spacers, 2);
+      padding: map-get($spacers, 2);
+      background-color: var(--color-light);
+      border-radius: $border-radius;
+    }
+  
+    .ixt-matrix__header {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      background-color: var(--color-light);
+      border-bottom: 2px solid var(--color-light);
+    }
+  
+    .ixt-matrix__row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      border-bottom: $border-width solid var(--color-light);
+      transition: $transition-base;
+  
+      &:hover {
+        background-color: var(--color-light);
+      }
+  
+      &--selected {
+        background-color: rgba(var(--color-primary), 0.1);
+      }
+    }
+  
+    .ixt-matrix__cell {
+      display: flex;
+      align-items: center;
+      padding: map-get($spacers, 2);
+  
+      &--first {
+        font-weight: 500;
+      }
+  
+      &-content {
+        display: flex;
+        align-items: center;
+        gap: map-get($spacers, 2);
+        width: 100%;
+      }
+  
+      &-actions {
+        display: flex;
+        gap: map-get($spacers, 1);
+        margin-left: auto;
+      }
+    }
+  
+    .ixt-matrix__filter-input {
+      width: 100%;
+      padding: map-get($spacers, 1);
+      border: $border-width solid var(--color-light);
+      border-radius: $border-radius;
+    }
+  
+    .ixt-matrix__pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: map-get($spacers, 2);
+    }
+  }
+  //matrix end ------------------------------------------------------------------
+
+  /**
+ * File: _layout.scss
+ * Location: src/components/theme/styles/_layout.scss
+ * Purpose: Layout component styles using Grid and Flex
+ */
+
+//split-pane begin ------------------------------------------------------------
+ixt-split-pane {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    width: 100%;
+    height: 100%;
+  
+    .split-pane-container {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+  
+    .left-pane {
+      display: grid;
+      grid-template-rows: 1fr;
+      min-width: 0;
+      overflow: auto;
+    }
+  
+    .right-pane {
+      display: grid;
+      grid-template-rows: 1fr;
+      min-width: 0;
+      overflow: auto;
+    }
+  
+    .divider {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      background-color: var(--color-light);
+      cursor: col-resize;
+  
+      &:hover {
+        background-color: var(--color-primary);
+  
+        .collapse-buttons {
+          opacity: 1;
+        }
+      }
+    }
+  
+    .collapse-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: map-get($spacers, 2);
+      opacity: 0;
+      transition: $transition-base;
+  
+      button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: map-get($spacers, 1);
+        border: none;
+        background: none;
+        color: var(--color-dark);
+        cursor: pointer;
+        transition: $transition-base;
+  
+        &:hover {
+          color: var(--color-primary);
+        }
+  
+        &.hidden {
+          display: none;
+        }
+      }
+    }
+  
+    .expand-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: map-get($spacers, 1);
+      background-color: var(--color-light);
+      border: none;
+      cursor: pointer;
+      transition: $transition-base;
+  
+      &:hover {
+        background-color: var(--color-primary);
+        color: var(--color-primary-text);
+      }
+  
+      &.right {
+        grid-column: 3;
+      }
+    }
+  }
+  //split-pane end --------------------------------------------------------------
+  
+  //dialog begin ---------------------------------------------------------------
+  ixt-dialog {
+    .ixt-dialog-container {
+      display: grid;
+      place-items: center;
+      width: 100vw;
+      height: 100vh;
+      padding: map-get($spacers, 4);
+      background-color: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: $transition-base;
+  
+      &.is-open {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+  
+    .ixt-dialog {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-width: 320px;
+      max-width: 90vw;
+      max-height: 90vh;
+      background-color: var(--color-default);
+      border-radius: $border-radius;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transform: translateY(-20px);
+      transition: $transition-base;
+  
+      .is-open & {
+        transform: translateY(0);
+      }
+    }
+  
+    .ixt-dialog__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: map-get($spacers, 2);
+      padding: map-get($spacers, 3);
+      border-bottom: $border-width solid var(--color-light);
+    }
+  
+    .ixt-dialog__title {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+  
+    .ixt-dialog__close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: none;
+      background: none;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: $transition-base;
+  
+      &:hover {
+        background-color: var(--color-light);
+      }
+  
+      .material-icons {
+        font-size: 1.25rem;
+      }
+    }
+  
+    .ixt-dialog__content {
+      display: grid;
+      gap: map-get($spacers, 3);
+      padding: map-get($spacers, 3);
+      overflow-y: auto;
+    }
+  
+    .ixt-dialog__fields {
+      display: grid;
+      gap: map-get($spacers, 3);
+  
+      .form-group {
+        display: grid;
+        gap: map-get($spacers, 1);
+      }
+    }
+  
+    .ixt-dialog__footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: map-get($spacers, 2);
+      padding: map-get($spacers, 3);
+      border-top: $border-width solid var(--color-light);
+    }
+  }
+  //dialog end -----------------------------------------------------------------

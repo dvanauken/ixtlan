@@ -1,0 +1,269 @@
+/**
+ * File: _base.scss
+ * Location: src/components/theme/styles/_base.scss
+ * Purpose: Semantic-first styling for HTML elements
+ */
+
+//header begin ------------------------------------------------------------------
+header {
+    background-color: var(--color-default);
+    padding: map-get($spacers, 3);
+    border-bottom: $border-width solid var(--color-light);
+  }
+  //header end --------------------------------------------------------------------
+  
+  //footer begin ------------------------------------------------------------------
+  footer {
+    background-color: var(--color-light);
+    padding: map-get($spacers, 3);
+    margin-top: auto;
+  }
+  //footer end --------------------------------------------------------------------
+  
+  //nav begin --------------------------------------------------------------------
+  nav {
+    display: flex;
+    align-items: center;
+    padding: map-get($spacers, 2);
+    
+    ul {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: map-get($spacers, 2);
+    }
+  }
+  //nav end ----------------------------------------------------------------------
+  
+  //main begin -------------------------------------------------------------------
+  main {
+    flex: 1;
+    padding: map-get($spacers, 3);
+  }
+  //main end ---------------------------------------------------------------------
+  
+  //section begin ----------------------------------------------------------------
+  section {
+    margin: map-get($spacers, 4) 0;
+  }
+  //section end ------------------------------------------------------------------
+  
+  //aside begin ------------------------------------------------------------------
+  aside {
+    padding: map-get($spacers, 3);
+    background-color: var(--color-light);
+  }
+  //aside end --------------------------------------------------------------------
+  
+  //headings begin ---------------------------------------------------------------
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--color-dark);
+    line-height: 1.2;
+    margin-bottom: map-get($spacers, 3);
+  }
+  
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 2rem; }
+  h3 { font-size: 1.75rem; }
+  h4 { font-size: 1.5rem; }
+  h5 { font-size: 1.25rem; }
+  h6 { font-size: 1rem; }
+  //headings end -----------------------------------------------------------------
+  
+  //paragraph begin --------------------------------------------------------------
+  p {
+    margin-bottom: map-get($spacers, 3);
+    line-height: $line-height-base;
+  }
+  //paragraph end ----------------------------------------------------------------
+  
+  //anchor begin -----------------------------------------------------------------
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: $transition-base;
+  
+    &:hover {
+      color: var(--color-primary-hover);
+    }
+  
+    &:active {
+      color: var(--color-primary-active);
+    }
+  }
+  //anchor end -------------------------------------------------------------------
+  
+  //lists begin ------------------------------------------------------------------
+  ul, ol {
+    margin: map-get($spacers, 3) 0;
+    padding-left: map-get($spacers, 4);
+  }
+  
+  li {
+    margin-bottom: map-get($spacers, 2);
+  }
+  //lists end --------------------------------------------------------------------
+  
+  //table begin ------------------------------------------------------------------
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: map-get($spacers, 3) 0;
+  }
+  
+  th, td {
+    padding: map-get($spacers, 2);
+    border: $border-width solid var(--color-light);
+    text-align: left;
+  }
+  
+  th {
+    background-color: var(--color-light);
+    font-weight: 600;
+  }
+  
+  thead {
+    border-bottom: (2 * $border-width) solid var(--color-light);
+  }
+  
+  tbody {
+    tr:nth-child(even) {
+      background-color: rgba(var(--color-light), 0.5);
+    }
+  }
+  
+  tfoot {
+    border-top: (2 * $border-width) solid var(--color-light);
+  }
+  //table end --------------------------------------------------------------------
+  
+  //form begin ------------------------------------------------------------------
+  form {
+    margin: map-get($spacers, 3) 0;
+  }
+  //form end --------------------------------------------------------------------
+  
+  //label begin -----------------------------------------------------------------
+  label {
+    display: block;
+    margin-bottom: map-get($spacers, 1);
+    font-weight: 500;
+  }
+  //label end -------------------------------------------------------------------
+  
+  //input begin -----------------------------------------------------------------
+  input, select, textarea {
+    display: block;
+    width: 100%;
+    padding: map-get($spacers, 2);
+    border: $border-width solid var(--color-light);
+    border-radius: $border-radius;
+    background-color: var(--color-default);
+    transition: $transition-base;
+  
+    &:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 0.2rem rgba(var(--color-primary), 0.25);
+    }
+  
+    &:disabled {
+      background-color: var(--color-light);
+      cursor: not-allowed;
+    }
+  }
+  //input end -------------------------------------------------------------------
+  
+  //button begin ----------------------------------------------------------------
+  button {
+    display: inline-block;
+    padding: map-get($spacers, 2) map-get($spacers, 3);
+    border: $border-width solid transparent;
+    border-radius: $border-radius;
+    background-color: var(--color-primary);
+    color: var(--color-primary-text);
+    cursor: pointer;
+    transition: $transition-base;
+  
+    &:hover {
+      background-color: var(--color-primary-hover);
+    }
+  
+    &:active {
+      background-color: var(--color-primary-active);
+    }
+  
+    &:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+  }
+  //button end ------------------------------------------------------------------
+  
+  //image begin -----------------------------------------------------------------
+  img, svg {
+    max-width: 100%;
+    height: auto;
+  }
+  //image end -------------------------------------------------------------------
+  
+  //figure begin ----------------------------------------------------------------
+  figure {
+    margin: map-get($spacers, 3) 0;
+  }
+  
+  figcaption {
+    margin-top: map-get($spacers, 2);
+    font-size: 0.875rem;
+    color: var(--color-secondary);
+  }
+  //figure end ------------------------------------------------------------------
+  
+  //code begin ------------------------------------------------------------------
+  pre, code {
+    font-family: 'Monaco', 'Consolas', monospace;
+    background-color: var(--color-light);
+    padding: map-get($spacers, 1);
+    border-radius: $border-radius;
+  }
+  
+  pre {
+    padding: map-get($spacers, 3);
+    overflow-x: auto;
+    
+    code {
+      padding: 0;
+      background-color: transparent;
+    }
+  }
+  //code end --------------------------------------------------------------------
+  
+  //body begin ------------------------------------------------------------------
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: $font-family-base;
+    font-size: $font-size-base;
+    line-height: $line-height-base;
+    color: var(--color-dark);
+    background-color: var(--color-default);
+  }
+  //body end --------------------------------------------------------------------
+  
+  //hr begin --------------------------------------------------------------------
+  hr {
+    margin: map-get($spacers, 4) 0;
+    border: 0;
+    border-top: $border-width solid var(--color-light);
+  }
+  //hr end ----------------------------------------------------------------------
+  
+  //div begin -------------------------------------------------------------------
+  div {
+    &:empty {
+      display: none;
+    }
+  }
+  //div end ---------------------------------------------------------------------

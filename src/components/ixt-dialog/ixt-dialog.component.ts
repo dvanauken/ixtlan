@@ -13,7 +13,7 @@ import {
   SimpleChanges,
   AfterViewInit
 } from '@angular/core';
-import { baseThemeColors } from '../theme/theme.colors';
+import { baseThemeColors, unitedThemeColors } from '../theme/theme.colors';
 import { ThemeVariant, ThemeColors } from '../theme/theme.types';
 import { IxtDialogButton, IxtDialogConfig } from './ixt-dialog.interfaces';
 
@@ -40,7 +40,7 @@ export class IxtDialogComponent implements OnInit, OnDestroy, AfterViewInit {
   public backdropClose: boolean = true;
 
   // Theme-related properties
-  public themeColors = baseThemeColors;
+  public themeColors = unitedThemeColors;
 
   private previouslyFocusedElement: HTMLElement | null = null;
   private focusableElements: HTMLElement[] = [];

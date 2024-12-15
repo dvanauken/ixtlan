@@ -1,0 +1,123 @@
+/**
+ * File: _variables.scss
+ * Location: src/components/theme/styles/_variables.scss
+ * Purpose: Design tokens and theme variable definitions
+ */
+
+// Import theme colors
+@use 'sass:map';
+
+// Theme Colors to CSS Custom Properties
+:root {
+  // Primary
+  --color-primary: #{map-get($baseThemeColors, "primary", "base")};
+  --color-primary-hover: #{map-get($baseThemeColors, "primary", "hover")};
+  --color-primary-active: #{map-get($baseThemeColors, "primary", "active")};
+  --color-primary-text: #{map-get($baseThemeColors, "primary", "text")};
+
+  // Secondary
+  --color-secondary: #{map-get($baseThemeColors, "secondary", "base")};
+  --color-secondary-hover: #{map-get($baseThemeColors, "secondary", "hover")};
+  --color-secondary-active: #{map-get($baseThemeColors, "secondary", "active")};
+  --color-secondary-text: #{map-get($baseThemeColors, "secondary", "text")};
+
+  // Success
+  --color-success: #{map-get($baseThemeColors, "success", "base")};
+  --color-success-hover: #{map-get($baseThemeColors, "success", "hover")};
+  --color-success-active: #{map-get($baseThemeColors, "success", "active")};
+  --color-success-text: #{map-get($baseThemeColors, "success", "text")};
+
+  // Danger
+  --color-danger: #{map-get($baseThemeColors, "danger", "base")};
+  --color-danger-hover: #{map-get($baseThemeColors, "danger", "hover")};
+  --color-danger-active: #{map-get($baseThemeColors, "danger", "active")};
+  --color-danger-text: #{map-get($baseThemeColors, "danger", "text")};
+
+  // Warning
+  --color-warning: #{map-get($baseThemeColors, "warning", "base")};
+  --color-warning-hover: #{map-get($baseThemeColors, "warning", "hover")};
+  --color-warning-active: #{map-get($baseThemeColors, "warning", "active")};
+  --color-warning-text: #{map-get($baseThemeColors, "warning", "text")};
+
+  // Info
+  --color-info: #{map-get($baseThemeColors, "info", "base")};
+  --color-info-hover: #{map-get($baseThemeColors, "info", "hover")};
+  --color-info-active: #{map-get($baseThemeColors, "info", "active")};
+  --color-info-text: #{map-get($baseThemeColors, "info", "text")};
+
+  // Light
+  --color-light: #{map-get($baseThemeColors, "light", "base")};
+  --color-light-hover: #{map-get($baseThemeColors, "light", "hover")};
+  --color-light-active: #{map-get($baseThemeColors, "light", "active")};
+  --color-light-text: #{map-get($baseThemeColors, "light", "text")};
+
+  // Dark
+  --color-dark: #{map-get($baseThemeColors, "dark", "base")};
+  --color-dark-hover: #{map-get($baseThemeColors, "dark", "hover")};
+  --color-dark-active: #{map-get($baseThemeColors, "dark", "active")};
+  --color-dark-text: #{map-get($baseThemeColors, "dark", "text")};
+
+  // Default
+  --color-default: #{map-get($baseThemeColors, "default", "base")};
+  --color-default-hover: #{map-get($baseThemeColors, "default", "hover")};
+  --color-default-active: #{map-get($baseThemeColors, "default", "active")};
+  --color-default-text: #{map-get($baseThemeColors, "default", "text")};
+}
+
+// Typography System
+$font-family-base: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-size-base: 1rem;
+$line-height-base: 1.5;
+
+// Spacing System
+$spacing-unit: 0.25rem;
+$spacers: (
+  0: 0,
+  1: $spacing-unit,
+  2: $spacing-unit * 2,
+  3: $spacing-unit * 4,
+  4: $spacing-unit * 6,
+  5: $spacing-unit * 8,
+);
+
+// Breakpoint System
+$breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+// Border System
+$border-radius: 0.25rem;
+$border-width: 1px;
+$border-color: var(--color-light);
+
+// Animation System
+$transition-base: all 0.2s ease-in-out;
+
+// Z-index System
+$z-indices: (
+  dropdown: 1000,
+  sticky: 1020,
+  fixed: 1030,
+  modal-backdrop: 1040,
+  modal: 1050,
+  popover: 1060,
+  tooltip: 1070
+);
+
+// Utility Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin responsive($breakpoint) {
+  @media (min-width: map-get($breakpoints, $breakpoint)) {
+    @content;
+  }
+}
