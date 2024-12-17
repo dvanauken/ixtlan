@@ -7,8 +7,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "build2": "node clear.js && ng build",
+    "build": "node clear.js && ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "prebuild": "git add . && git commit -m \"Pre-release commit\" || true",
