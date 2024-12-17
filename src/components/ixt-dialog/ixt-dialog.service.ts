@@ -32,9 +32,9 @@ export class IxtDialogService {
     // Allow time for component initialization
     await new Promise(resolve => requestAnimationFrame(resolve));
     
-    instance.loadComponent(component);
+    // Just create once and set message
     const contentComponent = instance.contentHost.createComponent(component);
-    contentComponent.instance.message = message;  // Add this line
+    contentComponent.instance.message = message;
     instance.open();
   
     // Wait for dialog result
@@ -43,8 +43,7 @@ export class IxtDialogService {
     this.appRef.detachView(this.dialogComponentRef.hostView);
     this.dialogComponentRef.destroy();
     return result;
-  }
-
+}
 
   
   
@@ -58,14 +57,19 @@ export class IxtDialogService {
   //   return await this.openDialog(SuccessDialogComponent, title, true);
   // }
 
-  async success(message: string, title: string): Promise<boolean> {
-    const dialogRef = this.componentFactoryResolver
-      .resolveComponentFactory(SuccessDialogComponent)
-      .create(this.injector);
+//   async success(message: string, title: string): Promise<boolean> {
+//     const dialogRef = this.componentFactoryResolver
+//       .resolveComponentFactory(SuccessDialogComponent)
+//       .create(this.injector);
       
-    // Set the message before creating dialog
-    dialogRef.instance.message = message;
+//     // Set the message before creating dialog
+//     dialogRef.instance.message = message;
     
-    return await this.openDialog(SuccessDialogComponent, message, title, true);
-  }
+//     return await this.openDialog(SuccessDialogComponent, message, title, true);
+//   }
+
+  async success(message: string, title: string): Promise<boolean> {
+    return await this.openDialog(SuccessDialogComponent, title, message, true);
+}
+
 }
