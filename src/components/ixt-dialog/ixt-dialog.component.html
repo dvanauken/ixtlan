@@ -1,0 +1,14 @@
+<dialog #dialog role="dialog" [ngStyle]="themeStyles">
+  <div role="document">
+    <header>
+      <h2>{{ title }}</h2>
+    </header>
+    <section>
+      <ng-template #contentHost></ng-template>
+    </section>
+    <footer>
+      <button type="button" (click)="closeDialog(false)">Cancel</button>
+      <button type="button" (click)="closeDialog(true)">OK</button>
+    </footer>
+  </div>
+</dialog>
