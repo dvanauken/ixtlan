@@ -18,6 +18,22 @@ import { IxtDialogService } from 'src/components/ixt-dialog/ixt-dialog.service';
 import { firstValueFrom } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { LunchFormComponent } from './lunch-form.component';
+import { ThemeVariant, ThemeColors } from 'src/components/theme/theme.types';
+import { baseThemeColors, unitedThemeColors } from 'src/components/theme/theme.colors';
+
+
+// Add to existing AppComponent class
+export interface ButtonDemo {
+  label: string;
+  variant: ThemeVariant;
+  size?: 'sm' | 'md' | 'lg';
+  theme?: ThemeColors;
+  disabled: boolean;
+  prefix?: string;
+  suffix?: string;
+}
+
+
 
 @Component({
   selector: 'app-root',
@@ -43,7 +59,8 @@ import { LunchFormComponent } from './lunch-form.component';
 export class AppComponent implements AfterViewInit {
   @ViewChild(LunchFormComponent, { static: true }) lunchForm!: LunchFormComponent;
 
-
+  protected baseThemeColors = baseThemeColors;
+  protected unitedThemeColors = unitedThemeColors;
 
   formData = this.employeeFormProvider.getCurrentForm();
   matrixTableData = this.matrixProvider.getTableData();
@@ -100,4 +117,51 @@ export class AppComponent implements AfterViewInit {
     await this.dialog.success('Success123!', 'Success Dialog 456');
     console.log('Dialog completed');
   }
+
+
+
+
+  buttonDemos: ButtonDemo[] = [
+    {
+      label: 'Submit Form',
+      variant: 'primary',
+      size: 'lg',
+      suffix: '→',
+      disabled: false
+    },
+    {
+      label: 'Cancel',
+      variant: 'secondary',
+      size: 'lg',
+      disabled: false
+    },
+    {
+      label: 'Delete Record',
+      variant: 'danger',
+      prefix: '⚠️',
+      disabled: false
+    },
+    {
+      label: 'United Theme',
+      variant: 'primary',
+      theme: unitedThemeColors,
+      size: 'lg',
+      disabled: false
+    },
+    {
+      label: 'Processing...',
+      variant: 'primary',
+      disabled: true
+    },
+    {
+      label: 'View Details',
+      variant: 'info',
+      size: 'sm',
+      disabled: false
+    }
+];
+  handleButtonClick(label: string) {
+    console.log(`Button clicked: ${label}`);
+  }
+
 }

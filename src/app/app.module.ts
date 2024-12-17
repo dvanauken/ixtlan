@@ -43,6 +43,7 @@ import { IxtMapModule } from 'src/components/ixt-map/ixt-map.module';
 import { RouterModule } from '@angular/router';
 import { IxtDialogModule } from 'src/components/ixt-dialog/ixt-dialog.module';
 import { LunchFormComponent } from './lunch-form.component';
+import { IxtButtonModule } from 'src/components/ixt-button/ixt-button.module';
 
 @NgModule({
   declarations: [
@@ -69,7 +70,8 @@ import { LunchFormComponent } from './lunch-form.component';
     IxtPanelModule,
     IxtMenuModule,
     IxtMapModule,
-    IxtDialogModule
+    IxtDialogModule,
+    IxtButtonModule
   ],
   providers: [
     IxtAutocompleteHandler,

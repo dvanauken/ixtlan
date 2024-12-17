@@ -4,3 +4,31 @@ nav, header, section, aside, footer {
   background: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+
+.button-showcase {
+  padding: 24px;
+  
+  .section {
+    margin-bottom: 32px;
+    
+    h4 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+  }
+
+  .button-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .theme {
+    h5 {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+  }
+}

@@ -30,21 +30,64 @@
 
   <section>
     <ixt-tabset>
-      <ixt-tab title="D3 Geo">
-        <ixt-map [width]="'100%'" [height]="'80%'" scale="1" translate="0,0">
-          <ixt-layer src="./../assets/countries.geojson" stroke="black" fill="gray"></ixt-layer>
-          <ixt-layer src="./../assets/flights.minified.geojson" stroke="red" fill="none" (click)="select($event)">
-            properties.airlineIata === 'F9'
-          </ixt-layer>
-          <ixt-layer src="./../assets/flights.minified.geojson" stroke="green" fill="none" (click)="select($event)">
-            properties.base === 'BOS'
-          </ixt-layer>
-          <ixt-layer src="./../assets/lakes.geojson" stroke="black" fill="blue" (click)="select($event)"></ixt-layer>
-          <ixt-layer src="./../assets/rivers.geojson" stroke="purple" fill="none"
-            (hover)="highlight($event)"></ixt-layer>
-        </ixt-map>
+
+      <ixt-tab title="Buttons">
+        <div class="button-showcase">
+          <!-- Size Variants -->
+          <div class="section">
+            <h4>Size Variants</h4>
+            <div class="button-row">
+              <ixt-button variant="primary" size="sm">Small</ixt-button>
+              <ixt-button variant="primary" size="md">Medium</ixt-button>
+              <ixt-button variant="primary" size="lg">Large</ixt-button>
+            </div>
+          </div>
+      
+          <!-- Theme Variants -->
+          <div class="section">
+            <h4>Theme Variants</h4>
+            <div class="button-row">
+              <div class="theme">
+                <h5>Base Theme</h5>
+                <div class="button-row">
+                  <ixt-button variant="primary">Primary</ixt-button>
+                  <ixt-button variant="secondary">Secondary</ixt-button>
+                  <ixt-button variant="danger">Danger</ixt-button>
+                </div>
+              </div>
+              <div class="theme">
+                <h5>United Theme</h5>
+                <div class="button-row">
+                  <ixt-button variant="primary" [theme]="unitedThemeColors">Primary</ixt-button>
+                  <ixt-button variant="secondary" [theme]="unitedThemeColors">Secondary</ixt-button>
+                  <ixt-button variant="danger" [theme]="unitedThemeColors">Danger</ixt-button>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Examples -->
+          <div class="section">
+            <h4>Examples</h4>
+            <div class="button-row">
+              <ixt-button *ngFor="let button of buttonDemos"
+                [variant]="button.variant"
+                [size]="button.size || 'md'"
+                [theme]="button.theme || baseThemeColors"
+                [disabled]="button.disabled"
+                (onClick)="handleButtonClick(button.label)"
+              >
+                <span *ngIf="button.prefix" prefix>{{button.prefix}}</span>
+                {{button.label}}
+                <span *ngIf="button.suffix" suffix>{{button.suffix}}</span>
+              </ixt-button>
+            </div>
+          </div>
+        </div>
       </ixt-tab>
 
+
+      
       <!-- Dialog Example -->
       <ixt-tab title="Dialog Example">
         <div class="dialog-demo-container flex flex-col gap-4 p-4">
