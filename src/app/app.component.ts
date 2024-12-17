@@ -97,7 +97,7 @@ export class AppComponent implements AfterViewInit {
   // Dialog examples using improved service ------------------------------------------------------
   async showSuccessDialog() {
     console.log('Starting dialog test');
-    await this.dialog.success('Your operation was successful!', 'Success Dialog');
+    await this.dialog.success('Success123!', 'Success Dialog');
     console.log('Dialog completed');
   }
 }

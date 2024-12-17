@@ -2,6 +2,7 @@
 import { ApplicationRef, ComponentFactoryResolver, ComponentRef, Injectable, Injector, Type, createComponent } from '@angular/core';
 import { IxtDialogComponent } from './ixt-dialog.component';
 import { SuccessDialogComponent } from './ixt-success-dialog.component';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,7 @@ export class IxtDialogService {
     private injector: Injector
   ) {}
 
-
-  async openDialog(component: Type<any>, title: string, modal: boolean = true): Promise<void> {
+  async openDialog(component: Type<any>, title: string, message: string, modal: boolean = true): Promise<boolean> {
     this.dialogComponentRef = this.componentFactoryResolver
       .resolveComponentFactory(IxtDialogComponent)
       .create(this.injector);
@@ -33,22 +33,39 @@ export class IxtDialogService {
     await new Promise(resolve => requestAnimationFrame(resolve));
     
     instance.loadComponent(component);
+    const contentComponent = instance.contentHost.createComponent(component);
+    contentComponent.instance.message = message;  // Add this line
     instance.open();
   
-    instance.close.subscribe(() => {
-      document.body.removeChild(domElem);
-      this.appRef.detachView(this.dialogComponentRef.hostView);
-      this.dialogComponentRef.destroy();
-    });
+    // Wait for dialog result
+    const result = await firstValueFrom(instance.close);
+    document.body.removeChild(domElem);
+    this.appRef.detachView(this.dialogComponentRef.hostView);
+    this.dialogComponentRef.destroy();
+    return result;
   }
+
+
   
-  closeDialog(): void {
+  
+  closeDialog(result: boolean): void {
     if (this.dialogComponentRef) {
-      this.dialogComponentRef.instance.closeDialog();
+      this.dialogComponentRef.instance.closeDialog(result);
     }
   }
 
-  success(message: string, title: string): void {
-    this.openDialog(SuccessDialogComponent, title, true);
+  // async success(message: string, title: string): Promise<boolean> {
+  //   return await this.openDialog(SuccessDialogComponent, title, true);
+  // }
+
+  async success(message: string, title: string): Promise<boolean> {
+    const dialogRef = this.componentFactoryResolver
+      .resolveComponentFactory(SuccessDialogComponent)
+      .create(this.injector);
+      
+    // Set the message before creating dialog
+    dialogRef.instance.message = message;
+    
+    return await this.openDialog(SuccessDialogComponent, message, title, true);
   }
 }
