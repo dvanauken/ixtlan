@@ -96,57 +96,8 @@ export class AppComponent implements AfterViewInit {
 
   // Dialog examples using improved service ------------------------------------------------------
   async showSuccessDialog() {
+    console.log('Starting dialog test');
     await this.dialog.success('Your operation was successful!', 'Success Dialog');
-  }
-
-  async showErrorDialog() {
-    await this.dialog.error('Something went wrong. Please try again.');
-  }
-
-  async showInfoDialog() {
-    await this.dialog.info('This is an informational dialog with some helpful text.');
-  }
-
-  async showConfirmDialog() {
-    const confirmed = await firstValueFrom(
-      this.dialog.confirm('Are you sure you want to perform this action?')
-    );
-    
-    if (confirmed) {
-      await this.dialog.success('Action confirmed!');
-    }
-  }
-
-  async openLunchOrderDialog() {
-    console.log('Starting openLunchOrderDialog'); // Debug point 1
-  
-    if (!this.lunchForm) {
-      console.error('Lunch form component not found');
-      return;
-    }
-  
-    try {
-      console.log('About to call showLunchOrderDialog'); // Debug point 2
-      const result = await this.lunchForm.showLunchOrderDialog();
-  
-      switch (result.status) {
-        case 'OK':
-          console.log('Lunch order placed:', result.data);
-          console.log('Formatted JSON:', JSON.stringify(result.data, null, 2));
-          break;
-  
-        case 'Cancel':
-          console.log('Lunch order was cancelled');
-          break;
-  
-        default:
-          console.error('Unexpected dialog result:', result);
-          break;
-      }
-    } catch (error) {
-      console.error('Error in lunch order dialog:', error);
-    }
-  
-    console.log('Test'); // Ensure this runs after everything
+    console.log('Dialog completed');
   }
 }

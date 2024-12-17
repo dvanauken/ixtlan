@@ -2,7 +2,6 @@
 import { Injectable } from '@angular/core';
 import { IxtEmployeeFormProvider } from './ixt-employee-form.provider';
 import { IxtDialogService } from '../../components/ixt-dialog/ixt-dialog.service';
-import { DialogType } from '../../components/ixt-dialog/ixt-dialog.interfaces';
 import { EmployeeForm } from './ixt-employee-form.provider';
 
 @Injectable()

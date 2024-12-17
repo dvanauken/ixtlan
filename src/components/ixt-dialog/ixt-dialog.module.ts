@@ -5,13 +5,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { IxtDialogComponent } from './ixt-dialog.component';
 import { IxtDialogService } from './ixt-dialog.service';  // Add this
-import { DynamicDialogContentComponent } from './dynamic-dialog-content.component';
 import { FormsModule } from '@angular/forms';
+import { SuccessDialogComponent } from './ixt-success-dialog.component';
 
 @NgModule({
   declarations: [
     IxtDialogComponent,
-    DynamicDialogContentComponent
+    SuccessDialogComponent  // Add this
+
   ],
   imports: [
     CommonModule,

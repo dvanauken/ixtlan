@@ -37,7 +37,7 @@
             properties.airlineIata === 'F9'
           </ixt-layer>
           <ixt-layer src="./../assets/flights.minified.geojson" stroke="green" fill="none" (click)="select($event)">
-            properties.airlineIata === 'NK'
+            properties.base === 'BOS'
           </ixt-layer>
           <ixt-layer src="./../assets/lakes.geojson" stroke="black" fill="blue" (click)="select($event)"></ixt-layer>
           <ixt-layer src="./../assets/rivers.geojson" stroke="purple" fill="none"
@@ -54,26 +54,6 @@
             <div class="flex flex-wrap gap-2">
               <button (click)="showSuccessDialog()" class="px-4 py-2 bg-green-500 text-white rounded">
                 Success Dialog
-              </button>
-
-              <button (click)="showErrorDialog()" class="px-4 py-2 bg-red-500 text-white rounded">
-                Error Dialog
-              </button>
-
-              <button (click)="showInfoDialog()" class="px-4 py-2 bg-blue-500 text-white rounded">
-                Info Dialog
-              </button>
-
-              <button (click)="showConfirmDialog()" class="px-4 py-2 bg-yellow-500 text-white rounded">
-                Confirm Dialog
-              </button>
-            </div>
-          </div>
-          <div class="flex flex-col gap-2 mt-4">
-            <h3 class="text-lg font-semibold">Template-based Dialog</h3>
-            <div class="flex flex-wrap gap-2">
-              <button (click)="openLunchOrderDialog()" class="px-4 py-2 bg-blue-500 text-white rounded">
-                Place Lunch Order 2
               </button>
             </div>
           </div>
@@ -213,4 +193,4 @@
   <footer>Footer</footer>
 </main>
 
-<app-lunch-form style="display: none;"></app-lunch-form>
+<app-lunch-form></app-lunch-form>

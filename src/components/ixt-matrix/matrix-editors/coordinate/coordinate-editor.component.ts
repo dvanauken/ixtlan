@@ -3,7 +3,6 @@ import { Component, Input, forwardRef, OnInit, Type } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl } from '@angular/forms';
 import { IxtDialogService } from '../../../ixt-dialog/ixt-dialog.service';
 import { MatrixEditor, MatrixEditorConfig } from '../editor.interface';
-import { DialogType } from '../../../ixt-dialog/ixt-dialog.interfaces';
 
 @Component({
     selector: 'coordinate-editor',

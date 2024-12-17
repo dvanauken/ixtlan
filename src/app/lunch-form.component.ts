@@ -1,6 +1,6 @@
 import { Component, ViewChild, TemplateRef, OnInit, EventEmitter, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { IxtDialogService } from 'dist/ixtlan';
+import { IxtDialogService } from 'src/components/ixt-dialog/ixt-dialog.service';
 import { firstValueFrom } from 'rxjs';
 
 
@@ -68,39 +68,35 @@ export class LunchFormComponent implements OnInit {
     this.resetForm();
 
     return new Promise((resolve) => {
-      this.dialogService.template('Lunch Order', this.lunchOrderTemplate, {
-        buttons: [
-          {
-            text: 'Place Order',
-            action: () => {
-              if (this.orderForm?.valid) {
-                const formData = this.getFormData(); // Get the form data
-                resolve({ status: 'OK', data: formData }); // Resolve with structured success result
-                return formData; // Required by the dialogService to process the action
-              } else {
-                this.dialogService.warning('Please fill out all required fields');
-                return false; // Prevent dialog from closing if validation fails
-              }
-            },
-            close: true, // Ensure dialog closes
-          },
-          {
-            text: 'Cancel',
-            action: () => {
-              resolve({ status: 'Cancel' }); // Resolve with cancel status
-            },
-            close: true, // Ensure dialog closes
-          },
-        ],
-      }).subscribe({
-        complete: () => {
-          console.log('Dialog closed'); // Ensure the dialog completes properly
-        },
-      });
+    //   this.dialogService.template('Lunch Order', this.lunchOrderTemplate, {
+    //     buttons: [
+    //       {
+    //         text: 'Place Order',
+    //         action: () => {
+    //           if (this.orderForm?.valid) {
+    //             const formData = this.getFormData(); // Get the form data
+    //             resolve({ status: 'OK', data: formData }); // Resolve with structured success result
+    //             return formData; // Required by the dialogService to process the action
+    //           } else {
+    //             this.dialogService.warning('Please fill out all required fields');
+    //             return false; // Prevent dialog from closing if validation fails
+    //           }
+    //         },
+    //         close: true, // Ensure dialog closes
+    //       },
+    //       {
+    //         text: 'Cancel',
+    //         action: () => {
+    //           resolve({ status: 'Cancel' }); // Resolve with cancel status
+    //         },
+    //         close: true, // Ensure dialog closes
+    //       },
+    //     ],
+    //   }).subscribe({
+    //     complete: () => {
+    //       console.log('Dialog closed'); // Ensure the dialog completes properly
+    //     },
+    //   });
     });
   }
-
-
-
-
 }
