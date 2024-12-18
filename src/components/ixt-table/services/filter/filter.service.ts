@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { FilterState, FilterOperator, FilterControls } from './filter.model';
-import { ColumnConfig } from '../../ixt-matrix.interfaces';
+import { ColumnConfig } from '../../ixt-table.interfaces';
 
 @Injectable({
   providedIn: 'root'

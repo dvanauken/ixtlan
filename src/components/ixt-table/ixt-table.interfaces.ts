@@ -1,5 +1,5 @@
 import { Type } from "@angular/core";
-import { MatrixEditor } from "./matrix-editors/editor.interface";
+import { MatrixEditor } from "./editors/editor.interface";
 
 export interface MatrixNode {
   code?: string;  // Add this property

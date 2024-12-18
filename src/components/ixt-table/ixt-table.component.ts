@@ -15,7 +15,7 @@ export type SortDirection = 'asc' | 'desc' | null;
 
 @Component({
   selector: 'ixt-table',
-  templateUrl: np'./ixt-table.component.html',
+  templateUrl: './ixt-table.component.html',
   styleUrls: ['./ixt-table.component.scss']
 })
 export class IxtTableComponent implements OnInit {
