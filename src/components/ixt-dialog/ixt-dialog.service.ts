@@ -1,8 +1,8 @@
 // ixt-dialog.service.ts
 import { ApplicationRef, ComponentFactoryResolver, ComponentRef, Injectable, Injector, Type, createComponent } from '@angular/core';
 import { IxtDialogComponent } from './ixt-dialog.component';
-import { SuccessDialogComponent } from './ixt-success-dialog.component';
 import { firstValueFrom } from 'rxjs';
+import { SuccessDialogComponent } from './types/success/ixt-success-dialog.component';
 
 @Injectable({
   providedIn: 'root'

@@ -1,85 +1,203 @@
-<div class="table-container" #tableContainer>
-  <!-- Toolbar -->
-  <div class="toolbar">
-    <button *ngIf="config.allowAdd" (click)="onAddNewRow()">Add New</button>
-    <button *ngIf="editingRows.size > 0" (click)="onSaveAll()">Save All</button>
-    <button (click)="toggleFilters($event)">
-      {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
-    </button>
-  </div>
-
-  <!-- Table -->
-  <table>
-    <thead>
-      <tr>
-        <th *ngFor="let col of config.columns">
-          {{col.header}}
-          <button *ngIf="col.sortable" (click)="onSort(col)">Sort</button>
-        </th>
-        <th *ngIf="config.allowEdit || config.allowDelete">Actions</th>
-      </tr>
-      <tr *ngIf="showFilters">
-        <th *ngFor="let col of config.columns">
-          <input *ngIf="col.filterable" 
-                 [placeholder]="'Filter ' + col.header"
-                 (input)="onFilter($event, col)">
-        </th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let row of paginatedData; let i = index"
-          [class.selected]="isRowSelected(row)"
-          (click)="onRowClick(row, i, $event)">
-        <td *ngFor="let col of config.columns">
-          <ng-container *ngIf="!isEditing(i); else editCell">
-            {{ formatCell(row[col.key], col) }}
-          </ng-container>
-          <ng-template #editCell>
-            <input [value]="row[col.key]"
-                   (input)="onFieldChange($event, col.key, row, i)">
-          </ng-template>
-        </td>
-        <td *ngIf="config.allowEdit || config.allowDelete">
-          <button *ngIf="config.allowEdit && !isEditing(i)" 
-                  (click)="onEdit(row, i, $event)">Edit</button>
-          <button *ngIf="isEditing(i)" 
-                  (click)="onSave(row, i)">Save</button>
-          <button *ngIf="isEditing(i)" 
-                  (click)="onCancel(row, i)">Cancel</button>
-          <button *ngIf="config.allowDelete" 
-                  (click)="onDelete(row, i, $event)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <!-- Pagination -->
-  <div class="pagination">
-    <select (change)="onPageSizeChange($event)">
-      <option *ngFor="let size of pagination.pageSizeOptions" 
-              [value]="size">
-        {{size === -1 ? 'All' : size}}
-      </option>
-    </select>
-    
-    <button (click)="goToFirstPage()" 
-            [disabled]="pagination.currentPage === 1">First</button>
-    <button (click)="goToPreviousPage()" 
-            [disabled]="pagination.currentPage === 1">Previous</button>
-    
-    <span *ngFor="let page of visiblePages">
-      <button *ngIf="page !== -1"
-              [class.active]="page === pagination.currentPage"
-              (click)="onPageChange(page)">
-        {{page}}
-      </button>
-      <span *ngIf="page === -1">...</span>
-    </span>
-    
-    <button (click)="goToNextPage()" 
-            [disabled]="pagination.currentPage === totalPages">Next</button>
-    <button (click)="goToLastPage()" 
-            [disabled]="pagination.currentPage === totalPages">Last</button>
-  </div>
+<div class="ixt-matrix__toolbar">
+  <button class="ixt-matrix__action-button" (click)="addNewRow()">
+    <span class="material-icons">add</span>
+  </button>
+  <button class="ixt-matrix__action-button" [disabled]="!hasChanges && newRowsLength === 0" (click)="saveChanges()">
+    <span class="material-icons">save</span>
+  </button>
 </div>
+
+<ng-container *ngIf="hasData; else noData">
+  <div class="ixt-matrix">
+    <!-- Header -->
+    <div class="ixt-matrix__header">
+      <div class="ixt-matrix__cell">
+        <binary-editor
+          [config]="{ rowIndex: -1 }"
+          [(ngModel)]="allSelected"
+          (selectionChange)="toggleAllRows($event.selected)">
+        </binary-editor>
+      </div>
+      <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
+        <div class="ixt-matrix__cell-content">
+          {{columnConfigs?.[col]?.label || col}}
+          <div class="ixt-matrix__cell-actions">
+            <button class="ixt-matrix__sort-toggle" (click)="toggleSort(col)">
+              <span class="material-icons">{{getSortIcon(col)}}</span>
+            </button>
+            <button class="ixt-matrix__filter-toggle" (click)="toggleFilters(col)">
+              <span class="material-icons">filter_alt</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="ixt-matrix__cell">Actions</div>
+    </div>
+
+    <!-- Filter Row -->
+    <div class="ixt-matrix__header" *ngIf="showFilters">
+      <div class="ixt-matrix__cell"></div>
+      <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
+        <ng-container *ngIf="activeFilterColumn === col && columnConfigs?.[col]">
+          <ng-container [ngSwitch]="getEditorType(columnConfigs?.[col]?.type)">
+            <!-- Text Filter -->
+            <input *ngSwitchCase="'text'" [formControl]="getFilterControl(col)"
+              [placeholder]="columnConfigs?.[col]?.placeholder || ''" class="ixt-matrix__filter-input">
+
+            <!-- Number Filter -->
+            <div *ngSwitchCase="'number'" class="ixt-matrix__number-filter">
+              <select [formControl]="getOperatorControl(col)" (change)="onOperatorChange(col)">
+                <option value="=">=</option>
+                <option value=">">&gt;</option>
+                <option value="<">&lt;</option>
+                <option value=">=">&gt;=</option>
+                <option value="<=">&lt;=</option>
+                <option value="!=">!=</option>
+              </select>
+              <input type="number" [formControl]="getFilterControl(col)"
+                [placeholder]="columnConfigs?.[col]?.placeholder || ''" class="ixt-matrix__filter-input">
+            </div>
+
+            <!-- Enum Filter -->
+            <div *ngSwitchCase="'enum'">
+              <select [formControl]="getFilterControl(col)" class="ixt-matrix__filter-input">
+                <option value="">All</option>
+                <option *ngFor="let opt of columnConfigs?.[col]?.enumValues" [value]="opt.value">
+                  {{opt.label}}
+                </option>
+              </select>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+      <div class="ixt-matrix__cell"></div>
+    </div>
+
+    <!-- Data Rows -->
+    <div class="ixt-matrix__row" *ngFor="let row of paginatedData; let i = index" 
+         [class.ixt-matrix__row--selected]="isRowSelected(getRowIndex(i))">
+      <div class="ixt-matrix__cell">
+        <binary-editor
+          [config]="{ rowIndex: getRowIndex(i), rowData: row }"
+          [ngModel]="isRowSelected(getRowIndex(i))"
+          (selectionChange)="selectRow(getRowIndex(i), $event.selected)">
+        </binary-editor>
+      </div>
+      <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
+        <ng-container *ngIf="isNewRow(i) || isEditing(getRowIndex(i)); else displayValue">
+          <ng-container [ngSwitch]="getEditorType(columnConfigs?.[col]?.type)">
+            <!-- Text Input -->
+            <input *ngSwitchCase="'text'" type="text" [ngModel]="row[col]"
+              (ngModelChange)="onValueChange(getRowIndex(i), col, $event)">
+
+            <!-- Number Input -->
+            <input *ngSwitchCase="'number'" type="number" [ngModel]="row[col]"
+              (ngModelChange)="onValueChange(getRowIndex(i), col, $event)">
+
+            <!-- Enum Select -->
+            <select *ngSwitchCase="'enum'" [ngModel]="row[col]"
+              (ngModelChange)="onValueChange(getRowIndex(i), col, $event)">
+              <option *ngFor="let opt of columnConfigs?.[col]?.enumValues" [ngValue]="opt.value">
+                {{opt.label}}
+              </option>
+            </select>
+
+            <!-- Custom Editor -->
+            <ng-container *ngSwitchCase="'custom'">
+              <ng-container *ngTemplateOutlet="customEditorTpl; context: {
+                 $implicit: getEditorComponent(columnConfigs?.[col]?.type),
+                 row: row,
+                 col: col,
+                 index: i,
+                 control: getEditControl(getRowIndex(i), col)
+               }">
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+          
+        <ng-template #displayValue>
+          <ng-container [ngSwitch]="columnConfigs?.[col]?.type">
+            <ng-container *ngSwitchCase="CoordinateEditorComponent">
+              {{formatCoordinate(row[col])}}
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              {{row[col]}}
+            </ng-container>
+          </ng-container>
+        </ng-template>
+      </div>
+       
+      <div class="ixt-matrix__cell">
+        <ng-container *ngIf="!isNewRow(i) && !isEditing(getRowIndex(i))">
+          <button class="ixt-matrix__action-button" (click)="startEditing(getRowIndex(i))">
+            <span class="material-icons">edit</span>
+          </button>
+        </ng-container>
+        <ng-container *ngIf="isNewRow(i) || isEditing(getRowIndex(i))">
+          <button class="ixt-matrix__action-button" (click)="cancelEditing(getRowIndex(i))">
+            <span class="material-icons">close</span>
+          </button>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="ixt-matrix__footer" *ngIf="showPagination">
+      <div class="ixt-matrix__pagination">
+        <div class="ixt-matrix__page-size">
+          <select [formControl]="pageSizeControl">
+            <option *ngFor="let size of pageSizes" [value]="size.value">
+              {{size.label}}
+            </option>
+          </select>
+          rows per page
+        </div>
+        <div class="ixt-matrix__controls">
+          <button (click)="onPageChange(1)" [disabled]="currentPage === 1">
+            <span class="material-icons">first_page</span>
+          </button>
+          <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
+            <span class="material-icons">chevron_left</span>
+          </button>
+          <button *ngFor="let page of visiblePages" [class.active]="page === currentPage" 
+                  [class.ellipsis]="page === -1" [disabled]="page === -1" 
+                  (click)="onPageChange(page)">
+            {{page === -1 ? '...' : page}}
+          </button>
+          <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages">
+            <span class="material-icons">chevron_right</span>
+          </button>
+          <button (click)="onPageChange(totalPages)" [disabled]="currentPage === totalPages">
+            <span class="material-icons">last_page</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<!-- Custom Editor Template -->
+<ng-template #customEditorTpl let-editor let-row="row" let-col="col" let-index="index" let-control="control">
+  <coordinate-editor
+    *ngIf="editor?.component === CoordinateEditorComponent"
+    [formControl]="control"
+    [config]="{
+      type: col === 'lat' ? 'lat' : 'lon'
+    }">
+  </coordinate-editor>
+
+  <airport-code-editor 
+   *ngIf="editor?.component === AirportCodeEditorComponent"
+    [formControl]="control"
+    [config]="editor.getEditConfig()"
+    [existingCodes]="getCodes(data)">
+  </airport-code-editor>
+</ng-template>
+
+<!-- No Data Template -->
+<ng-template #noData>
+  <div class="ixt-matrix__empty">
+    No data available
+  </div>
+</ng-template>

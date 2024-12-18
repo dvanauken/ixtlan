@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { IxtDialogComponent } from './ixt-dialog.component';
 import { IxtDialogService } from './ixt-dialog.service';  // Add this
 import { FormsModule } from '@angular/forms';
-import { SuccessDialogComponent } from './ixt-success-dialog.component';
+import { SuccessDialogComponent } from './types/success/ixt-success-dialog.component';
 
 @NgModule({
   declarations: [

@@ -1,27 +1,39 @@
-export interface TableColumnDef<T> {
-  key: keyof T;
-  header: string;
+import { Type } from "@angular/core";
+import { MatrixEditor } from "./matrix-editors/editor.interface";
+
+export interface MatrixNode {
+  code?: string;  // Add this property
+  [key: string]: any;
+}
+
+export interface PageSize {
+  value: number | 'all';
+  label: string;
+}
+
+export type FilterOperator = 'equals' | 'startsWith' | 'contains' | 'between' | '>' | '<' | '>=' | '<=' | '!=';
+
+export interface FilterState {
+  field: string;
+  operator: FilterOperator;
+  value: any;
+  secondaryValue?: any;
+}
+
+export interface ColumnConfig {
+  type: 'text' | 'number' | 'enum' | Type<MatrixEditor> | MatrixEditor;  
+  field: string;
+  label?: string;
+  operator?: FilterOperator;
+  enumValues?: { value: any, label: string }[];
+  placeholder?: string;
+  debounceTime?: number;
   editable?: boolean;
-  sortable?: boolean;
-  filterable?: boolean;
-  width?: string;
-  formatter?: (value: any) => string;
-  validator?: (value: any) => boolean | string;
+  config?: any;
 }
 
-export interface TableConfig<T> {
-  columns: TableColumnDef<T>[];
-  selectionMode?: 'none' | 'single' | 'multiple';
-  pageSize?: number;
-  pageSizeOptions?: number[];
-  allowAdd?: boolean;
-  allowEdit?: boolean;
-  allowDelete?: boolean;
+export interface RowChanges {
+  [key: string]: any;
 }
 
-export interface PaginationConfig {
-  pageSize: number;
-  currentPage: number;
-  totalItems: number;
-  pageSizeOptions: number[];
-}
+export type ColumnConfigs = Record<string, ColumnConfig>;

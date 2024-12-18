@@ -1,258 +1,312 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, Input, Output, EventEmitter, Inject } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { TableConfig, TableColumnDef, PaginationConfig } from './ixt-table.interfaces';
-import { ChangeDetectorRef, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, TemplateRef, ViewChild, Type } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { ColumnConfig, FilterOperator, FilterState, MatrixNode, PageSize, RowChanges } from './ixt-table.interfaces';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { IxtDialogService } from '../ixt-dialog/ixt-dialog.index';
+import { PaginationService } from './services/pagination.service';
+import { FilterService } from './services/filter/filter.service';
+import { SortService } from './services/sort/sort.service';
+import { SelectionService } from './services/selection/selection.service';
+import { EditService } from './services/edit/edit.service';
+import { MatrixEditor } from './editors/editor.interface';
+import { AirportCodeEditorComponent, CoordinateEditorComponent } from './ixt-table.index';
+
+export type SortDirection = 'asc' | 'desc' | null;
 
 @Component({
   selector: 'ixt-table',
-  templateUrl: './ixt-table.component.html',
+  templateUrl: np'./ixt-table.component.html',
   styleUrls: ['./ixt-table.component.scss']
 })
-export class IxtTableComponent<T extends object> implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('tableContainer', { static: true }) tableContainer!: ElementRef;
-  
-  @Input() data: T[] = [];
-  @Input() config!: TableConfig<T>;
-  
-  @Output() selectionChange = new EventEmitter<T[]>();
-  @Output() rowAdd = new EventEmitter<T>();
-  @Output() rowEdit = new EventEmitter<{ original: T, changes: Partial<T> }>();
-  @Output() rowDelete = new EventEmitter<T>();
-  @Output() sortChange = new EventEmitter<{ column: keyof T, direction: 'asc' | 'desc' }>();
-  @Output() filterChange = new EventEmitter<{ column: keyof T, value: string }>();
+export class IxtTableComponent implements OnInit {
+  @Input() data: MatrixNode[] = [];
+  @Input() columnConfigs?: Record<string, ColumnConfig>;
+  @ViewChild('noData') noDataTemplate!: TemplateRef<any>;
+  @ViewChild('customEditorTpl') customEditorTpl!: TemplateRef<any>;
 
-  private resizeObserver!: ResizeObserver;
-  private cdr = inject(ChangeDetectorRef);
-  selectedRows = new Set<T>();
-  lastClickedRowIndex: number | null = null;
-  editingRows = new Set<number>();
-  showFilters = false;
-  paginatedData: T[] = [];
+  columns: string[] = [];
+  pageSizeControl = new FormControl<number | 'all'>(10);
+  readonly AirportCodeEditorComponent = AirportCodeEditorComponent;
+  readonly CoordinateEditorComponent = CoordinateEditorComponent;
 
-  pagination: PaginationConfig = {
-    pageSize: 10,
-    currentPage: 1,
-    totalItems: 0,
-    pageSizeOptions: [10, 25, 50, 100, -1]
-  };
+  constructor(
+    private dialogService: IxtDialogService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private paginationService: PaginationService,
+    private filterService: FilterService,
+    private sortService: SortService,
+    private selectionService: SelectionService,
+    private editService: EditService  
+  ) { }
 
-  constructor() {}
+  ngOnInit() {
+    this.columns = this.getColumns(this.data);
 
-  ngOnInit(): void {
-    this.initTable();
-  }
+    // Initialize pagination
+    this.paginationService.initialize(this.data.length);
 
-  ngAfterViewInit(): void {
-    this.resizeObserver = new ResizeObserver(() => {
-      this.resizeTable();
-    });
-    this.resizeObserver.observe(this.tableContainer.nativeElement);
-  }
+    // Initialize filters
+    if (this.columnConfigs) {
+      Object.entries(this.columnConfigs).forEach(([field, config]) => {
+        this.filterService.initializeFilter(field, config);
 
-  ngOnDestroy(): void {
-    if (this.resizeObserver) {
-      this.resizeObserver.disconnect();
+        // Get the control from service and subscribe to changes
+        const control = this.filterService.getFilterControl(field);
+        if (control) {
+          control.valueChanges.pipe(
+            debounceTime(config.debounceTime || 300),
+            distinctUntilChanged()
+          ).subscribe(value => {
+            this.filterService.onFilterChange(field, value, config);
+          });
+        }
+      });
     }
+
+    // Subscribe to filter changes
+    this.filterService.filtersChanged$.subscribe(() => {
+      this.changeDetectorRef.markForCheck();
+    });
+
+    // Subscribe to pagination changes
+    this.paginationService.state$.subscribe(() => {
+      this.changeDetectorRef.markForCheck();
+    });
+
+    // Subscribe to page size changes
+    this.pageSizeControl.valueChanges.subscribe(value => {
+      if (value) {
+        this.paginationService.onPageSizeChange(value);
+      }
+    });
   }
 
-  private initTable(): void {
-    this.pagination.totalItems = this.data.length;
-    this.updatePaginatedData();
+  // edit logic start
+  addNewRow(): void {
+    this.editService.addNewRow(this.columnConfigs || {});
   }
 
-  isRowSelected(row: T): boolean {
-    return this.selectedRows.has(row);
+  cancelEditing(rowIndex: number): void {
+    this.editService.cancelEditing(rowIndex);
+  }
+
+  getEditorComponent(type: any): MatrixEditor | null {
+    console.log('getEditorComponent called with:', {
+      type,
+      isCoordinate: type === CoordinateEditorComponent,
+      isAirport: type === AirportCodeEditorComponent
+    });
+
+    if (type === AirportCodeEditorComponent) {
+      return new AirportCodeEditorComponent(this.dialogService);
+    }
+    if (type === CoordinateEditorComponent) {
+      return new CoordinateEditorComponent(this.dialogService);
+    }
+    return null;
+  }
+
+  getEditorType(type: any): string {
+    console.log('getEditorType called with:', {
+      type,
+      isString: typeof type === 'string',
+      isCoordinate: type === CoordinateEditorComponent,
+      isAirport: type === AirportCodeEditorComponent
+    });
+
+    if (typeof type === 'string') {
+      return type;
+    }
+    if (type === AirportCodeEditorComponent || type === CoordinateEditorComponent) {
+      console.log('Returning custom for editor type');
+      return 'custom';
+    }
+    console.log('Falling back to text type');
+    return 'text';
+  }
+
+  getEditControl(rowIndex: number, field: string): FormControl {
+    return this.editService.getEditControl(rowIndex, field);
+  }
+
+  getRowIndex(displayIndex: number): number {
+    return this.editService.getRowIndex(displayIndex);
+  }
+
+  get hasChanges(): boolean {
+    return this.editService.hasChanges();
   }
 
   isEditing(index: number): boolean {
-    return this.editingRows.has(index);
+    return this.editService.isEditing(index);
   }
 
-  formatCell(value: any, column: TableColumnDef<T>): string {
-    if (column.formatter) {
-      return column.formatter(value);
-    }
-    return value?.toString() ?? '';
+  isNewRow(displayIndex: number): boolean {
+    return this.editService.isNewRow(displayIndex);
   }
 
-  onAddNewRow(): void {
-    const newRow = {} as T;
-    this.data.unshift(newRow);
-    this.editingRows.add(0);
-    this.rowAdd.emit(newRow);
-    this.updatePaginatedData();
+  get newRowsLength(): number {
+    return this.editService.getNewRows().length;
   }
 
-  onFieldChange(event: Event, field: keyof T, row: T, index: number): void {
-    const input = event.target as HTMLInputElement;
-    const value = input.value;
-    
-    const column = this.config.columns.find((col: TableColumnDef<T>) => col.key === field);
-    if (column?.validator) {
-      const validationResult = column.validator(value);
-      if (typeof validationResult === 'string') {
-        alert(validationResult);
-        return;
-      }
-      if (!validationResult) {
-        return;
-      }
-    }
-
-    (row[field] as any) = value;
+  onValueChange(rowIndex: number, field: string, value: any): void {
+    this.editService.onValueChange({ rowIndex, field, value });
   }
 
-  onRowClick(row: T, index: number, event: MouseEvent): void {
-    if (this.editingRows.size > 0) return;
-    if (this.config.selectionMode === 'none') return;
-
-    this.lastClickedRowIndex = index;
-    
-    if (this.config.selectionMode === 'single') {
-      this.selectedRows.clear();
-      this.selectedRows.add(row);
-    } else if (this.config.selectionMode === 'multiple') {
-      if (event.shiftKey && this.lastClickedRowIndex !== null) {
-        const start = Math.min(index, this.lastClickedRowIndex);
-        const end = Math.max(index, this.lastClickedRowIndex);
-        this.selectedRows = new Set(this.paginatedData.slice(start, end + 1));
-      } else if (event.ctrlKey || event.metaKey) {
-        if (this.selectedRows.has(row)) {
-          this.selectedRows.delete(row);
-        } else {
-          this.selectedRows.add(row);
-        }
-      } else {
-        this.selectedRows.clear();
-        this.selectedRows.add(row);
-      }
-    }
-
-    this.selectionChange.emit(Array.from(this.selectedRows));
+  saveChanges(): void {
+    this.data = this.editService.saveChanges(this.data);
+    this.changeDetectorRef.markForCheck();
   }
 
-  onEdit(row: T, index: number, event: Event): void {
-    event.stopPropagation();
-    (row as any).originalData = { ...row };
-    this.editingRows.add(index);
+  startEditing(rowIndex: number): void {
+    this.editService.startEditing(rowIndex);
+  }
+  // edit logic end
+
+  // filter logic start
+  get activeFilterColumn(): string | undefined {
+    return this.filterService.activeColumn;
   }
 
-  onSave(row: T, index: number): void {
-    const changes = {} as Partial<T>;
-    const original = (row as any).originalData;
-    
-    for (const key of Object.keys(row) as (keyof T)[]) {
-      if (key !== 'originalData' && row[key] !== original[key]) {
-        changes[key] = row[key];
-      }
-    }
-
-    this.rowEdit.emit({ original, changes });
-    this.editingRows.delete(index);
-    delete (row as any).originalData;
+  getFilterControl(col: string): FormControl<any> {
+    return this.filterService.getFilterControl(col)!;
   }
 
-  onCancel(row: T, index: number): void {
-    const original = (row as any).originalData;
-    Object.assign(row, original);
-    this.editingRows.delete(index);
-    delete (row as any).originalData;
+  getOperatorControl(col: string): FormControl<string> {
+    return this.filterService.getOperatorControl(col)!;
   }
 
-  onDelete(row: T, index: number, event: Event): void {
-    event.stopPropagation();
-    if (confirm('Are you sure you want to delete this row?')) {
-      this.data = this.data.filter((_, i) => i !== index);
-      this.rowDelete.emit(row);
-      this.updatePaginatedData();
-    }
+  onOperatorChange(field: string): void {
+    this.filterService.onOperatorChange(field);
   }
 
-  onSaveAll(): void {
-    for (const index of Array.from(this.editingRows)) {
-      const row = this.paginatedData[index];
-      this.onSave(row, index);
-    }
+  get showFilters(): boolean {
+    return this.filterService.isShowingFilters;
   }
 
-  onSort(column: TableColumnDef<T>): void {
-    this.sortChange.emit({ 
-      column: column.key, 
-      direction: 'asc' // Toggle this based on current state
-    });
+  toggleFilters(col: string): void {
+    this.filterService.toggleFilters(col);
   }
-
-  onFilter(event: Event, column: TableColumnDef<T>): void {
-    const input = event.target as HTMLInputElement;
-    this.filterChange.emit({ column: column.key, value: input.value });
-  }
-
-  updatePaginatedData(): void {
-    if (this.pagination.pageSize === -1) {
-      this.paginatedData = [...this.data];
-      return;
-    }
-
-    const startIndex = (this.pagination.currentPage - 1) * this.pagination.pageSize;
-    const endIndex = startIndex + this.pagination.pageSize;
-    this.paginatedData = this.data.slice(startIndex, endIndex);
-  }
-
-  get totalPages(): number {
-    if (this.pagination.pageSize === -1) return 1;
-    return Math.ceil(this.pagination.totalItems / this.pagination.pageSize);
-  }
-
-  get visiblePages(): number[] {
-    const totalPages = this.totalPages;
-    const current = this.pagination.currentPage;
-    const pages: number[] = [];
-
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      if (current > 3) pages.push(-1);
-      for (let i = Math.max(2, current - 1); i <= Math.min(totalPages - 1, current + 1); i++) {
-        pages.push(i);
-      }
-      if (current < totalPages - 2) pages.push(-1);
-      pages.push(totalPages);
-    }
-
-    return pages;
-  }
-
-  onPageSizeChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const newSize = parseInt(select.value, 10);
-    this.pagination.pageSize = newSize;
-    this.pagination.currentPage = 1;
-    this.updatePaginatedData();
+  // filter logic end
+  
+  // pagination logic start
+  get currentPage(): number {
+    return this.paginationService.getCurrentPage();
   }
 
   onPageChange(page: number): void {
-    if (page < 1 || page > this.totalPages) return;
-    this.pagination.currentPage = page;
-    this.updatePaginatedData();
+    this.paginationService.onPageChange(page);
   }
 
-  goToFirstPage(): void { this.onPageChange(1); }
-  goToLastPage(): void { this.onPageChange(this.totalPages); }
-  goToPreviousPage(): void { this.onPageChange(this.pagination.currentPage - 1); }
-  goToNextPage(): void { this.onPageChange(this.pagination.currentPage + 1); }
+  onPageSizeChange(size: number | 'all'): void {
+    this.paginationService.onPageSizeChange(size);
+  }
 
-  private resizeTable(): void {
-    if (this.tableContainer) {
-      const width = this.tableContainer.nativeElement.offsetWidth;
-      const height = this.tableContainer.nativeElement.offsetHeight;
+  get paginatedData(): MatrixNode[] {
+    // Start with combined data
+    let allData = [...this.editService.getNewRows(), ...this.data];
+  
+    // Apply filters
+    if (this.filterService.hasActiveFilters()) {
+      const activeFilters = this.filterService.getActiveFilters();
+      const filteredExisting = this.data.filter(item =>
+        Array.from(activeFilters.values()).every(filter =>
+          this.filterService.matchesFilter(item[filter.field], filter)
+        )
+      );
+      allData = [...this.editService.getNewRows(), ...filteredExisting];
     }
+  
+    // Apply sorting
+    allData = this.sortService.sortData(allData);
+  
+    // Apply pagination
+    return this.paginationService.getPaginatedData(allData);
   }
 
-  toggleFilters(event?: Event): void {
-    if (event) {
-      event.stopPropagation();
-    }
-    this.showFilters = !this.showFilters;
+  get pageSizes(): PageSize[] {
+    return this.paginationService.getPageSizes();
   }
+
+  get showPagination(): boolean {
+    return this.paginationService.shouldShowPagination();
+  }
+
+  get totalPages(): number {
+    return this.paginationService.getTotalPages();
+  }
+
+  get visiblePages(): number[] {
+    return this.paginationService.getVisiblePages();
+  }
+  // pagination logic end
+
+  // selection logic start
+  get allSelected(): boolean {
+    return this.selectionService.isAllSelected();
+  }
+
+  set allSelected(value: boolean) {
+    this.selectionService.toggleAllRows(value, this.data.length);
+  }
+
+  getSelectedRows(): MatrixNode[] {
+    return Array.from(this.selectionService.getSelectedRows())
+      .map(index => this.data[index])
+      .filter(row => row !== undefined);
+  }
+
+  get hasSelectedRows(): boolean {
+    return this.selectionService.getSelectedCount() > 0;
+  }
+
+  isRowSelected(index: number): boolean {
+    return this.selectionService.isSelected(index);
+  }
+
+  selectRow(index: number, selected = true): void {
+    this.selectionService.selectRow(index, selected);
+  }
+
+  setSelectedRows(indices: number[]): void {
+    this.selectionService.setSelectedRows(indices);
+  }
+
+  toggleAllRows(selected: boolean): void {
+    this.selectionService.toggleAllRows(selected, this.data.length);
+  }
+  // selection logic end
+
+  // sort logic start
+  getSortIcon(column: string): string {
+    return this.sortService.getSortIcon(column);
+  }
+
+  toggleSort(column: string): void {
+    this.sortService.toggleSort(column);
+  }
+  // sort logic end
+
+  // i/o logic start
+  formatCoordinate(value: number): string {
+    return value.toFixed(1);
+  }
+
+  getCodes(data: MatrixNode[]): string[] {
+    if (!data) return [];
+    return data.map(row => row['code']?.toString() || '');
+  }
+  // i/o logic end
+
+  // config logic start
+  getColumns(data: MatrixNode[]): string[] {
+    if (!data?.length) return [];
+    const firstRow = data[0];
+    return Object.keys(firstRow);
+  }
+
+  get hasData(): boolean {
+    return !!this.data?.length;
+  }
+  // config logic end
 }
