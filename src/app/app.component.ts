@@ -54,6 +54,7 @@ export class AppComponent implements AfterViewInit {
 
   formData = this.employeeFormProvider.getCurrentForm();
   tableAirportData: any[] = [];
+  tableColumnConfigs = this.tableProvider.getAirportColumnConfigs();
   accordionPanels = this.accordianDataService.getAccordianPanels();
 
   constructor(

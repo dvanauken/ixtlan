@@ -2,10 +2,8 @@
   <nav>
     <ixt-tabset title="Employee Form">
       <ixt-tab title="Tab 1">
-        <ixt-tree [nodes]="treeProvider.treeData" 
-          (nodeExpanded)="treeHandler.onNodeExpanded($event)"
-          (nodeCollapsed)="treeHandler.onNodeCollapsed($event)" 
-          (nodeSelected)="treeHandler.onNodeSelected($event)">
+        <ixt-tree [nodes]="treeProvider.treeData" (nodeExpanded)="treeHandler.onNodeExpanded($event)"
+          (nodeCollapsed)="treeHandler.onNodeCollapsed($event)" (nodeSelected)="treeHandler.onNodeSelected($event)">
         </ixt-tree>
       </ixt-tab>
       <ixt-tab title="Tab 2">
@@ -16,20 +14,43 @@
   </nav>
 
   <header>
-    <ixt-menu 
-      src="./../assets/menu.json"
-      brandName="Your Brand"
-      brandLogo="./../assets/logo.png"
-      brandLink="/"
-      variant="default"
-      [showSearch]="true"
-      searchPlaceholder="Search products..."
-      (searchSubmitted)="onSearch($event)">
+    <ixt-menu src="./../assets/menu.json" brandName="Your Brand" brandLogo="./../assets/logo.png" brandLink="/"
+      variant="default" [showSearch]="true" searchPlaceholder="Search products..." (searchSubmitted)="onSearch($event)">
     </ixt-menu>
   </header>
 
   <section>
     <ixt-tabset>
+      <ixt-tab title="Clazz">
+        <ixt-clazz></ixt-clazz>
+      </ixt-tab>
+
+      <ixt-tab title="Sequence">
+        <ixt-diagram></ixt-diagram>
+      </ixt-tab>
+
+      <ixt-tab title="viewport">
+        <ixt-viewport></ixt-viewport>
+      </ixt-tab>
+
+      <ixt-tab title="cavas">
+        <ixt-canvas></ixt-canvas>
+      </ixt-tab>
+
+      <ixt-tab title="D3 Geo">
+        <ixt-map [width]="'100%'" [height]="'80%'" scale="1" translate="0,0">
+          <ixt-layer src="./../assets/countries.geojson" stroke="black" fill="gray"></ixt-layer>
+          <ixt-layer src="./../assets/flights.minified.geojson" stroke="red" fill="none" (click)="select($event)">
+            properties.airlineIata === 'F9'
+          </ixt-layer>
+          <ixt-layer src="./../assets/flights.minified.geojson" stroke="green" fill="none" (click)="select($event)">
+            properties.airlineIata === 'NK'
+          </ixt-layer>
+          <ixt-layer src="./../assets/lakes.geojson" stroke="black" fill="blue" (click)="select($event)"></ixt-layer>
+          <ixt-layer src="./../assets/rivers.geojson" stroke="purple" fill="none"
+            (hover)="highlight($event)"></ixt-layer>
+        </ixt-map>
+      </ixt-tab>
 
       <ixt-tab title="Buttons">
         <div class="button-showcase">
@@ -42,7 +63,7 @@
               <ixt-button variant="primary" size="lg">Large</ixt-button>
             </div>
           </div>
-      
+
           <!-- Theme Variants -->
           <div class="section">
             <h4>Theme Variants</h4>
@@ -65,18 +86,14 @@
               </div>
             </div>
           </div>
-      
+
           <!-- Examples -->
           <div class="section">
             <h4>Examples</h4>
             <div class="button-row">
-              <ixt-button *ngFor="let button of buttonDemos"
-                [variant]="button.variant"
-                [size]="button.size || 'md'"
-                [theme]="button.theme || baseThemeColors"
-                [disabled]="button.disabled"
-                (onClick)="handleButtonClick(button.label)"
-              >
+              <ixt-button *ngFor="let button of buttonDemos" [variant]="button.variant" [size]="button.size || 'md'"
+                [theme]="button.theme || baseThemeColors" [disabled]="button.disabled"
+                (onClick)="handleButtonClick(button.label)">
                 <span *ngIf="button.prefix" prefix>{{button.prefix}}</span>
                 {{button.label}}
                 <span *ngIf="button.suffix" suffix>{{button.suffix}}</span>
@@ -87,7 +104,7 @@
       </ixt-tab>
 
 
-      
+
       <!-- Dialog Example -->
       <ixt-tab title="Dialog Example">
         <div class="dialog-demo-container flex flex-col gap-4 p-4">
@@ -137,35 +154,16 @@
         </form>
       </ixt-tab>
 
-      <ixt-tab title="Auto Complete">
-        <h2>Map Projection Selector</h2>
-        <ixt-auto-complete 
-          [options]="autocompleteProvider.projectionOptions" 
-          placeholder="Search projection..."
-          (valueChange)="autocompleteHandler.onValueChange($event)">
-        </ixt-auto-complete>
-      </ixt-tab>
-
       <ixt-tab title="Calendar">
         <ixt-calendar></ixt-calendar>
       </ixt-tab>
 
-      <ixt-tab title="IxtTable">
-        <ixt-tabset>
-          <ixt-tab title="Standard Table">
-            <ixt-table 
-              [data]="tableAirportData" 
-              [columnConfigs]="tableColumnConfigs"
-              *ngIf="tableAirportData.length">
-            </ixt-table>
-          </ixt-tab>
-          <ixt-tab title="Tree">
-            <ixt-table [data]="tableTreeData"></ixt-table>
-          </ixt-tab>
-          <ixt-tab title="Table Tree">
-            <ixt-table [data]="tableTableTreeData"></ixt-table>
-          </ixt-tab>
-        </ixt-tabset>
+      <ixt-tab title="Standard Table">
+        <ixt-table 
+          [data]="tableAirportData" 
+          [columnConfigs]="tableColumnConfigs" 
+          *ngIf="tableAirportData.length">
+        </ixt-table>
       </ixt-tab>
 
       <ixt-tab title="IxtSplitPane">
@@ -213,9 +211,7 @@
   </section>
 
   <aside>
-    <ixt-layer-manager 
-      [layers]="layerProvider.mapLayers"
-      (layerChange)="layerManager.onLayerChange($event)"
+    <ixt-layer-manager [layers]="layerProvider.mapLayers" (layerChange)="layerManager.onLayerChange($event)"
       (layerOrderChange)="layerManager.onLayerOrderChange($event)">
     </ixt-layer-manager>
   </aside>

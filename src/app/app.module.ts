@@ -37,6 +37,8 @@ import { IxtDialogModule } from 'src/components/ixt-dialog/ixt-dialog.module';
 import { LunchFormComponent } from './lunch-form.component';
 import { IxtButtonModule } from 'src/components/ixt-button/ixt-button.module';
 import { IxtTableModule } from 'src/components/ixt-table/ixt-table.module';
+import { IxtCanvasModule, IxtViewportModule, IxtDiagramModule} from 'src/public-api';
+import { IxtClazzDiagram } from 'src/components/ixt-diagram/types/clazz/ixt-clazz.diagram';
 
 @NgModule({
   declarations: [
@@ -61,7 +63,11 @@ import { IxtTableModule } from 'src/components/ixt-table/ixt-table.module';
     IxtMapModule,
     IxtDialogModule,
     IxtButtonModule,
-    IxtTableModule
+    IxtTableModule,
+    IxtCanvasModule,
+    IxtViewportModule,
+    IxtDiagramModule,
+    IxtClazzDiagram
   ],
   providers: [
     IxtEmployeeFormHandler,
