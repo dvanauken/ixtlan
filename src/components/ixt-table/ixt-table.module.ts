@@ -25,4 +25,4 @@ import { BinaryEditorComponent } from './editors/binary-editor/binary-editor.com
   ],
   exports: [IxtTableComponent]
 })
-export class IxtMatrixModule { }
+export class IxtTableModule { }

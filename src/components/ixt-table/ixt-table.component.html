@@ -1,51 +1,51 @@
-<div class="ixt-matrix__toolbar">
-  <button class="ixt-matrix__action-button" (click)="addNewRow()">
+<div class="ixt-table__toolbar">
+  <button class="ixt-table__action-button" (click)="addNewRow()">
     <span class="material-icons">add</span>
   </button>
-  <button class="ixt-matrix__action-button" [disabled]="!hasChanges && newRowsLength === 0" (click)="saveChanges()">
+  <button class="ixt-table__action-button" [disabled]="!hasChanges && newRowsLength === 0" (click)="saveChanges()">
     <span class="material-icons">save</span>
   </button>
 </div>
 
 <ng-container *ngIf="hasData; else noData">
-  <div class="ixt-matrix">
+  <div class="ixt-table">
     <!-- Header -->
-    <div class="ixt-matrix__header">
-      <div class="ixt-matrix__cell">
+    <div class="ixt-table__header">
+      <div class="ixt-table__cell">
         <binary-editor
           [config]="{ rowIndex: -1 }"
           [(ngModel)]="allSelected"
           (selectionChange)="toggleAllRows($event.selected)">
         </binary-editor>
       </div>
-      <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
-        <div class="ixt-matrix__cell-content">
+      <div class="ixt-table__cell" *ngFor="let col of columns" [class.ixt-table__cell--first]="col === columns[0]">
+        <div class="ixt-table__cell-content">
           {{columnConfigs?.[col]?.label || col}}
-          <div class="ixt-matrix__cell-actions">
-            <button class="ixt-matrix__sort-toggle" (click)="toggleSort(col)">
+          <div class="ixt-table__cell-actions">
+            <button class="ixt-table__sort-toggle" (click)="toggleSort(col)">
               <span class="material-icons">{{getSortIcon(col)}}</span>
             </button>
-            <button class="ixt-matrix__filter-toggle" (click)="toggleFilters(col)">
+            <button class="ixt-table__filter-toggle" (click)="toggleFilters(col)">
               <span class="material-icons">filter_alt</span>
             </button>
           </div>
         </div>
       </div>
-      <div class="ixt-matrix__cell">Actions</div>
+      <div class="ixt-table__cell">Actions</div>
     </div>
 
     <!-- Filter Row -->
-    <div class="ixt-matrix__header" *ngIf="showFilters">
-      <div class="ixt-matrix__cell"></div>
-      <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
+    <div class="ixt-table__header" *ngIf="showFilters">
+      <div class="ixt-table__cell"></div>
+      <div class="ixt-table__cell" *ngFor="let col of columns" [class.ixt-table__cell--first]="col === columns[0]">
         <ng-container *ngIf="activeFilterColumn === col && columnConfigs?.[col]">
           <ng-container [ngSwitch]="getEditorType(columnConfigs?.[col]?.type)">
             <!-- Text Filter -->
             <input *ngSwitchCase="'text'" [formControl]="getFilterControl(col)"
-              [placeholder]="columnConfigs?.[col]?.placeholder || ''" class="ixt-matrix__filter-input">
+              [placeholder]="columnConfigs?.[col]?.placeholder || ''" class="ixt-table__filter-input">
 
             <!-- Number Filter -->
-            <div *ngSwitchCase="'number'" class="ixt-matrix__number-filter">
+            <div *ngSwitchCase="'number'" class="ixt-table__number-filter">
               <select [formControl]="getOperatorControl(col)" (change)="onOperatorChange(col)">
                 <option value="=">=</option>
                 <option value=">">&gt;</option>
@@ -55,12 +55,12 @@
                 <option value="!=">!=</option>
               </select>
               <input type="number" [formControl]="getFilterControl(col)"
-                [placeholder]="columnConfigs?.[col]?.placeholder || ''" class="ixt-matrix__filter-input">
+                [placeholder]="columnConfigs?.[col]?.placeholder || ''" class="ixt-table__filter-input">
             </div>
 
             <!-- Enum Filter -->
             <div *ngSwitchCase="'enum'">
-              <select [formControl]="getFilterControl(col)" class="ixt-matrix__filter-input">
+              <select [formControl]="getFilterControl(col)" class="ixt-table__filter-input">
                 <option value="">All</option>
                 <option *ngFor="let opt of columnConfigs?.[col]?.enumValues" [value]="opt.value">
                   {{opt.label}}
@@ -70,20 +70,20 @@
           </ng-container>
         </ng-container>
       </div>
-      <div class="ixt-matrix__cell"></div>
+      <div class="ixt-table__cell"></div>
     </div>
 
     <!-- Data Rows -->
-    <div class="ixt-matrix__row" *ngFor="let row of paginatedData; let i = index" 
-         [class.ixt-matrix__row--selected]="isRowSelected(getRowIndex(i))">
-      <div class="ixt-matrix__cell">
+    <div class="ixt-table__row" *ngFor="let row of paginatedData; let i = index" 
+         [class.ixt-table__row--selected]="isRowSelected(getRowIndex(i))">
+      <div class="ixt-table__cell">
         <binary-editor
           [config]="{ rowIndex: getRowIndex(i), rowData: row }"
           [ngModel]="isRowSelected(getRowIndex(i))"
           (selectionChange)="selectRow(getRowIndex(i), $event.selected)">
         </binary-editor>
       </div>
-      <div class="ixt-matrix__cell" *ngFor="let col of columns" [class.ixt-matrix__cell--first]="col === columns[0]">
+      <div class="ixt-table__cell" *ngFor="let col of columns" [class.ixt-table__cell--first]="col === columns[0]">
         <ng-container *ngIf="isNewRow(i) || isEditing(getRowIndex(i)); else displayValue">
           <ng-container [ngSwitch]="getEditorType(columnConfigs?.[col]?.type)">
             <!-- Text Input -->
@@ -128,14 +128,14 @@
         </ng-template>
       </div>
        
-      <div class="ixt-matrix__cell">
+      <div class="ixt-table__cell">
         <ng-container *ngIf="!isNewRow(i) && !isEditing(getRowIndex(i))">
-          <button class="ixt-matrix__action-button" (click)="startEditing(getRowIndex(i))">
+          <button class="ixt-table__action-button" (click)="startEditing(getRowIndex(i))">
             <span class="material-icons">edit</span>
           </button>
         </ng-container>
         <ng-container *ngIf="isNewRow(i) || isEditing(getRowIndex(i))">
-          <button class="ixt-matrix__action-button" (click)="cancelEditing(getRowIndex(i))">
+          <button class="ixt-table__action-button" (click)="cancelEditing(getRowIndex(i))">
             <span class="material-icons">close</span>
           </button>
         </ng-container>
@@ -143,9 +143,9 @@
     </div>
 
     <!-- Pagination -->
-    <div class="ixt-matrix__footer" *ngIf="showPagination">
-      <div class="ixt-matrix__pagination">
-        <div class="ixt-matrix__page-size">
+    <div class="ixt-table__footer" *ngIf="showPagination">
+      <div class="ixt-table__pagination">
+        <div class="ixt-table__page-size">
           <select [formControl]="pageSizeControl">
             <option *ngFor="let size of pageSizes" [value]="size.value">
               {{size.label}}
@@ -153,7 +153,7 @@
           </select>
           rows per page
         </div>
-        <div class="ixt-matrix__controls">
+        <div class="ixt-table__controls">
           <button (click)="onPageChange(1)" [disabled]="currentPage === 1">
             <span class="material-icons">first_page</span>
           </button>
@@ -197,7 +197,7 @@
 
 <!-- No Data Template -->
 <ng-template #noData>
-  <div class="ixt-matrix__empty">
+  <div class="ixt-table__empty">
     No data available
   </div>
 </ng-template>

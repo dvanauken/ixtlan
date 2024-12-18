@@ -102,19 +102,6 @@
           </div>
         </div>
       </ixt-tab>
-
-
-
-      <ixt-tab title="Tab 1">
-        <ixt-table [data]="tableProvider.employeeData" [config]="tableProvider.employeeConfig"></ixt-table>
-      </ixt-tab>
-      <ixt-tab title="Tab 2">
-        <ixt-table [data]="tableProvider.salesData" [config]="tableProvider.salesConfig"></ixt-table>
-      </ixt-tab>
-      <ixt-tab title="Tab 3">
-        <ixt-table [data]="tableProvider.inventoryData" [config]="tableProvider.inventoryConfig"></ixt-table>
-      </ixt-tab>
-
       <ixt-tab title="Employee Form">
         <form class="form-grid">
           <h3>Personal Information</h3>
@@ -163,20 +150,20 @@
         <ixt-calendar></ixt-calendar>
       </ixt-tab>
 
-      <ixt-tab title="IxtMatrix">
+      <ixt-tab title="IxtTable">
         <ixt-tabset>
           <ixt-tab title="Standard Table">
-            <ixt-matrix 
-              [data]="matrixAirportData" 
-              [columnConfigs]="matrixColumnConfigs"
-              *ngIf="matrixAirportData.length">
-            </ixt-matrix>
+            <ixt-table 
+              [data]="tableAirportData" 
+              [columnConfigs]="tableColumnConfigs"
+              *ngIf="tableAirportData.length">
+            </ixt-table>
           </ixt-tab>
           <ixt-tab title="Tree">
-            <ixt-matrix [data]="matrixTreeData"></ixt-matrix>
+            <ixt-table [data]="tableTreeData"></ixt-table>
           </ixt-tab>
           <ixt-tab title="Table Tree">
-            <ixt-matrix [data]="matrixTableTreeData"></ixt-matrix>
+            <ixt-table [data]="tableTableTreeData"></ixt-table>
           </ixt-tab>
         </ixt-tabset>
       </ixt-tab>
