@@ -20,10 +20,10 @@ export interface FlowEdge {
   label?: string;
 }
 
-export interface Point {
-  x: number;
-  y: number;
-}
+// export interface Point {
+//   x: number;
+//   y: number;
+// }
 
 // Optional: Add configuration interface if you want to allow customization
 export interface IxtFlowConfig {

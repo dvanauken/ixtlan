@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Specification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        h1 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #0033A0;
+        }
+        h2 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 2em;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #4B306A;
+        }
+        h3 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.5em;
+            font-weight: 400;
+            margin-bottom: 10px;
+            color: #7D5FB2;
+        }
+        h4, h5, h6 {
+            font-family: 'Roboto', sans-serif;
+            color: #444;
+        }
+        h4 {
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+        h5 {
+            font-size: 1em;
+            font-weight: 400;
+        }
+        h6 {
+            font-size: 0.9em;
+            font-weight: 400;
+        }
+        p, li {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1em;
+            font-weight: 300;
+            color: #333;
+            line-height: 1.8;
+        }
+        a {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1em;
+            font-weight: 400;
+            text-decoration: none;
+            color: #00B2A9;
+        }
+        a:hover {
+            text-decoration: underline;
+            color: #007F77;
+        }
+        button {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1em;
+            font-weight: 500;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #0033A0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #00297D;
+        }
+        code {
+            font-family: 'Courier New', monospace;
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        small {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.8em;
+            color: #666;
+        }
+        b, strong {
+            font-weight: 700;
+        }
+        i, em {
+            font-style: italic;
+        }
+        mark {
+            background-color: #ff0;
+            color: #000;
+            padding: 2px 4px;
+        }
+        del {
+            text-decoration: line-through;
+            color: #dc3545;
+        }
+        ins {
+            text-decoration: underline;
+            color: #28a745;
+        }
+        sub {
+            font-size: 0.8em;
+            vertical-align: sub;
+        }
+        sup {
+            font-size: 0.8em;
+            vertical-align: super;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ccc;
+            margin: 20px 0;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        ol {
+            list-style-type: decimal;
+            margin-left: 20px;
+        }
+        dl {
+            margin: 20px 0;
+        }
+        dt {
+            font-weight: 700;
+            color: #0033A0;
+        }
+        dd {
+            margin-left: 20px;
+            color: #555;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Font Specification</h1>
+
+    <h2>Headers</h2>
+    <ul>
+        <h1>H1: Roboto, 2.5em, Bold, Primary Color (#0033A0)</h1>
+        <h2>H2: Roboto, 2em, Semi-Bold, Secondary Color (#4B306A)</h2>
+        <h3>H3: Roboto, 1.5em, Regular, Tertiary Color (#7D5FB2)</h3>
+        <h4>H4-H6: Roboto, Gradually Smaller and Lighter (#444)</h4>
+        <h5>H4-H6: Roboto, Gradually Smaller and Lighter (#444)</h5>
+        <h6>H4-H6: Roboto, Gradually Smaller and Lighter (#444)</h6>
+    </ul>
+
+    <h2>Text Elements</h2>
+    <p>Example of <b>bold</b> and <strong>important</strong> text.</p>
+    <p>Example of <i>italic</i> and <em>emphasized</em> text.</p>
+    <p>Example of <mark>highlighted</mark>, <del>deleted</del>, and <ins>inserted</ins> text.</p>
+    <p>Example of <sub>subscript</sub> and <sup>superscript</sup> text.</p>
+
+    <h2>Lists</h2>
+    <ul>
+        <li>Unordered list item 1</li>
+        <li>Unordered list item 2</li>
+    </ul>
+    <ol>
+        <li>Ordered list item 1</li>
+        <li>Ordered list item 2</li>
+    </ol>
+
+    <h2>Description List</h2>
+    <dl>
+        <dt>Term 1</dt>
+        <dd>Description for Term 1</dd>
+        <dt>Term 2</dt>
+        <dd>Description for Term 2</dd>
+    </dl>
+
+    <h2>Tables</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Header 1</th>
+                <th>Header 2</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Data 1</td>
+                <td>Data 2</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>Small Text</h2>
+    <p><small>This is small text, often used for footnotes or additional information.</small></p>
+</body>
+</html>

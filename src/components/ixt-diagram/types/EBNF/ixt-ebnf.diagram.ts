@@ -1,5 +1,6 @@
 // ixt-ebnf.diagram.ts
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Point } from './ixt-ebnf.types';
 
 interface Node {
   id: string;
@@ -86,12 +87,6 @@ export class IxtEbnfDiagram implements OnInit {
   ngOnInit() {
     this.ctx = this.canvasRef.nativeElement.getContext('2d')!;
     this.draw();
-  }
-
-  private draw() {
-    this.ctx.clearRect(0, 0, this.width, this.height);
-    this.drawEdges();
-    this.drawNodes();
   }
 
   private drawNodes() {
@@ -554,5 +549,58 @@ export class IxtEbnfDiagram implements OnInit {
     if (this.selectedNode) {
       this.drawSelectedNode();
     }
+  }
+
+  private getMidPoint(points: Point[]): Point {
+    if (!points || points.length === 0) {
+      return { x: 0, y: 0 };
+    }
+    
+    if (points.length === 1) {
+      return points[0];
+    }
+    
+    const midIndex = Math.floor((points.length - 1) / 2);
+    
+    if (points.length % 2 === 0) {
+      // Even number of points - average the two middle points
+      const point1 = points[midIndex];
+      const point2 = points[midIndex + 1];
+      return {
+        x: (point1.x + point2.x) / 2,
+        y: (point1.y + point2.y) / 2
+      };
+    } else {
+      // Odd number of points - return the middle point
+      return points[midIndex];
+    }
+  }
+
+  private getPointOnCurve(points: Point[], t: number): Point {
+    if (points.length === 2) {
+      // Linear interpolation
+      return {
+        x: points[0].x + (points[1].x - points[0].x) * t,
+        y: points[0].y + (points[1].y - points[0].y) * t
+      };
+    } else if (points.length === 3) {
+      // Quadratic bezier
+      const mt = 1 - t;
+      return {
+        x: mt * mt * points[0].x + 2 * mt * t * points[1].x + t * t * points[2].x,
+        y: mt * mt * points[0].y + 2 * mt * t * points[1].y + t * t * points[2].y
+      };
+    } else if (points.length === 4) {
+      // Cubic bezier
+      const mt = 1 - t;
+      return {
+        x: mt * mt * mt * points[0].x + 3 * mt * mt * t * points[1].x + 
+           3 * mt * t * t * points[2].x + t * t * t * points[3].x,
+        y: mt * mt * mt * points[0].y + 3 * mt * mt * t * points[1].y + 
+           3 * mt * t * t * points[2].y + t * t * t * points[3].y
+      };
+    }
+    // Fall back to linear interpolation between first and last points
+    return this.getPointOnCurve([points[0], points[points.length - 1]], t);
   }
 }

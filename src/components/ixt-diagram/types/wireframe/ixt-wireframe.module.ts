@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { IxtWireframeDiagram } from './ixt-wireframe-diagram';
+import { IxtWireframeDiagram } from './ixt-wireframe.diagram';
 
 @NgModule({
   declarations: [

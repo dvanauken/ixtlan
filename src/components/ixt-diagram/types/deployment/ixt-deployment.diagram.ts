@@ -1,22 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { DeploymentNode, Connection, DeploymentDiagramConfig } from './ixt-deployment.types';
 import { fromEvent } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
-interface DeploymentNode {
-  id: string;
-  type: 'server' | 'database' | 'service' | 'container';
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  label: string;
-}
-
-interface Connection {
-  from: string;
-  to: string;
-  type: 'deploys' | 'depends' | 'communicates';
-}
 
 @Component({
   selector: 'ixt-deployment-diagram',

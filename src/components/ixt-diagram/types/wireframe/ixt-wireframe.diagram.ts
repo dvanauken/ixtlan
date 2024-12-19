@@ -198,7 +198,7 @@ export class IxtWireframeDiagram implements OnInit {
     // Draw top ruler
     const topCtx = this.topRuler.nativeElement.getContext('2d')!;
     topCtx.clearRect(0, 0, this.topRuler.nativeElement.width, this.topRuler.nativeElement.height);
-    
+
     // Draw left ruler
     const leftCtx = this.leftRuler.nativeElement.getContext('2d')!;
     leftCtx.clearRect(0, 0, this.leftRuler.nativeElement.width, this.leftRuler.nativeElement.height);
@@ -209,7 +209,7 @@ export class IxtWireframeDiagram implements OnInit {
 
   private draw() {
     this.ctx.clearRect(0, 0, this.mainCanvas.nativeElement.width, this.mainCanvas.nativeElement.height);
-    
+
     if (this.showGrid) {
       this.drawGrid();
     }
@@ -241,7 +241,7 @@ export class IxtWireframeDiagram implements OnInit {
 
   private drawShape(shape: WireframeShape) {
     const isSelected = this.selectedShapes.has(shape.id);
-    
+
     this.ctx.save();
     this.ctx.scale(this.scale, this.scale);
     this.ctx.translate(this.panOffset.x, this.panOffset.y);
@@ -264,7 +264,7 @@ export class IxtWireframeDiagram implements OnInit {
     this.ctx.fillStyle = '#f0f0f0';
     this.ctx.strokeStyle = isSelected ? '#0066ff' : '#000';
     this.ctx.lineWidth = isSelected ? 2 : 1;
-    
+
     this.ctx.beginPath();
     this.ctx.roundRect(shape.x, shape.y, shape.width, shape.height, 5);
     this.ctx.fill();
@@ -282,7 +282,7 @@ export class IxtWireframeDiagram implements OnInit {
     this.ctx.fillStyle = '#fff';
     this.ctx.strokeStyle = isSelected ? '#0066ff' : '#000';
     this.ctx.lineWidth = isSelected ? 2 : 1;
-    
+
     this.ctx.beginPath();
     this.ctx.rect(shape.x, shape.y, shape.width, shape.height);
     this.ctx.fill();
@@ -304,7 +304,7 @@ export class IxtWireframeDiagram implements OnInit {
     const pos = this.getCanvasPosition(event);
     this.isDragging = true;
     this.dragStart = pos;
-    
+
     // Check if clicked on a shape
     const clickedShape = this.findShapeAtPosition(pos);
     if (clickedShape) {
@@ -319,7 +319,7 @@ export class IxtWireframeDiagram implements OnInit {
     } else {
       this.selectedShapes.clear();
     }
-    
+
     this.draw();
   }
 
@@ -335,7 +335,7 @@ export class IxtWireframeDiagram implements OnInit {
         if (this.selectedShapes.has(shape.id)) {
           shape.x += dx;
           shape.y += dy;
-          
+
           if (this.snapEnabled) {
             shape.x = Math.round(shape.x / this.gridSize) * this.gridSize;
             shape.y = Math.round(shape.y / this.gridSize) * this.gridSize;
@@ -352,26 +352,26 @@ export class IxtWireframeDiagram implements OnInit {
     this.draw();
   }
 
-  onMouseUp() {
+  onMouseUp(_event: MouseEvent) {  // Add underscore to indicate unused parameter
     this.isDragging = false;
   }
 
   onWheel(event: WheelEvent) {
     event.preventDefault();
     const pos = this.getCanvasPosition(event);
-    
+
     // Calculate zoom
     const delta = event.deltaY > 0 ? 0.9 : 1.1;
     const newScale = this.scale * delta;
-    
+
     // Limit zoom range
     if (newScale >= 0.1 && newScale <= 5) {
       this.scale = newScale;
-      
+
       // Adjust pan offset to zoom towards mouse position
       this.panOffset.x = pos.x - (pos.x - this.panOffset.x) * delta;
       this.panOffset.y = pos.y - (pos.y - this.panOffset.y) * delta;
-      
+
       this.draw();
     }
   }
@@ -389,7 +389,7 @@ export class IxtWireframeDiagram implements OnInit {
     for (let i = this.shapes.length - 1; i >= 0; i--) {
       const shape = this.shapes[i];
       if (pos.x >= shape.x && pos.x <= shape.x + shape.width &&
-          pos.y >= shape.y && pos.y <= shape.y + shape.height) {
+        pos.y >= shape.y && pos.y <= shape.y + shape.height) {
         return shape;
       }
     }
@@ -411,207 +411,203 @@ export class IxtWireframeDiagram implements OnInit {
     this.draw();
   }
 
+
   alignSelected(alignment: string) {
     if (this.selectedShapes.size < 2) return;
 
     const selectedShapes = this.shapes.filter(s => this.selectedShapes.has(s.id));
 
-    alignSelected(alignment: string) {
-        if (this.selectedShapes.size < 2) return;
-    
-        const selectedShapes = this.shapes.filter(s => this.selectedShapes.has(s.id));
-        
-        switch (alignment) {
-          case 'left':
-            const leftMost = Math.min(...selectedShapes.map(s => s.x));
-            selectedShapes.forEach(s => s.x = leftMost);
-            break;
-          case 'center':
-            const centerX = selectedShapes.reduce((acc, s) => acc + s.x + s.width/2, 0) / selectedShapes.length;
-            selectedShapes.forEach(s => s.x = centerX - s.width/2);
-            break;
-          case 'right':
-            const rightMost = Math.max(...selectedShapes.map(s => s.x + s.width));
-            selectedShapes.forEach(s => s.x = rightMost - s.width);
-            break;
-          case 'top':
-            const topMost = Math.min(...selectedShapes.map(s => s.y));
-            selectedShapes.forEach(s => s.y = topMost);
-            break;
-          case 'middle':
-            const centerY = selectedShapes.reduce((acc, s) => acc + s.y + s.height/2, 0) / selectedShapes.length;
-            selectedShapes.forEach(s => s.y = centerY - s.height/2);
-            break;
-          case 'bottom':
-            const bottomMost = Math.max(...selectedShapes.map(s => s.y + s.height));
-            selectedShapes.forEach(s => s.y = bottomMost - s.height);
-            break;
-        }
-        
+    switch (alignment) {
+      case 'left':
+        const leftMost = Math.min(...selectedShapes.map(s => s.x));
+        selectedShapes.forEach(s => s.x = leftMost);
+        break;
+      case 'center':
+        const centerX = selectedShapes.reduce((acc, s) => acc + s.x + s.width / 2, 0) / selectedShapes.length;
+        selectedShapes.forEach(s => s.x = centerX - s.width / 2);
+        break;
+      case 'right':
+        const rightMost = Math.max(...selectedShapes.map(s => s.x + s.width));
+        selectedShapes.forEach(s => s.x = rightMost - s.width);
+        break;
+      case 'top':
+        const topMost = Math.min(...selectedShapes.map(s => s.y));
+        selectedShapes.forEach(s => s.y = topMost);
+        break;
+      case 'middle':
+        const centerY = selectedShapes.reduce((acc, s) => acc + s.y + s.height / 2, 0) / selectedShapes.length;
+        selectedShapes.forEach(s => s.y = centerY - s.height / 2);
+        break;
+      case 'bottom':
+        const bottomMost = Math.max(...selectedShapes.map(s => s.y + s.height));
+        selectedShapes.forEach(s => s.y = bottomMost - s.height);
+        break;
+    }
+
+    this.draw();
+  }
+
+  // Add shape when dropped from palette
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    const shapeType = event.dataTransfer?.getData('text/plain');
+    const pos = this.getCanvasPosition(event as unknown as MouseEvent);
+
+    if (shapeType) {
+      const template = this.availableShapes.find(s => s.type === shapeType);
+      if (template) {
+        const newShape: WireframeShape = {
+          id: `shape-${Date.now()}`,
+          type: shapeType,
+          x: pos.x,
+          y: pos.y,
+          width: template.defaultWidth,
+          height: template.defaultHeight,
+          text: '',
+          layer: this.shapes.length,
+          properties: {}
+        };
+
+        this.shapes.push(newShape);
+        this.selectedShapes.clear();
+        this.selectedShapes.add(newShape.id);
         this.draw();
-      }
-    
-      // Add shape when dropped from palette
-      onDrop(event: DragEvent) {
-        event.preventDefault();
-        const shapeType = event.dataTransfer?.getData('text/plain');
-        const pos = this.getCanvasPosition(event as unknown as MouseEvent);
-        
-        if (shapeType) {
-          const template = this.availableShapes.find(s => s.type === shapeType);
-          if (template) {
-            const newShape: WireframeShape = {
-              id: `shape-${Date.now()}`,
-              type: shapeType,
-              x: pos.x,
-              y: pos.y,
-              width: template.defaultWidth,
-              height: template.defaultHeight,
-              text: '',
-              layer: this.shapes.length,
-              properties: {}
-            };
-            
-            this.shapes.push(newShape);
-            this.selectedShapes.clear();
-            this.selectedShapes.add(newShape.id);
-            this.draw();
-          }
-        }
-      }
-    
-      // Handle text editing for shapes
-      onDoubleClick(event: MouseEvent) {
-        const pos = this.getCanvasPosition(event);
-        const shape = this.findShapeAtPosition(pos);
-        
-        if (shape) {
-          const text = prompt('Enter text:', shape.text);
-          if (text !== null) {
-            shape.text = text;
-            this.draw();
-          }
-        }
-      }
-    
-      // Resize selected shapes
-      private initializeResizeHandles() {
-        const handleSize = 8;
-        const handles = [
-          { cursor: 'nw-resize', x: 0, y: 0 },
-          { cursor: 'n-resize', x: 0.5, y: 0 },
-          { cursor: 'ne-resize', x: 1, y: 0 },
-          { cursor: 'w-resize', x: 0, y: 0.5 },
-          { cursor: 'e-resize', x: 1, y: 0.5 },
-          { cursor: 'sw-resize', x: 0, y: 1 },
-          { cursor: 's-resize', x: 0.5, y: 1 },
-          { cursor: 'se-resize', x: 1, y: 1 }
-        ];
-    
-        this.selectedShapes.forEach(id => {
-          const shape = this.shapes.find(s => s.id === id);
-          if (shape) {
-            handles.forEach(handle => {
-              const x = shape.x + shape.width * handle.x - handleSize/2;
-              const y = shape.y + shape.height * handle.y - handleSize/2;
-              
-              this.ctx.fillStyle = '#fff';
-              this.ctx.strokeStyle = '#0066ff';
-              this.ctx.fillRect(x, y, handleSize, handleSize);
-              this.ctx.strokeRect(x, y, handleSize, handleSize);
-            });
-          }
-        });
-      }
-    
-      // Layer management
-      bringToFront() {
-        if (this.selectedShapes.size === 0) return;
-        
-        const maxLayer = Math.max(...this.shapes.map(s => s.layer));
-        this.shapes.forEach(shape => {
-          if (this.selectedShapes.has(shape.id)) {
-            shape.layer = maxLayer + 1;
-          }
-        });
-        
-        this.sortShapesByLayer();
-        this.draw();
-      }
-    
-      sendToBack() {
-        if (this.selectedShapes.size === 0) return;
-        
-        const minLayer = Math.min(...this.shapes.map(s => s.layer));
-        this.shapes.forEach(shape => {
-          if (this.selectedShapes.has(shape.id)) {
-            shape.layer = minLayer - 1;
-          }
-        });
-        
-        this.sortShapesByLayer();
-        this.draw();
-      }
-    
-      private sortShapesByLayer() {
-        this.shapes.sort((a, b) => a.layer - b.layer);
-      }
-    
-      // Save and load functionality
-      saveToJSON(): string {
-        return JSON.stringify({
-          shapes: this.shapes,
-          scale: this.scale,
-          panOffset: this.panOffset,
-          showGrid: this.showGrid,
-          snapEnabled: this.snapEnabled
-        });
-      }
-    
-      loadFromJSON(json: string) {
-        try {
-          const data = JSON.parse(json);
-          this.shapes = data.shapes;
-          this.scale = data.scale;
-          this.panOffset = data.panOffset;
-          this.showGrid = data.showGrid;
-          this.snapEnabled = data.snapEnabled;
-          this.selectedShapes.clear();
-          this.draw();
-        } catch (error) {
-          console.error('Error loading wireframe:', error);
-        }
-      }
-    
-      // Export functionality
-      exportAsPNG(): string {
-        return this.mainCanvas.nativeElement.toDataURL('image/png');
-      }
-    
-      // Undo/Redo support
-      private undoStack: any[] = [];
-      private redoStack: any[] = [];
-    
-      private saveState() {
-        this.undoStack.push(this.saveToJSON());
-        this.redoStack = [];
-      }
-    
-      undo() {
-        if (this.undoStack.length > 0) {
-          const currentState = this.saveToJSON();
-          this.redoStack.push(currentState);
-          const previousState = this.undoStack.pop()!;
-          this.loadFromJSON(previousState);
-        }
-      }
-    
-      redo() {
-        if (this.redoStack.length > 0) {
-          const currentState = this.saveToJSON();
-          this.undoStack.push(currentState);
-          const nextState = this.redoStack.pop()!;
-          this.loadFromJSON(nextState);
-        }
       }
     }
+  }
+
+  // Handle text editing for shapes
+  onDoubleClick(event: MouseEvent) {
+    const pos = this.getCanvasPosition(event);
+    const shape = this.findShapeAtPosition(pos);
+
+    if (shape) {
+      const text = prompt('Enter text:', shape.text);
+      if (text !== null) {
+        shape.text = text;
+        this.draw();
+      }
+    }
+  }
+
+  // Resize selected shapes
+  private initializeResizeHandles() {
+    const handleSize = 8;
+    const handles = [
+      { cursor: 'nw-resize', x: 0, y: 0 },
+      { cursor: 'n-resize', x: 0.5, y: 0 },
+      { cursor: 'ne-resize', x: 1, y: 0 },
+      { cursor: 'w-resize', x: 0, y: 0.5 },
+      { cursor: 'e-resize', x: 1, y: 0.5 },
+      { cursor: 'sw-resize', x: 0, y: 1 },
+      { cursor: 's-resize', x: 0.5, y: 1 },
+      { cursor: 'se-resize', x: 1, y: 1 }
+    ];
+
+    this.selectedShapes.forEach(id => {
+      const shape = this.shapes.find(s => s.id === id);
+      if (shape) {
+        handles.forEach(handle => {
+          const x = shape.x + shape.width * handle.x - handleSize / 2;
+          const y = shape.y + shape.height * handle.y - handleSize / 2;
+
+          this.ctx.fillStyle = '#fff';
+          this.ctx.strokeStyle = '#0066ff';
+          this.ctx.fillRect(x, y, handleSize, handleSize);
+          this.ctx.strokeRect(x, y, handleSize, handleSize);
+        });
+      }
+    });
+  }
+
+  // Layer management
+  bringToFront() {
+    if (this.selectedShapes.size === 0) return;
+
+    const maxLayer = Math.max(...this.shapes.map(s => s.layer));
+    this.shapes.forEach(shape => {
+      if (this.selectedShapes.has(shape.id)) {
+        shape.layer = maxLayer + 1;
+      }
+    });
+
+    this.sortShapesByLayer();
+    this.draw();
+  }
+
+  sendToBack() {
+    if (this.selectedShapes.size === 0) return;
+
+    const minLayer = Math.min(...this.shapes.map(s => s.layer));
+    this.shapes.forEach(shape => {
+      if (this.selectedShapes.has(shape.id)) {
+        shape.layer = minLayer - 1;
+      }
+    });
+
+    this.sortShapesByLayer();
+    this.draw();
+  }
+
+  private sortShapesByLayer() {
+    this.shapes.sort((a, b) => a.layer - b.layer);
+  }
+
+  // Save and load functionality
+  saveToJSON(): string {
+    return JSON.stringify({
+      shapes: this.shapes,
+      scale: this.scale,
+      panOffset: this.panOffset,
+      showGrid: this.showGrid,
+      snapEnabled: this.snapEnabled
+    });
+  }
+
+  loadFromJSON(json: string) {
+    try {
+      const data = JSON.parse(json);
+      this.shapes = data.shapes;
+      this.scale = data.scale;
+      this.panOffset = data.panOffset;
+      this.showGrid = data.showGrid;
+      this.snapEnabled = data.snapEnabled;
+      this.selectedShapes.clear();
+      this.draw();
+    } catch (error) {
+      console.error('Error loading wireframe:', error);
+    }
+  }
+
+  // Export functionality
+  exportAsPNG(): string {
+    return this.mainCanvas.nativeElement.toDataURL('image/png');
+  }
+
+  // Undo/Redo support
+  private undoStack: any[] = [];
+  private redoStack: any[] = [];
+
+  private saveState() {
+    this.undoStack.push(this.saveToJSON());
+    this.redoStack = [];
+  }
+
+  undo() {
+    if (this.undoStack.length > 0) {
+      const currentState = this.saveToJSON();
+      this.redoStack.push(currentState);
+      const previousState = this.undoStack.pop()!;
+      this.loadFromJSON(previousState);
+    }
+  }
+
+  redo() {
+    if (this.redoStack.length > 0) {
+      const currentState = this.saveToJSON();
+      this.undoStack.push(currentState);
+      const nextState = this.redoStack.pop()!;
+      this.loadFromJSON(nextState);
+    }
+  }
+}
