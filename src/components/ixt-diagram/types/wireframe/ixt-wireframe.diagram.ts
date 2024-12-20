@@ -19,7 +19,7 @@ interface Point {
 }
 
 @Component({
-  selector: 'ixt-wireframe-diagram',
+  selector: 'ixt-wireframe',
   template: `
     <div class="wireframe-container">
       <!-- Left Toolbar -->

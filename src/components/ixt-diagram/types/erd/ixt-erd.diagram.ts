@@ -24,7 +24,7 @@ interface Relationship {
 }
 
 @Component({
-  selector: 'ixt-erd-diagram',
+  selector: 'ixt-erd',
   template: `
     <div class="diagram-container">
       <canvas #canvas 

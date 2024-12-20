@@ -1,19 +1,20 @@
+// src/components/ixt-map/ixt-map.module.ts
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common'; // CommonModule is needed for common directives like NgIf, NgFor, etc.
+import { CommonModule } from '@angular/common';
 import { IxtMapComponent } from './ixt-map.component';
-import { IxtLayerComponent } from './ixt-layer.component';
+import { IxtLayerModule } from './ixt-layer.module';
 
 @NgModule({
   declarations: [
-    IxtMapComponent,   // Declare IxtMapComponent
-    IxtLayerComponent  // Declare IxtLayerComponent
+    IxtMapComponent
   ],
   imports: [
-    CommonModule       // Import CommonModule for basic Angular directives
+    CommonModule,
+    IxtLayerModule
   ],
   exports: [
-    IxtMapComponent,   // Export IxtMapComponent to be available for other modules
-    IxtLayerComponent  // Export IxtLayerComponent so it can be used in conjunction with IxtMapComponent
+    IxtMapComponent,
+    IxtLayerModule
   ]
 })
-export class IxtMapModule {}
+export class IxtMapModule { }

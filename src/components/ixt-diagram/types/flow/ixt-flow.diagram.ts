@@ -24,7 +24,7 @@ interface Point {
 }
 
 @Component({
-  selector: 'ixt-flow-diagram',
+  selector: 'ixt-flow',
   template: `
     <div class="flow-diagram-container">
       <canvas #canvas 

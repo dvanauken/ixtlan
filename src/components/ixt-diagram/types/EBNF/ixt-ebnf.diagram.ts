@@ -20,7 +20,7 @@ interface Edge {
 }
 
 @Component({
-  selector: 'ixt-ebnf-diagram',
+  selector: 'ixt-ebnf',
   template: `
     <div class="diagram-container">
       <canvas #canvas

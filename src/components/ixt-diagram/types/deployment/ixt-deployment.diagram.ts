@@ -4,7 +4,7 @@ import { fromEvent } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'ixt-deployment-diagram',
+  selector: 'ixt-deployment',
   template: `
     <div class="diagram-container">
       <canvas #canvas 
