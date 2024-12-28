@@ -1,6 +1,6 @@
 {
   "name": "@dvanauken/ixtlan",
-  "version": "0.3.0-alpha.1011",
+  "version": "0.3.0-alpha.1012",
   "main": "./dist/ixtlan/fesm2022/ixtlan.mjs",
   "module": "./dist/ixtlan/fesm2022/ixtlan.mjs",
   "typings": "./dist/ixtlan/index.d.ts",
