@@ -1,3 +1,4 @@
+// File: src/components/ixt-table/ixt-table.interfaces.ts
 import { Type } from "@angular/core";
 import { MatrixEditor } from "./editors/editor.interface";
 

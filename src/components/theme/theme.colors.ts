@@ -72,7 +72,7 @@ export const unitedThemeColors: ThemeColors = {
     base: '#0033A0',    // United Blue
     hover: '#00297A',   // Darker shade for hover state
     active: '#002060',  // Even darker shade for active state
-    text: '#FF00000'     // White text for contrast
+    text: '#FFFFFF'     // White text for contrast
   },
   secondary: {
     base: '#6D2077',    // Atlantic Amethyst
@@ -90,7 +90,7 @@ export const unitedThemeColors: ThemeColors = {
     base: '#4CAF50',    // Subtle green
     hover: '#43A047',   // Darker shade for hover state
     active: '#388E3C',  // Even darker shade for active state
-    text: '#FF0000'     // White text for contrast
+    text: '#FFFFFF'     // White text for contrast
   },
   warning: {
     base: '#FF9800',    // Warm yellow-orange
@@ -129,3 +129,4 @@ export const unitedThemeColors: ThemeColors = {
     text: '#000000'     // Black text for readability
   }
 };
+

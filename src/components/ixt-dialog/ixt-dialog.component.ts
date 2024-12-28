@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef, Input, Output, EventEmitter, ViewContainerRef, ComponentFactoryResolver, Type, AfterViewInit } from '@angular/core';
-import { baseThemeColors } from '../theme/theme.colors';
-import { ThemeVariant, ThemeColors } from '../theme/theme.types';
+import { baseThemeColors } from './../theme/theme.colors';
+import { ThemeVariant, ThemeColors } from './../theme/theme.types';
 
 @Component({
   selector: 'ixt-dialog',

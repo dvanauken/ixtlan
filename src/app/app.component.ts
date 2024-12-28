@@ -10,12 +10,12 @@ import { IxtEmployeeFormHandler } from './form/ixt-employee-form.handler';
 import { IxtTableProvider } from './table/ixt-table.provider';
 import { IxtMenuProvider } from './menu/ixt-menu.provider';
 import { AccordianDataService } from './accordion/accordion.data';
-import { IxtDialogService } from 'src/components/ixt-dialog/ixt-dialog.service';
+import { IxtDialogService } from './../components/ixt-dialog/ixt-dialog.service';
 import { firstValueFrom } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { LunchFormComponent } from './lunch-form.component';
-import { ThemeVariant, ThemeColors } from 'src/components/theme/theme.types';
-import { baseThemeColors, unitedThemeColors } from 'src/components/theme/theme.colors';
+import { ThemeVariant, ThemeColors } from './../components/theme/theme.types';
+import { baseThemeColors, unitedThemeColors } from './../components/theme/theme.colors';
 
 
 // Add to existing AppComponent class

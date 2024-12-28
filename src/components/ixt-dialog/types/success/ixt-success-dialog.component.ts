@@ -1,7 +1,7 @@
 // ixt-success-dialog.component.ts
 import { Component, Input } from '@angular/core';
-import { baseThemeColors } from 'src/components/theme/theme.colors';
-import { ThemeVariant, ThemeColors } from 'src/components/theme/theme.types';
+import { ThemeColors, ThemeVariant } from '../../../theme/theme.types';
+import { baseThemeColors } from '../../../theme/theme.colors';
 
 @Component({
   selector: 'ixt-success-dialog',

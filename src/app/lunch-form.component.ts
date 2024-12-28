@@ -1,6 +1,6 @@
 import { Component, ViewChild, TemplateRef, OnInit, EventEmitter, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { IxtDialogService } from 'src/components/ixt-dialog/ixt-dialog.service';
+import { IxtDialogService } from './../components/ixt-dialog/ixt-dialog.service';
 import { firstValueFrom } from 'rxjs';
 
 

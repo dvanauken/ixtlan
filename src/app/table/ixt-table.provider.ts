@@ -1,9 +1,9 @@
-// src/app/matrix/ixt-matrix.provider.ts
+// src/app/matrix/ixt-table.provider.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IxtDialogService } from 'src/components/ixt-dialog/ixt-dialog.service';
-import { ColumnConfigs, AirportCodeEditorComponent, CoordinateEditorComponent } from 'src/public-api';
+import { IxtDialogService } from './../../components/ixt-dialog/ixt-dialog.service';
+import { AirportCodeEditorComponent, ColumnConfigs, CoordinateEditorComponent } from './../../components/ixt-table/ixt-table.index';
 
 @Injectable({
   providedIn: 'root'
