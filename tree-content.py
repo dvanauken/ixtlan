@@ -50,7 +50,7 @@ EXCLUDE_FOLDERS = {
     ".git", 
     ".gitignore",
     ".editorconfig",
-    "dist", 
+    "distxxx", 
     ".idea",
     ".angular/cache/**",  # This will exclude everything under the .angular/cache directory
     "error.txt",
@@ -65,6 +65,9 @@ EXCLUDE_FOLDERS = {
     "src/favicon.ico",
     "src/polyfills.ts", 
     "TiltedPerspective.gif", "TiltedPerspective.jpg", "TiltedPerspective.png",
+    "dist/ixtlan/fesm2022",
+    "dist/ixtlan/esm2022",
+
 }
 
 # Common image file extensions to ignore content
