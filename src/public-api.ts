@@ -30,26 +30,26 @@ export {
   ITabsetConfig
  } from './components/ixt-tabset/ixt-tabset.index';
  
-//  //------------------------------------ Basic UI Components -------------------------------------
-//  export {
-//   IxtButtonModule
-//  } from './components/ixt-button/ixt-button.index';
+ //------------------------------------ Basic UI Components -------------------------------------
+ export {
+  IxtButtonModule
+ } from './components/ixt-button/ixt-button.index';
  
-//  export {
-//   IxtPanelModule
-//  } from './components/ixt-panel/ixt-panel.index';
+ export {
+  IxtPanelModule
+ } from './components/ixt-panel/ixt-panel.index';
  
-//  export {
-//   IxtMenuModule
-//  } from './components/ixt-menu/ixt-menu.index';
+ export {
+  IxtMenuModule
+ } from './components/ixt-menu/ixt-menu.index';
  
-//  export {
-//   IxtTreeModule
-//  } from './components/ixt-tree/ixt-tree.index';
+ export {
+  IxtTreeModule
+ } from './components/ixt-tree/ixt-tree.index';
  
-//  export {
-//   IxtAccordianModule
-//  } from './components/ixt-accordian/ixt-accordian.index';
+ export {
+  IxtAccordianModule
+ } from './components/ixt-accordian/ixt-accordian.index';
  
 //  //--------------------------------- Canvas & View Components ----------------------------------
 //  export {
