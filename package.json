@@ -2,9 +2,9 @@
   "name": "@dvanauken/ixtlan",
   "version": "0.3.0-alpha.1028",
   "main": "./dist/ixtlan/bundles/ixtlan.umd.js",
-  "module": "./dist/ixtlan/fesm2022/ixtlan.mjs",
-  "es2022": "./dist/ixtlan/fesm2022/ixtlan.mjs",
-  "esm2022": "./dist/ixtlan/esm2022/ixtlan.mjs",
+  "module": "./dist/ixtlan/fesm2022/dvanauken-ixtlan.mjs",
+  "es2022": "./dist/ixtlan/fesm2022/dvanauken-ixtlan.mjs",
+  "esm2022": "./dist/ixtlan/esm2022/dvanauken-ixtlan.mjs",
   "typings": "./dist/ixtlan/index.d.ts",
   "exports": {
     ".": {
