@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IxtTableComponent } from './ixt-text.component';
+import { IxtTextEditor } from './ixt-text.editor';
 
 @NgModule({
   declarations: [
-    IxtTextComponent
+    IxtTextEditor
   ],
   imports: [
     CommonModule,
     FormsModule
   ],
   exports: [
-    IxtTextComponent
+    IxtTextEditor
   ]
 })
 export class IxtTableModule { }

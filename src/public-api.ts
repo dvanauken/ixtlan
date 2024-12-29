@@ -171,3 +171,14 @@ export {
   baseThemeColors,
   unitedThemeColors
 } from './components/theme/theme.colors';
+
+
+export {
+  IxtFormModule,
+  IxtInputModule,
+  IxtSelectModule,
+  IxtTextModule,
+  IxtDateModule,
+  IxtTimeModule,
+  IxtBinaryModule
+} from './components/ixt-form/ixt-form.index';

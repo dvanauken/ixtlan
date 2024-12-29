@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ixt-ixt-text',
-  templateUrl: './ixt-text.component.html',
-  styleUrls: ['./ixt-text.component.scss']
+  selector: 'ixt-text-editor',
+  templateUrl: './ixt-text.editor.html',
+  styleUrls: ['./ixt-text.editor.scss']
 })
-export class IxtTextComponent {
+export class IxtTextEditor {
 
 }

@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IxtSelectComponent } from './ixt-select.component';
+import { IxtSelectEditor } from './ixt-select.editor';
 
 @NgModule({
   declarations: [
-    IxtSelectComponent
+    IxtSelectEditor
   ],
   imports: [
     CommonModule,
     FormsModule
   ],
   exports: [
-    IxtSelectComponent
+    IxtSelectEditor
   ]
 })
 export class IxtSelectModule { }
