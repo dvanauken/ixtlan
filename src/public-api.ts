@@ -31,10 +31,12 @@ export {
  } from './components/ixt-tabset/ixt-tabset.index';
  
  //------------------------------------ Basic UI Components -------------------------------------
- export {
-  IxtButtonModule
- } from './components/ixt-button/ixt-button.index';
- 
+ export { 
+  IxtButtonModule,
+  IxtButtonComponent,
+  ButtonSize 
+} from './components/ixt-button/ixt-button.index';
+
  export {
   IxtPanelModule
  } from './components/ixt-panel/ixt-panel.index';

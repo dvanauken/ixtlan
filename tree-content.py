@@ -6,9 +6,10 @@ import sys
 
 # List of folders and files to exclude, with the ability to use specific paths and wildcards
 EXCLUDE_FOLDERS = {
+    "src/app",
     "src/components/ixt-accordian",
     "src/components/ixt-breadcrumb",
-    "src/components/ixt-button",
+    "src/components/ixt-buttonxx",
     "src/components/ixt-calendar",
     "src/components/ixt-canvas",
     "src/components/ixt-chart",
@@ -18,10 +19,10 @@ EXCLUDE_FOLDERS = {
 
     "src/components/ixt-diagram",
     "src/components/ixt-expression-builder",
-    "src/components/ixt-formx",
+    "src/components/ixt-form",
     "src/components/ixt-imagex",
     "src/components/ixt-layer-managerx",
-    "src/components/ixt-mapx",
+    "src/components/ixt-map",
     "src/components/ixt-menu",
     "src/components/ixt-panel",
     "src/components/ixt-progress",
