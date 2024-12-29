@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -18,11 +18,16 @@ import { BinaryEditorComponent } from './editors/binary-editor/binary-editor.com
   ],
   imports: [
     CommonModule,
-    FormsModule,           // Make sure this is here
+    FormsModule,           
     ReactiveFormsModule,
     MatIconModule,
     MatAutocompleteModule
   ],
-  exports: [IxtTableComponent]
+  providers: [
+    DatePipe  
+  ],
+  exports: [
+    IxtTableComponent
+  ]
 })
 export class IxtTableModule { }

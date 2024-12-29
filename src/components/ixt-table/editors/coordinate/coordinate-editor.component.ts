@@ -1,8 +1,8 @@
-// src/components/ixt-matrix/matrix-editors/coordinate/coordinate-editor.component.ts
+// src/components/ixt-table/table-editors/coordinate/coordinate-editor.component.ts
 import { Component, Input, forwardRef, OnInit, Type } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl } from '@angular/forms';
 import { IxtDialogService } from '../../../ixt-dialog/ixt-dialog.service';
-import { MatrixEditor, MatrixEditorConfig } from '../editor.interface';
+import { TableEditor, TableEditorConfig } from '../editor.interface';
 
 @Component({
     selector: 'coordinate-editor',
@@ -32,14 +32,14 @@ import { MatrixEditor, MatrixEditorConfig } from '../editor.interface';
         }
     ]
 })
-export class CoordinateEditorComponent implements ControlValueAccessor, OnInit, MatrixEditor {
-    @Input() config?: MatrixEditorConfig;
+export class CoordinateEditorComponent implements ControlValueAccessor, OnInit, TableEditor {
+    @Input() config?: TableEditorConfig;
 
     inputControl = new FormControl('');
     hasError = false;
     errorMessage = '';
 
-    // MatrixEditor implementation
+    // TableEditor implementation
     component: Type<any> = CoordinateEditorComponent;
 
     private onChange: (value: number) => void = () => { };
@@ -51,7 +51,7 @@ export class CoordinateEditorComponent implements ControlValueAccessor, OnInit, 
         this.setupValueChanges();
     }
 
-    getEditConfig(): MatrixEditorConfig {
+    getEditConfig(): TableEditorConfig {
         return {
             type: this.config?.['type'] || 'lat'
         };

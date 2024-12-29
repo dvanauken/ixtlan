@@ -1,9 +1,9 @@
-// src/components/ixt-matrix/matrix-editors/binary-editor/binary-editor.component.ts
+// src/components/ixt-table/table-editors/binary-editor/binary-editor.component.ts
 import { Component, Input, forwardRef, Output, EventEmitter, Type } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl } from '@angular/forms';
-import { MatrixEditor, MatrixEditorConfig } from '../editor.interface';
+import { TableEditor, TableEditorConfig } from '../editor.interface';
 
-interface BinaryConfig extends MatrixEditorConfig {
+interface BinaryConfig extends TableEditorConfig {
   trueValue?: any;
   falseValue?: any;
   trueDisplay?: string;
@@ -42,7 +42,7 @@ interface SelectionEvent {
     }
   ]
 })
-export class BinaryEditorComponent implements ControlValueAccessor, MatrixEditor {
+export class BinaryEditorComponent implements ControlValueAccessor, TableEditor {
   @Input() config: BinaryConfig = {};
   @Output() selectionChange = new EventEmitter<SelectionEvent>();
 

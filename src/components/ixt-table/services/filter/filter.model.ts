@@ -1,16 +1,16 @@
-// src/components/ixt-matrix/services/filter/filter.model.ts
+// 3. filter.model.ts
 import { FormControl } from '@angular/forms';
 
 export type FilterOperator = 'equals' | 'startsWith' | 'contains' | 'between' | '>' | '<' | '>=' | '<=' | '!=';
 
 export interface FilterState {
-  field: string;
-  operator: FilterOperator;
-  value: any;
-  secondaryValue?: any;
+    field: string;
+    operator: FilterOperator;
+    value: any;
+    secondaryValue?: any;
 }
 
 export interface FilterControls {
-  value: FormControl;
-  operator?: FormControl<string>;
+    value: FormControl;
+    operator?: FormControl<string>;
 }

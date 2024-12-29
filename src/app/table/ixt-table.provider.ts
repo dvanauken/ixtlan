@@ -1,4 +1,4 @@
-// src/app/matrix/ixt-table.provider.ts
+// src/app/table/ixt-table.provider.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';

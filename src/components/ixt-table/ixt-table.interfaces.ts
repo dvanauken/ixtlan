@@ -1,40 +1,23 @@
-// File: src/components/ixt-table/ixt-table.interfaces.ts
+// 1. ixt-table.interfaces.ts - Keep only core table interfaces
 import { Type } from "@angular/core";
-import { MatrixEditor } from "./editors/editor.interface";
-
-export interface MatrixNode {
-  code?: string;  // Add this property
-  [key: string]: any;
-}
-
-export interface PageSize {
-  value: number | 'all';
-  label: string;
-}
-
-export type FilterOperator = 'equals' | 'startsWith' | 'contains' | 'between' | '>' | '<' | '>=' | '<=' | '!=';
-
-export interface FilterState {
-  field: string;
-  operator: FilterOperator;
-  value: any;
-  secondaryValue?: any;
-}
+import { TableEditor } from "./editors/editor.interface";
+import { FilterOperator } from "./services/filter/filter.model";
 
 export interface ColumnConfig {
-  type: 'text' | 'number' | 'enum' | Type<MatrixEditor> | MatrixEditor;  
-  field: string;
-  label?: string;
-  operator?: FilterOperator;
-  enumValues?: { value: any, label: string }[];
-  placeholder?: string;
-  debounceTime?: number;
-  editable?: boolean;
-  config?: any;
-}
-
-export interface RowChanges {
-  [key: string]: any;
+    type: 'text' | 'number' | 'enum' | Type<TableEditor> | TableEditor;
+    field: string;
+    label?: string;
+    operator?: FilterOperator;
+    enumValues?: { value: any, label: string }[];
+    placeholder?: string;
+    debounceTime?: number;
+    editable?: boolean;
+    config?: any;
 }
 
 export type ColumnConfigs = Record<string, ColumnConfig>;
+
+export interface TableNode {
+    code?: string;
+    [key: string]: any;
+}

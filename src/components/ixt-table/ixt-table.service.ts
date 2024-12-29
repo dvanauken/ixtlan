@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { MatrixRow } from './matrix-base.type';
-import { PageSize } from './ixt-matrix.interfaces';
+import { PageSize } from './ixt-table.index';
+import { TableRow } from './ixt-table.type';
 
 export interface PaginationState {
     currentPage: number;
@@ -13,9 +13,9 @@ export interface PaginationState {
 @Injectable({
     providedIn: 'root'
 })
-export class MatrixDataService {
-    private dataSubject = new BehaviorSubject<MatrixRow[]>([]);
-    private newRowsSubject = new BehaviorSubject<MatrixRow[]>([]);
+export class TableDataService {
+    private dataSubject = new BehaviorSubject<TableRow[]>([]);
+    private newRowsSubject = new BehaviorSubject<TableRow[]>([]);
     private paginationStateSubject = new BehaviorSubject<PaginationState>({
         currentPage: 1,
         pageSize: 10,
@@ -31,22 +31,22 @@ export class MatrixDataService {
     constructor() { }
 
     // Data operations
-    setData(data: MatrixRow[]): void {
+    setData(data: TableRow[]): void {
         this.dataSubject.next(data);
         this.updateTotalPages();
     }
 
-    getData(): Observable<MatrixRow[]> {
+    getData(): Observable<TableRow[]> {
         return this.dataSubject.asObservable();
     }
 
     // New rows operations
-    addNewRow(row: MatrixRow): void {
+    addNewRow(row: TableRow): void {
         const currentNewRows = this.newRowsSubject.value;
         this.newRowsSubject.next([row, ...currentNewRows]);
     }
 
-    getNewRows(): Observable<MatrixRow[]> {
+    getNewRows(): Observable<TableRow[]> {
         return this.newRowsSubject.asObservable();
     }
 
@@ -69,13 +69,13 @@ export class MatrixDataService {
         return this.paginationStateSubject.asObservable();
     }
 
-    getPaginatedData(): Observable<MatrixRow[]> {
+    getPaginatedData(): Observable<TableRow[]> {
         return this.combineData().pipe(
             map(allData => this.paginateData(allData))
         );
     }
 
-    private combineData(): Observable<MatrixRow[]> {
+    private combineData(): Observable<TableRow[]> {
         return combineLatest([
             this.dataSubject,
             this.newRowsSubject
@@ -84,7 +84,7 @@ export class MatrixDataService {
         );
     }
 
-    private paginateData(data: MatrixRow[]): MatrixRow[] {
+    private paginateData(data: TableRow[]): TableRow[] {
         const state = this.paginationStateSubject.value;
 
         if (state.pageSize === 'all' || data.length <= 50) {

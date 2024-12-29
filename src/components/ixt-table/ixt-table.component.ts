@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input, OnInit, TemplateRef, ViewChild, Type } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ColumnConfig, FilterOperator, FilterState, MatrixNode, PageSize, RowChanges } from './ixt-table.interfaces';
+import { ColumnConfig, TableNode} from './ixt-table.interfaces';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { IxtDialogService } from '../ixt-dialog/ixt-dialog.index';
 import { PaginationService } from './services/pagination.service';
@@ -8,10 +8,10 @@ import { FilterService } from './services/filter/filter.service';
 import { SortService } from './services/sort/sort.service';
 import { SelectionService } from './services/selection/selection.service';
 import { EditService } from './services/edit/edit.service';
-import { MatrixEditor } from './editors/editor.interface';
-import { AirportCodeEditorComponent, CoordinateEditorComponent } from './ixt-table.index';
+import { TableEditor } from './editors/editor.interface';
+import { AirportCodeEditorComponent, CoordinateEditorComponent, PageSize } from './ixt-table.index';
 
-export type SortDirection = 'asc' | 'desc' | null;
+
 
 @Component({
   selector: 'ixt-table',
@@ -19,7 +19,7 @@ export type SortDirection = 'asc' | 'desc' | null;
   styleUrls: ['./ixt-table.component.scss']
 })
 export class IxtTableComponent implements OnInit {
-  @Input() data: MatrixNode[] = [];
+  @Input() data: TableNode[] = [];
   @Input() columnConfigs?: Record<string, ColumnConfig>;
   @ViewChild('noData') noDataTemplate!: TemplateRef<any>;
   @ViewChild('customEditorTpl') customEditorTpl!: TemplateRef<any>;
@@ -90,7 +90,7 @@ export class IxtTableComponent implements OnInit {
     this.editService.cancelEditing(rowIndex);
   }
 
-  getEditorComponent(type: any): MatrixEditor | null {
+  getEditorComponent(type: any): TableEditor | null {
     console.log('getEditorComponent called with:', {
       type,
       isCoordinate: type === CoordinateEditorComponent,
@@ -202,7 +202,7 @@ export class IxtTableComponent implements OnInit {
     this.paginationService.onPageSizeChange(size);
   }
 
-  get paginatedData(): MatrixNode[] {
+  get paginatedData(): TableNode[] {
     // Start with combined data
     let allData = [...this.editService.getNewRows(), ...this.data];
   
@@ -250,7 +250,7 @@ export class IxtTableComponent implements OnInit {
     this.selectionService.toggleAllRows(value, this.data.length);
   }
 
-  getSelectedRows(): MatrixNode[] {
+  getSelectedRows(): TableNode[] {
     return Array.from(this.selectionService.getSelectedRows())
       .map(index => this.data[index])
       .filter(row => row !== undefined);
@@ -292,14 +292,14 @@ export class IxtTableComponent implements OnInit {
     return value.toFixed(1);
   }
 
-  getCodes(data: MatrixNode[]): string[] {
+  getCodes(data: TableNode[]): string[] {
     if (!data) return [];
     return data.map(row => row['code']?.toString() || '');
   }
   // i/o logic end
 
   // config logic start
-  getColumns(data: MatrixNode[]): string[] {
+  getColumns(data: TableNode[]): string[] {
     if (!data?.length) return [];
     const firstRow = data[0];
     return Object.keys(firstRow);

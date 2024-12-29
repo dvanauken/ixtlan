@@ -1,7 +1,7 @@
 import { Component, Input, forwardRef, OnInit, Type } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl } from '@angular/forms';
 import { IxtDialogService } from '../../../ixt-dialog/ixt-dialog.service';
-import { MatrixEditor, MatrixEditorConfig } from '../editor.interface';
+import { TableEditor, TableEditorConfig } from '../editor.interface';
 
 @Component({
   selector: 'airport-code-editor',
@@ -33,8 +33,8 @@ import { MatrixEditor, MatrixEditorConfig } from '../editor.interface';
     }
   ]
 })
-export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit, MatrixEditor {
-  @Input() config?: MatrixEditorConfig;
+export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit, TableEditor {
+  @Input() config?: TableEditorConfig;
   @Input() existingCodes: string[] = [];
   @Input() field: string = 'code';
 
@@ -42,7 +42,7 @@ export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit,
   hasError = false;
   errorMessage = '';
 
-  // MatrixEditor implementation
+  // TableEditor implementation
   component: Type<any> = AirportCodeEditorComponent;
 
   // ControlValueAccessor implementations
@@ -55,8 +55,8 @@ export class AirportCodeEditorComponent implements ControlValueAccessor, OnInit,
     this.setupValueChanges();
   }
 
-  // MatrixEditor methods
-  getEditConfig(): MatrixEditorConfig {
+  // TableEditor methods
+  getEditConfig(): TableEditorConfig {
     return {
       existingValues: this.existingCodes,
       maxLength: 3,

@@ -1,5 +1,5 @@
 
-// src/components/ixt-matrix/services/pagination/pagination.service.ts
+// src/components/ixt-table/services/pagination/pagination.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { PageSize, PaginationState } from './pagination.model';

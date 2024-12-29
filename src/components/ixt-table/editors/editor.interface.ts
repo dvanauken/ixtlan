@@ -1,6 +1,6 @@
 import { Type } from "@angular/core";
 
-export interface MatrixEditorConfig {
+export interface TableEditorConfig {
   existingValues?: any[];
   validators?: any[];
   field?: string;
@@ -9,7 +9,7 @@ export interface MatrixEditorConfig {
 
 
 
-export interface MatrixEditor {
+export interface TableEditor {
   component: Type<any>;
   getEditConfig(): any;
   validate?(value: any): boolean;

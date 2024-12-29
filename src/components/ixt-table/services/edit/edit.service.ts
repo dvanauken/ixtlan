@@ -1,9 +1,9 @@
-// src/components/ixt-matrix/services/edit/edit.service.ts
+// src/components/ixt-table/services/edit/edit.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { EditState, RowChanges, EditEvent } from './edit.model';
 import { ColumnConfig } from '../../ixt-table.interfaces';
+import { EditEvent, EditState, RowChanges } from './edit.model';
 
 @Injectable({
   providedIn: 'root'

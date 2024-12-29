@@ -1,4 +1,4 @@
-// src/components/ixt-matrix/services/sort/sort.service.ts
+// src/components/ixt-table/services/sort/sort.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { SortState, SortDirection } from './sort.model';

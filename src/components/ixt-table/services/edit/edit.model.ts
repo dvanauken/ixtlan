@@ -1,4 +1,4 @@
-// src/components/ixt-matrix/services/edit/edit.model.ts
+// src/components/ixt-table/services/edit/edit.model.ts
 import { FormControl } from '@angular/forms';
 
 export interface RowChanges {

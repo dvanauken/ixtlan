@@ -1,4 +1,4 @@
-// src/components/ixt-matrix/services/selection/selection.service.ts
+// src/components/ixt-table/services/selection/selection.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { SelectionState } from './selection.model';
