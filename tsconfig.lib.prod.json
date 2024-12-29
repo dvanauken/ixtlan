@@ -1,3 +1,4 @@
+//tsconfig.lib.prod.json
 {
     "extends": "./tsconfig.lib.json",
     "compilerOptions": {
