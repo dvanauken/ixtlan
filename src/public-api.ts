@@ -56,17 +56,18 @@ export {
   IxtAccordianModule,
   IxtAccordianComponent 
 } from './components/ixt-accordian/ixt-accordian.index';
+
+ //--------------------------------- Canvas & View Components ----------------------------------
+ export {
+  IxtCanvasModule,
+  IxtCanvasComponent
+ } from './components/ixt-canvas/ixt-canvas.index';
  
-//  //--------------------------------- Canvas & View Components ----------------------------------
-//  export {
-//   IxtCanvasModule,
-//   IxtViewportModule
-//  } from './components/ixt-canvas/ixt-viewport.index';
- 
-//  //------------------------------------ Form Components ---------------------------------------
-//  export {
-//   IxtExpressionBuilderModule
-//  } from './components/ixt-expression-builder/ixt-expression-builder.index';
+ //------------------------------------ Form Components ---------------------------------------
+ export {
+  IxtExpressionBuilderComponent,
+  IxtExpressionBuilderModule
+ } from './components/ixt-expression-builder/ixt-expression-builder.index';
  
 //  //----------------------------------- Diagram Components ------------------------------------
 //  export {
