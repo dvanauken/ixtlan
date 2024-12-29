@@ -76,17 +76,19 @@ export {
 } from './components/ixt-diagram/ixt-diagram.index';
 
  export {
-  IxtClazzModule,
   IxtClazzDiagram,
+  IxtClazzModule
  } from './components/ixt-diagram/types/clazz/ixt-clazz.index';
  
-//  export {
-//   IxtDeploymentModule
-//  } from './components/ixt-diagram/types/deployment/ixt-deployment.index';
+ export {
+  IxtDeploymentDiagram,
+  IxtDeploymentModule
+ } from './components/ixt-diagram/types/deployment/ixt-deployment.index';
  
-//  export {
-//   IxtEbnfModule
-//  } from './components/ixt-diagram/types/EBNF/ixt-ebnf.index';
+ export {
+  IxtEbnfDiagram,
+  IxtEbnfModule
+ } from './components/ixt-diagram/types/EBNF/ixt-ebnf.index';
  
 //  export {
 //   IxtFlowModule
