@@ -1,45 +1,131 @@
-// Core
-export * from './components/ixt-table/ixt-table.index';
+// public-api.ts
 
-// Core UI Components
-export * from './components/ixt-button/ixt-button.index';
-export * from './components/ixt-dialog/ixt-dialog.index';
-export * from './components/ixt-tabset/ixt-tabset.index';
-export * from './components/ixt-panel/ixt-panel.index';
-export * from './components/ixt-menu/ixt-menu.index';
-export * from './components/ixt-tree/ixt-tree.index';
-export * from './components/ixt-accordian/ixt-accordian.index';
-
-// Canvas & Viewport Components
-export * from './components/ixt-canvas/ixt-canvas.index';
-export * from './components/ixt-viewport/ixt-viewport.index';
-
-// Form Components
-export * from './components/ixt-expression-builder/ixt-expression-builder.index';
-
-// Diagram Components
-export * from './components/ixt-diagram/ixt-diagram.index';
-export * from './components/ixt-diagram/types/clazz/ixt-clazz.index';
-export * from './components/ixt-diagram/types/deployment/ixt-deployment.index';
-export * from './components/ixt-diagram/types/EBNF/ixt.ebnf.index';
-export * from './components/ixt-diagram/types/flow/ixt-flow.index';
-export * from './components/ixt-diagram/types/gannt/gannt.index';
-export * from './components/ixt-diagram/types/network/ixt-network.index';
-export * from './components/ixt-diagram/types/sankey/ixt-sankey.index';
-export * from './components/ixt-diagram/types/wireframe/ixt-wireframe.index';
-
-// Layer Management
-export * from './components/ixt-layer-manager/ixt-layer-manager.index';
-
-// Calendar Component
-export * from './components/ixt-calendar/ixt-calendar.index';
-
-// Map Component
-export * from './components/ixt-map/ixt-map.index';
-
-// Split Pane Component
-export * from './components/ixt-splitpane/index';
-
-// Theme
-export * from './components/theme/theme.types';
-export * from './components/theme/theme.colors';
+//---------------------------------- Core Components & Services ----------------------------------
+export {
+  IxtTableModule,
+  IxtTableComponent,
+  AirportCodeEditorComponent,
+  CoordinateEditorComponent,
+  BinaryEditorComponent,
+  TableEditor,
+  ColumnConfigs,
+  EditService,
+  FilterService,
+  SortService,
+  SelectionService,
+  PaginationService
+ } from './components/ixt-table/ixt-table.index';
+ 
+ export {
+  IxtDialogModule,
+  IxtDialogComponent,
+  IxtDialogService
+ } from './components/ixt-dialog/ixt-dialog.index';
+ 
+ export {
+  IxtTabsetModule,
+  IxtTabComponent,
+  IxtTabsetComponent,
+  ITabContent, 
+  ITabsetConfig
+ } from './components/ixt-tabset/ixt-tabset.index';
+ 
+ //------------------------------------ Basic UI Components -------------------------------------
+ export {
+  IxtButtonModule
+ } from './components/ixt-button/ixt-button.index';
+ 
+ export {
+  IxtPanelModule
+ } from './components/ixt-panel/ixt-panel.index';
+ 
+ export {
+  IxtMenuModule
+ } from './components/ixt-menu/ixt-menu.index';
+ 
+ export {
+  IxtTreeModule
+ } from './components/ixt-tree/ixt-tree.index';
+ 
+ export {
+  IxtAccordianModule
+ } from './components/ixt-accordian/ixt-accordian.index';
+ 
+//  //--------------------------------- Canvas & View Components ----------------------------------
+//  export {
+//   IxtCanvasModule,
+//   IxtViewportModule
+//  } from './components/ixt-canvas/ixt-viewport.index';
+ 
+ //------------------------------------ Form Components ---------------------------------------
+ export {
+  IxtExpressionBuilderModule
+ } from './components/ixt-expression-builder/ixt-expression-builder.index';
+ 
+ //----------------------------------- Diagram Components ------------------------------------
+ export {
+  IxtDiagramModule
+ } from './components/ixt-diagram/ixt-diagram.index';
+ 
+ export {
+  IxtClazzModule
+ } from './components/ixt-diagram/types/clazz/ixt-clazz.index';
+ 
+ export {
+  IxtDeploymentModule
+ } from './components/ixt-diagram/types/deployment/ixt-deployment.index';
+ 
+//  export {
+//   IxtEbnfModule
+//  } from './components/ixt-diagram/types/EBNF/ixt-ebnf.index';
+ 
+ export {
+  IxtFlowModule
+ } from './components/ixt-diagram/types/flow/ixt-flow.index';
+ 
+ export {
+  IxtGanntModule
+ } from './components/ixt-diagram/types/gannt/gannt.index';
+ 
+ export {
+  IxtNetworkModule
+ } from './components/ixt-diagram/types/network/ixt-network.index';
+ 
+ export {
+  IxtSankeyModule
+ } from './components/ixt-diagram/types/sankey/ixt-sankey.index';
+ 
+ export {
+  IxtWireframeModule
+ } from './components/ixt-diagram/types/wireframe/ixt-wireframe.index';
+ 
+//  //-------------------------------- Map & Layer Components ----------------------------------
+//  export {
+//   IxtMapModule
+//  } from './components/ixt-map/ixt-map.index';
+ 
+ export {
+  IxtLayerManagerModule
+ } from './components/ixt-layer-manager/ixt-layer-manager.index';
+ 
+ //----------------------------- Utility & Layout Components --------------------------------
+ export {
+  IxtSplitPaneModule,
+  IxtSplitPaneComponent
+ } from './components/ixt-splitpane/index';
+ 
+ export {
+  IxtCalendarModule
+ } from './components/ixt-calendar/ixt-calendar.index';
+ 
+ //------------------------------------ Theme Exports --------------------------------------
+ export {
+  ThemeVariant,
+  ThemeColor,
+  ThemeColors
+ } from './components/theme/theme.types';
+ 
+ export {
+  baseThemeColors,
+  unitedThemeColors
+ } from './components/theme/theme.colors';
