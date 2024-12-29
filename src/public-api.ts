@@ -1,5 +1,5 @@
 // File: src/public-api.ts
-export * from './components/ixt-table/ixt-table.interfaces';
+export * from './components/ixt-table/ixt-table.index'; // This will pick up index.ts
 
 // Core UI Components
 export * from './components/ixt-button/ixt-button.index';
@@ -47,6 +47,7 @@ export * from './components/theme/theme.colors';
 // In ixtlan/src/public-api.ts
 export * from './components/ixt-table/ixt-table.module';
 export * from './components/ixt-table/ixt-table.component';
+export * from './components/ixt-table/ixt-table.interfaces';
 export * from './components/ixt-table/ixt-table.interfaces';
 
 // In src/public-api.ts, add:
