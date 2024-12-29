@@ -160,12 +160,12 @@ export {
   IxtCalendarModule
  } from './components/ixt-calendar/ixt-calendar.index';
  
-//  //------------------------------------ Theme Exports --------------------------------------
-//  export {
-//   ThemeVariant,
-//   ThemeColor,
-//   ThemeColors
-//  } from './components/theme/theme.types';
+ //------------------------------------ Theme Exports --------------------------------------
+export {
+  ThemeVariant,
+  ThemeColor,
+  ThemeColors
+} from './components/theme/theme.types';
  
 //  export {
 //   baseThemeColors,
