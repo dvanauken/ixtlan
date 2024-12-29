@@ -1,5 +1,5 @@
 {
-  "name": "@dvanauken/ixtlan",
+  "name": "ixtlan",
   "version": "0.3.0-alpha.1030",
   "files": [
     "dist/ixtlan/**/*"
