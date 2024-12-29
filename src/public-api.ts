@@ -149,15 +149,16 @@ export {
 } from './components/ixt-map/ixt-map.index';
 
 
- //----------------------------- Utility & Layout Components --------------------------------
-//  export {
-//   IxtSplitPaneModule,
-//   IxtSplitPaneComponent
-//  } from './components/ixt-splitpane/index';
+//----------------------------- Utility & Layout Components --------------------------------
+ export {
+  IxtSplitPaneComponent,
+  IxtSplitPaneModule
+ } from './components/ixt-splitpane/index';
  
-//  export {
-//   IxtCalendarModule
-//  } from './components/ixt-calendar/ixt-calendar.index';
+ export {
+  IxtCalendarComponent,
+  IxtCalendarModule
+ } from './components/ixt-calendar/ixt-calendar.index';
  
 //  //------------------------------------ Theme Exports --------------------------------------
 //  export {
