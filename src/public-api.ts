@@ -1,5 +1,5 @@
-// File: src/public-api.ts
-export * from './components/ixt-table/ixt-table.index'; // This will pick up index.ts
+// Core
+export * from './components/ixt-table/ixt-table.index';
 
 // Core UI Components
 export * from './components/ixt-button/ixt-button.index';
@@ -40,27 +40,6 @@ export * from './components/ixt-map/ixt-map.index';
 // Split Pane Component
 export * from './components/ixt-splitpane/index';
 
-// Add to src/public-api.ts
+// Theme
 export * from './components/theme/theme.types';
 export * from './components/theme/theme.colors';
-
-// In ixtlan/src/public-api.ts
-export * from './components/ixt-table/ixt-table.module';
-export * from './components/ixt-table/ixt-table.component';
-export * from './components/ixt-table/ixt-table.interfaces';
-export * from './components/ixt-table/ixt-table.interfaces';
-
-// In src/public-api.ts, add:
-export interface TableConfig {
-  columns: {
-    [key: string]: {
-      title: string;
-      type?: string;
-      sortable?: boolean; 
-      filterable?: boolean;
-    }
-  };
-  sortable?: boolean;
-  filterable?: boolean;
-  pageSize?: number;
-}
