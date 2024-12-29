@@ -20,7 +20,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "clear && ng build",
+    "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "tsc -p tsconfig.test.json && node dist/test/parser.test.js",
     "test:clean": "rimraf dist && npm test",
