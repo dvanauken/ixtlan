@@ -69,14 +69,15 @@ export {
   IxtExpressionBuilderModule
  } from './components/ixt-expression-builder/ixt-expression-builder.index';
  
-//  //----------------------------------- Diagram Components ------------------------------------
-//  export {
-//   IxtDiagramModule
-//  } from './components/ixt-diagram/ixt-diagram.index';
+ //----------------------------------- Diagram Components ------------------------------------
+ export {
+  IxtDiagramModule,
+ } from './components/ixt-diagram/ixt-diagram.index';
  
-//  export {
-//   IxtClazzModule
-//  } from './components/ixt-diagram/types/clazz/ixt-clazz.index';
+ export {
+  IxtClazzModule,
+  IxtClazzDiagram,
+ } from './components/ixt-diagram/types/clazz/ixt-clazz.index';
  
 //  export {
 //   IxtDeploymentModule
