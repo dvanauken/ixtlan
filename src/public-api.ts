@@ -70,10 +70,11 @@ export {
  } from './components/ixt-expression-builder/ixt-expression-builder.index';
  
  //----------------------------------- Diagram Components ------------------------------------
- export {
+ export { 
   IxtDiagramModule,
- } from './components/ixt-diagram/ixt-diagram.index';
- 
+  IxtDiagramComponent 
+} from './components/ixt-diagram/ixt-diagram.index';
+
  export {
   IxtClazzModule,
   IxtClazzDiagram,
