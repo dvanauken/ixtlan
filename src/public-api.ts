@@ -155,10 +155,10 @@ export {
   IxtSplitPaneModule
  } from './components/ixt-splitpane/index';
  
- export {
+export {
   IxtCalendarComponent,
   IxtCalendarModule
- } from './components/ixt-calendar/ixt-calendar.index';
+} from './components/ixt-calendar/ixt-calendar.index';
  
  //------------------------------------ Theme Exports --------------------------------------
 export {
@@ -167,7 +167,7 @@ export {
   ThemeColors
 } from './components/theme/theme.types';
  
-//  export {
-//   baseThemeColors,
-//   unitedThemeColors
-//  } from './components/theme/theme.colors';
+export {
+  baseThemeColors,
+  unitedThemeColors
+} from './components/theme/theme.colors';
