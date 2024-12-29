@@ -90,25 +90,30 @@ export {
   IxtEbnfModule
  } from './components/ixt-diagram/types/EBNF/ixt-ebnf.index';
  
-//  export {
-//   IxtFlowModule
-//  } from './components/ixt-diagram/types/flow/ixt-flow.index';
+ export {
+  IxtFlowDiagram,
+  IxtFlowModule
+ } from './components/ixt-diagram/types/flow/ixt-flow.index';
  
-//  export {
-//   IxtGanntModule
-//  } from './components/ixt-diagram/types/gannt/gannt.index';
+ export {
+  IxtGanntDiagram,
+  IxtGanntModule
+ } from './components/ixt-diagram/types/gannt/gannt.index';
  
-//  export {
-//   IxtNetworkModule
-//  } from './components/ixt-diagram/types/network/ixt-network.index';
+ export {
+  IxtNetworkDiagram,
+  IxtNetworkModule
+ } from './components/ixt-diagram/types/network/ixt-network.index';
  
-//  export {
-//   IxtSankeyModule
-//  } from './components/ixt-diagram/types/sankey/ixt-sankey.index';
+ export {
+  IxtSankeyDiagram,
+  IxtSankeyModule
+ } from './components/ixt-diagram/types/sankey/ixt-sankey.index';
  
-//  export {
-//   IxtWireframeModule
-//  } from './components/ixt-diagram/types/wireframe/ixt-wireframe.index';
+ export {
+  IxtWireframeDiagram,
+  IxtWireframeModule
+ } from './components/ixt-diagram/types/wireframe/ixt-wireframe.index';
  
 //  //-------------------------------- Map & Layer Components ----------------------------------
 //  export {
