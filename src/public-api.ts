@@ -115,15 +115,40 @@ export {
   IxtWireframeModule
  } from './components/ixt-diagram/types/wireframe/ixt-wireframe.index';
  
-//  //-------------------------------- Map & Layer Components ----------------------------------
-//  export {
-//   IxtMapModule
-//  } from './components/ixt-map/ixt-map.index';
- 
-//  export {
-//   IxtLayerManagerModule
-//  } from './components/ixt-layer-manager/ixt-layer-manager.index';
- 
+//-------------------------------- Map & Layer Components ----------------------------------
+export {
+  // Components & Modules
+  IxtMapModule,
+  IxtMapComponent,
+  IxtLayerComponent,
+  
+  // Services
+  MapService,
+  GeoProcessingService,
+  LayerRenderService,
+  LayerEventService,
+  LayerStateService,
+  MapErrorService,
+  RouteProcessorService,
+  
+  // Types & Interfaces
+  MapDimensions,
+  MapState,
+  MapContainer,
+  MapSelection,
+  PathSelection,
+  MapServiceState,
+  LayerEventHandlers,
+  LayerRenderOptions,
+  LayerState,
+  MapError,
+  MapErrorCode,
+  RouteProcessingConfig,
+  GeoFeatureProperties,
+  GeoProcessingOptions,
+} from './components/ixt-map/ixt-map.index';
+
+
  //----------------------------- Utility & Layout Components --------------------------------
 //  export {
 //   IxtSplitPaneModule,

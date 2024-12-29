@@ -2,40 +2,31 @@
 import { Injectable } from '@angular/core';
 import * as d3 from 'd3';
 import { GeoProjection, GeoPath } from 'd3';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { MapError, MapErrorCode, MapErrorService } from './map-error.service';
+import { MapDimensions, MapState } from './map.types';
 
-export interface MapDimensions {
-  width: number;
-  height: number;
-}
-
-export interface MapState {
-  projection: GeoProjection;
-  pathGenerator: GeoPath;
-  dimensions: MapDimensions;
-}
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class MapService {
   private projection!: GeoProjection;
   private pathGenerator!: GeoPath;
   private selectedElementSource = new BehaviorSubject<SVGPathElement | null>(null);
-  private dimensions = new BehaviorSubject<MapDimensions>({ width: 800, height: 600 });
+  private dimensions = new BehaviorSubject<MapDimensions>({ 
+    width: 800, 
+    height: 600,
+    scale: 1,
+    translate: '0,0'
+  });
 
   readonly selectedElement$ = this.selectedElementSource.asObservable();
   readonly dimensions$ = this.dimensions.asObservable();
 
   private errorSubject = new BehaviorSubject<MapError | null>(null);
   private retryAttemptsMap = new Map<string, number>();
-  
   readonly maxRetryAttempts = 3;
   readonly errors$ = this.errorSubject.asObservable();
 
   constructor(private errorService: MapErrorService) {}
-
 
   initializeProjection(width: number, height: number): { projection: GeoProjection; pathGenerator: d3.GeoPath } {
     try {
@@ -44,10 +35,7 @@ export class MapService {
       }
 
       this.projection = d3.geoMercator()
-        .fitSize([width, height], {
-          type: 'Sphere'
-        });
-
+        .fitSize([width, height], { type: 'Sphere' });
       this.pathGenerator = d3.geoPath().projection(this.projection);
 
       return {
@@ -63,7 +51,7 @@ export class MapService {
       throw error;
     }
   }
-  
+
   getProjection(): GeoProjection {
     return this.projection;
   }
@@ -78,13 +66,11 @@ export class MapService {
 
   setSelection(element: SVGPathElement | null): void {
     const previousElement = this.selectedElementSource.value;
-    
     if (previousElement) {
       d3.select(previousElement)
         .attr('stroke', d3.select(previousElement).attr('data-original-stroke'))
         .attr('stroke-width', '1');
     }
-
     this.selectedElementSource.next(element);
   }
 
@@ -93,7 +79,9 @@ export class MapService {
   }
 
   getBaseDimension(value: string | number): number {
-    if (typeof value === 'number') return value;
+    if (typeof value === 'number') {
+      return value;
+    }
     const num = parseFloat(value);
     return isNaN(num) ? 800 : num;
   }
