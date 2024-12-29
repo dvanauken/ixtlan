@@ -37,21 +37,25 @@ export {
   ButtonSize 
 } from './components/ixt-button/ixt-button.index';
 
- export {
-  IxtPanelModule
- } from './components/ixt-panel/ixt-panel.index';
- 
- export {
-  IxtMenuModule
- } from './components/ixt-menu/ixt-menu.index';
- 
- export {
-  IxtTreeModule
- } from './components/ixt-tree/ixt-tree.index';
- 
- export {
-  IxtAccordianModule
- } from './components/ixt-accordian/ixt-accordian.index';
+export { 
+  IxtPanelModule,
+  IxtPanelComponent 
+} from './components/ixt-panel/ixt-panel.index';
+
+export { 
+  IxtMenuModule,
+  IxtMenuComponent 
+} from './components/ixt-menu/ixt-menu.index';
+
+export { 
+  IxtTreeModule,
+  IxtTreeComponent 
+} from './components/ixt-tree/ixt-tree.index';
+
+export { 
+  IxtAccordianModule,
+  IxtAccordianComponent 
+} from './components/ixt-accordian/ixt-accordian.index';
  
 //  //--------------------------------- Canvas & View Components ----------------------------------
 //  export {
