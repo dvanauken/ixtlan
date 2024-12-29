@@ -1,6 +1,6 @@
 {
   "name": "@dvanauken/ixtlan",
-  "version": "0.3.0-alpha.1026",
+  "version": "0.3.0-alpha.1027",
   "main": "./dist/ixtlan/bundles/ixtlan.umd.js",
   "module": "./dist/ixtlan/fesm2022/ixtlan.mjs",
   "es2022": "./dist/ixtlan/fesm2022/ixtlan.mjs",
