@@ -2,7 +2,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IxtMapComponent } from './ixt-map.component';
-import { IxtLayerComponent } from './ixt-layer.component';
 import { GeoProcessingService } from './geo-processing.service';
 import { LayerEventService } from './layer-event.service';
 import { LayerRenderService } from './layer-render.service';
@@ -13,15 +12,13 @@ import { RouteProcessorService } from './route-processor.service';
 
 @NgModule({
   declarations: [
-    IxtMapComponent,
-    IxtLayerComponent
+    IxtMapComponent
   ],
   imports: [
     CommonModule
   ],
   exports: [
-    IxtMapComponent,
-    IxtLayerComponent
+    IxtMapComponent
   ],
   providers: [
     MapService,
