@@ -15,4 +15,4 @@ import { IxtTextEditor } from './ixt-text.editor';
     IxtTextEditor
   ]
 })
-export class IxtTableModule { }
+export class IxtTextModule { }

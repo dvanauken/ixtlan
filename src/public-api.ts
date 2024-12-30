@@ -63,6 +63,28 @@ export {
   IxtCanvasComponent
  } from './components/ixt-canvas/ixt-canvas.index';
  
+
+ //------------------------------------ Form Components ---------------------------------------
+export { 
+  IxtFormModule, 
+  IxtInputModule, 
+  IxtSelectModule, 
+  IxtTextModule, 
+  IxtDateModule, 
+  IxtTimeModule, 
+  IxtBinaryModule,
+  
+  // Explicitly export the classes
+  IxtFormComponent,
+  IxtTextEditor,
+  IxtInputEditor,
+  IxtSelectEditor,
+  IxtDateEditor,
+  IxtTimeEditor,
+  IxtBinaryEditor
+} from './components/ixt-form/ixt-form.index';
+
+ 
  //------------------------------------ Form Components ---------------------------------------
  export {
   IxtExpressionBuilderComponent,

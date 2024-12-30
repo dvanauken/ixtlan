@@ -1,26 +1,26 @@
-// Main Form Component & Module
-export { IxtFormComponent } from './ixt-form.component';
-export { IxtFormModule } from './ixt-form.module';
+// // Main Form Component & Module
+// export { IxtFormComponent } from './ixt-form.component';
+// export { IxtFormModule } from './ixt-form.module';
 
-// Text Editor
-export { IxtTextEditor } from './ixt-text/ixt-text.editor';
-export { IxtTableModule as IxtTextModule } from './ixt-text/ixt-text.module';
+// // Text Editor
+// export { IxtTextEditor } from './ixt-text/ixt-text.editor';
+// export { IxtTextModule } from './ixt-text/ixt-text.module';
 
-// Input Editor
-export { IxtInputEditor } from './ixt-input/ixt-input.editor';
-export { IxtInputModule } from './ixt-input/ixt-input.module';
+// // Input Editor
+// export { IxtInputEditor } from './ixt-input/ixt-input.editor';
+// export { IxtInputModule } from './ixt-input/ixt-input.module';
 
-// Select Editor
-export { IxtSelectEditor } from './ixt-select/ixt-select.editor';
-export { IxtSelectModule } from './ixt-select/ixt-select.module';
+// // Select Editor
+// export { IxtSelectEditor } from './ixt-select/ixt-select.editor';
+// export { IxtSelectModule } from './ixt-select/ixt-select.module';
 
-// Date Editor
-export { IxtDateEditor } from './ixt-date/ixt-date.editor';
-export { IxtDateModule } from './ixt-date/ixt-date.module';
+// // Date Editor
+// export { IxtDateEditor } from './ixt-date/ixt-date.editor';
+// export { IxtDateModule } from './ixt-date/ixt-date.module';
 
-// Time Editor
-export { IxtTimeEditor } from './ixt-time/ixt-time.editor';
-export { IxtTimeModule } from './ixt-time/ixt-time.module';
+// // Time Editor
+// export { IxtTimeEditor } from './ixt-time/ixt-time.editor';
+// export { IxtTimeModule } from './ixt-time/ixt-time.module';
 
 // Binary Editor
 export { IxtBinaryEditor } from './ixt-binary/ixt-binary.editor';

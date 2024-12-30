@@ -9,17 +9,16 @@ import { RouterModule } from '@angular/router';
 import { IxtButtonModule } from './../components/ixt-button/ixt-button.module';
 import { IxtDialogModule } from './../components/ixt-dialog/ixt-dialog.module';
 import { IxtTableModule } from './../components/ixt-table/ixt-table.module';
-import { IxtTabsetModule } from './../components/ixt-tabset/ixt-tabset.module';  // Fixed name
-import { IxtTabComponent } from './../components/ixt-tabset/ixt-tab.component';  // Added individual component
+import { IxtTabsetModule } from './../components/ixt-tabset/ixt-tabset.module';  
+import { IxtTabComponent } from './../components/ixt-tabset/ixt-tab.component';  
 import { IxtPanelModule } from './../components/ixt-panel/ixt-panel.module';
 import { IxtMenuModule } from './../components/ixt-menu/ixt-menu.module';
 import { IxtTreeModule } from './../components/ixt-tree/ixt-tree.module';
-import { IxtAccordianModule } from './../components/ixt-accordian/ixt-accordian.module';  // Fixed path
+import { IxtAccordianModule } from './../components/ixt-accordian/ixt-accordian.module';  
 import { IxtCanvasModule } from './../components/ixt-canvas/ixt-canvas.module';
 import { IxtViewportModule } from './../components/ixt-viewport/ixt-viewport.module';
 import { IxtExpressionBuilderModule } from './../components/ixt-expression-builder/ixt-expression-builder.module';
 import { IxtMapModule } from './../components/ixt-map/ixt-map.module';
-import { IxtLayerModule } from './../components/ixt-map/ixt-layer.module';
 import { IxtLayerManagerModule } from './../components/ixt-layer-manager/ixt-layer-manager.module';
 import { IxtSplitPaneModule } from './../components/ixt-splitpane/ixt-split-pane.module';
 import { IxtCalendarModule } from './../components/ixt-calendar/ixt-calendar.module';
@@ -28,7 +27,7 @@ import { IxtCalendarModule } from './../components/ixt-calendar/ixt-calendar.mod
 import { IxtDiagramModule } from './../components/ixt-diagram/ixt-diagram.module';
 import { IxtClazzModule } from './../components/ixt-diagram/types/clazz/ixt-clazz.module';
 import { IxtDeploymentModule } from './../components/ixt-diagram/types/deployment/ixt-deployment.module';
-import { IxtEbnfModule } from './../components/ixt-diagram/types/EBNF/ixt-ebnf.module';  // Fixed path
+import { IxtEbnfModule } from './../components/ixt-diagram/types/EBNF/ixt-ebnf.module';  
 import { IxtFlowModule } from './../components/ixt-diagram/types/flow/ixt-flow.module';
 import { IxtGanntModule } from './../components/ixt-diagram/types/gannt/gannt.module';
 import { IxtNetworkModule } from './../components/ixt-diagram/types/network/ixt-network.module';
@@ -72,9 +71,8 @@ import { IxtTreeProvider } from './tree/ixt-tree.provider';
     IxtDialogModule,
     IxtDiagramModule,
     IxtExpressionBuilderModule,
-    IxtLayerModule,  // Added Layer module
     IxtLayerManagerModule,
-    IxtMapModule,
+    IxtMapModule,  // Keep this one - it contains the IxtLayerComponent
     IxtMenuModule,
     IxtPanelModule,
     IxtSplitPaneModule,
@@ -105,7 +103,7 @@ import { IxtTreeProvider } from './tree/ixt-tree.provider';
     IxtTableProvider
   ],
   schemas: [
-    CUSTOM_ELEMENTS_SCHEMA  // Added schema for custom elements
+    CUSTOM_ELEMENTS_SCHEMA
   ],
   bootstrap: [AppComponent]
 })
