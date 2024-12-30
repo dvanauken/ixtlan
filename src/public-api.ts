@@ -14,24 +14,24 @@ export {
   SortService,
   SelectionService,
   PaginationService
- } from './components/ixt-table/ixt-table.index';
+} from './components/ixt-table/ixt-table.index';
  
- export {
+export {
   IxtDialogModule,
   IxtDialogComponent,
   IxtDialogService
- } from './components/ixt-dialog/ixt-dialog.index';
+} from './components/ixt-dialog/ixt-dialog.index';
  
- export {
+export {
   IxtTabsetModule,
   IxtTabComponent,
   IxtTabsetComponent,
   ITabContent, 
   ITabsetConfig
- } from './components/ixt-tabset/ixt-tabset.index';
+} from './components/ixt-tabset/ixt-tabset.index';
  
- //------------------------------------ Basic UI Components -------------------------------------
- export { 
+//------------------------------------ Basic UI Components -------------------------------------
+export { 
   IxtButtonModule,
   IxtButtonComponent,
   ButtonSize 
@@ -57,14 +57,13 @@ export {
   IxtAccordianComponent 
 } from './components/ixt-accordian/ixt-accordian.index';
 
- //--------------------------------- Canvas & View Components ----------------------------------
- export {
+//--------------------------------- Canvas & View Components ----------------------------------
+export {
   IxtCanvasModule,
   IxtCanvasComponent
- } from './components/ixt-canvas/ixt-canvas.index';
- 
+} from './components/ixt-canvas/ixt-canvas.index';
 
- //------------------------------------ Form Components ---------------------------------------
+//------------------------------------ Form Components ---------------------------------------
 export { 
   IxtFormModule, 
   IxtInputModule, 
@@ -73,78 +72,73 @@ export {
   IxtDateModule, 
   IxtTimeModule, 
   IxtBinaryModule,
-  
-  // Explicitly export the classes
   IxtFormComponent,
   IxtTextEditor,
   IxtInputEditor,
   IxtSelectEditor,
   IxtDateEditor,
   IxtTimeEditor,
-  IxtBinaryEditor
+  IxtBinaryEditor,
+  FormFieldConfig
 } from './components/ixt-form/ixt-form.index';
 
- 
- //------------------------------------ Form Components ---------------------------------------
- export {
+//------------------------------------ Expression Builder Components ---------------------------------------
+export {
   IxtExpressionBuilderComponent,
   IxtExpressionBuilderModule
- } from './components/ixt-expression-builder/ixt-expression-builder.index';
+} from './components/ixt-expression-builder/ixt-expression-builder.index';
  
- //----------------------------------- Diagram Components ------------------------------------
- export { 
+//----------------------------------- Diagram Components ------------------------------------
+export { 
   IxtDiagramModule,
   IxtDiagramComponent 
 } from './components/ixt-diagram/ixt-diagram.index';
 
- export {
+export {
   IxtClazzDiagram,
   IxtClazzModule
- } from './components/ixt-diagram/types/clazz/ixt-clazz.index';
+} from './components/ixt-diagram/types/clazz/ixt-clazz.index';
  
- export {
+export {
   IxtDeploymentDiagram,
   IxtDeploymentModule
- } from './components/ixt-diagram/types/deployment/ixt-deployment.index';
+} from './components/ixt-diagram/types/deployment/ixt-deployment.index';
  
- export {
+export {
   IxtEbnfDiagram,
   IxtEbnfModule
- } from './components/ixt-diagram/types/EBNF/ixt-ebnf.index';
+} from './components/ixt-diagram/types/EBNF/ixt-ebnf.index';
  
- export {
+export {
   IxtFlowDiagram,
   IxtFlowModule
- } from './components/ixt-diagram/types/flow/ixt-flow.index';
+} from './components/ixt-diagram/types/flow/ixt-flow.index';
  
- export {
+export {
   IxtGanntDiagram,
   IxtGanntModule
- } from './components/ixt-diagram/types/gannt/gannt.index';
+} from './components/ixt-diagram/types/gannt/gannt.index';
  
- export {
+export {
   IxtNetworkDiagram,
   IxtNetworkModule
- } from './components/ixt-diagram/types/network/ixt-network.index';
+} from './components/ixt-diagram/types/network/ixt-network.index';
  
- export {
+export {
   IxtSankeyDiagram,
   IxtSankeyModule
- } from './components/ixt-diagram/types/sankey/ixt-sankey.index';
+} from './components/ixt-diagram/types/sankey/ixt-sankey.index';
  
- export {
+export {
   IxtWireframeDiagram,
   IxtWireframeModule
- } from './components/ixt-diagram/types/wireframe/ixt-wireframe.index';
+} from './components/ixt-diagram/types/wireframe/ixt-wireframe.index';
  
 //-------------------------------- Map & Layer Components ----------------------------------
 export {
-  // Components & Modules
   IxtMapModule,
   IxtMapComponent,
   IxtLayerComponent,
-  
-  // Services
   MapService,
   GeoProcessingService,
   LayerRenderService,
@@ -152,8 +146,6 @@ export {
   LayerStateService,
   MapErrorService,
   RouteProcessorService,
-  
-  // Types & Interfaces
   MapDimensions,
   MapState,
   MapContainer,
@@ -170,19 +162,18 @@ export {
   GeoProcessingOptions,
 } from './components/ixt-map/ixt-map.index';
 
-
 //----------------------------- Utility & Layout Components --------------------------------
- export {
+export {
   IxtSplitPaneComponent,
   IxtSplitPaneModule
- } from './components/ixt-splitpane/index';
+} from './components/ixt-splitpane/index';
  
 export {
   IxtCalendarComponent,
   IxtCalendarModule
 } from './components/ixt-calendar/ixt-calendar.index';
  
- //------------------------------------ Theme Exports --------------------------------------
+//------------------------------------ Theme Exports --------------------------------------
 export {
   ThemeVariant,
   ThemeColor,
@@ -193,14 +184,3 @@ export {
   baseThemeColors,
   unitedThemeColors
 } from './components/theme/theme.colors';
-
-
-export {
-  IxtFormModule,
-  IxtInputModule,
-  IxtSelectModule,
-  IxtTextModule,
-  IxtDateModule,
-  IxtTimeModule,
-  IxtBinaryModule
-} from './components/ixt-form/ixt-form.index';
