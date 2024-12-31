@@ -1,1 +1,52 @@
-<p>ixt-text-editor works!</p>
+<div class="ixt-date-editor" [class.is-disabled]="disabled" [id]="id">
+    <!-- Date Input -->
+    <div *ngIf="dateConfig.showDate" class="ixt-date-editor__date">
+      <input type="date"
+             class="ixt-date-editor__input"
+             [disabled]="disabled || !dateConfig.allowManualInput"
+             [min]="dateConfig.minDate?.toISOString().split('T')[0]"
+             [max]="dateConfig.maxDate?.toISOString().split('T')[0]"
+             [value]="currentDate?.toISOString().split('T')[0]"
+             (change)="onDateChange($event)">
+    </div>
+  
+    <!-- Time Input -->
+    <div *ngIf="timeConfig.showTime" class="ixt-date-editor__time">
+      <input type="number"
+             class="ixt-date-editor__time-input"
+             [min]="timeConfig.use24Hour ? 0 : 1"
+             [max]="timeConfig.use24Hour ? 23 : 12"
+             [value]="hours"
+             (change)="onTimeChange()"
+             [(ngModel)]="hours">
+      
+      <span class="ixt-date-editor__separator">:</span>
+      
+      <input type="number"
+             class="ixt-date-editor__time-input"
+             min="0"
+             max="59"
+             [step]="timeConfig.minutesStep"
+             [value]="minutes"
+             (change)="onTimeChange()"
+             [(ngModel)]="minutes">
+      
+      <ng-container *ngIf="timeConfig.showSeconds">
+        <span class="ixt-date-editor__separator">:</span>
+        <input type="number"
+               class="ixt-date-editor__time-input"
+               min="0"
+               max="59"
+               [step]="timeConfig.secondsStep"
+               [value]="seconds"
+               (change)="onTimeChange()"
+               [(ngModel)]="seconds">
+      </ng-container>
+      
+      <button *ngIf="!timeConfig.use24Hour"
+              class="ixt-date-editor__ampm"
+              (click)="toggleAmPm()">
+        {{ isAM ? 'AM' : 'PM' }}
+      </button>
+    </div>
+  </div>

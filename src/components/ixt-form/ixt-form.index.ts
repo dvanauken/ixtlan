@@ -1,3 +1,5 @@
+//src\components\ixt-form\ixt-form.index.ts
+
 // Main Form Component & Module
 export { IxtFormComponent } from './ixt-form.component';
 export { IxtFormModule } from './ixt-form.module';
@@ -25,6 +27,17 @@ export { IxtTimeModule } from './ixt-time/ixt-time.module';
 // Binary Editor
 export { IxtBinaryEditor } from './ixt-binary/ixt-binary.editor';
 export { IxtBinaryModule } from './ixt-binary/ixt-binary.module';
+
+export {
+  FormFieldConfig,
+  FormConfig,
+  FormControlType,
+  FormValidationError,
+  FormSubmitEvent,
+  FormChangeEvent,
+  FormBlurEvent,
+  FormValidationRule
+ } from './ixt-form.model';
 
 // Common Interfaces & Types
 export interface FormFieldConfig {

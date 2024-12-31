@@ -1,0 +1,50 @@
+# ixt-table-tree.component.html
+<div class="controls">
+  <button (click)="decreaseLevel()" [disabled]="!selectedNode">◄</button>
+  <button (click)="increaseLevel()" [disabled]="!selectedNode">►</button>
+  <button (click)="moveUp()" [disabled]="!canMoveUp()">↑</button>
+  <button (click)="moveDown()" [disabled]="!canMoveDown()">↓</button>
+</div>
+
+<table class="table-tree" cdkDropList (cdkDropListDropped)="onDrop($event)">
+  <thead>
+    <tr>
+      <th *ngFor="let col of columns">{{col.header}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let node of flatNodes; let i = index" 
+        [class.selected]="selectedNode?.id === node.id"
+        cdkDrag
+        [cdkDragData]="node"
+        (click)="selectNode(node)">
+      <td *ngFor="let col of columns; let first = first">
+        <div *ngIf="first" 
+             [style.padding-left.px]="node.level * 24"
+             class="tree-cell">
+          <span *ngIf="hasChildren(node)" 
+                class="expand-icon"
+                (click)="toggle(node, $event)">
+            {{node.expanded ? '▼' : '▶'}}
+          </span>
+          {{node.data[col.field]}}
+        </div>
+        <ng-container *ngIf="!first">
+          <ng-container [ngSwitch]="col.type">
+            <div *ngSwitchCase="'progress'" class="progress-bar">
+              <div [style.width.%]="node.data[col.field]"></div>
+              {{node.data[col.field]}}%
+            </div>
+            <div *ngSwitchCase="'date'">
+              {{node.data[col.field] | date:'shortDate'}}
+            </div>
+            <div *ngSwitchDefault>{{node.data[col.field]}}</div>
+          </ng-container>
+        </ng-container>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="drop-indicator-top" *ngIf="dropPosition === 'top'"></div>
+<div class="drop-indicator-bottom" *ngIf="dropPosition === 'bottom'"></div>

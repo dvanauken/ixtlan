@@ -1,0 +1,97 @@
+// ixt-binary.editor.scss
+
+:host {
+    --binary-spacing: 0.5rem;
+    --binary-focus-color: #4a90e2;
+    --binary-disabled-opacity: 0.6;
+    --binary-transition-duration: 0.2s;
+    
+    display: inline-block;
+    font-family: inherit;
+  
+    .binary-wrapper {
+      display: flex;
+      align-items: center;
+      gap: var(--binary-spacing);
+  
+      &.radio-style {
+        .radio-group {
+          display: flex;
+          gap: var(--binary-spacing);
+        }
+      }
+    }
+  
+    input {
+      &[type="checkbox"],
+      &[type="radio"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 1.2em;
+        height: 1.2em;
+        border: 2px solid currentColor;
+        position: relative;
+        cursor: pointer;
+        transition: all var(--binary-transition-duration) ease;
+  
+        &:focus {
+          outline: none;
+          box-shadow: 0 0 0 2px var(--binary-focus-color);
+        }
+  
+        &:disabled {
+          cursor: not-allowed;
+          opacity: var(--binary-disabled-opacity);
+  
+          & + label {
+            opacity: var(--binary-disabled-opacity);
+            cursor: not-allowed;
+          }
+        }
+      }
+  
+      &[type="checkbox"] {
+        border-radius: 0.25em;
+  
+        &:checked {
+          background-color: currentColor;
+          
+          &::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            width: 0.25em;
+            height: 0.5em;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+          }
+        }
+      }
+  
+      &[type="radio"] {
+        border-radius: 50%;
+  
+        &:checked {
+          &::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 0.5em;
+            height: 0.5em;
+            background-color: currentColor;
+            border-radius: 50%;
+          }
+        }
+      }
+    }
+  
+    label {
+      cursor: pointer;
+      user-select: none;
+      transition: opacity var(--binary-transition-duration) ease;
+    }
+  }

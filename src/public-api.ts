@@ -64,22 +64,31 @@ export {
 } from './components/ixt-canvas/ixt-canvas.index';
 
 //------------------------------------ Form Components ---------------------------------------
-export { 
-  IxtFormModule, 
-  IxtInputModule, 
-  IxtSelectModule, 
-  IxtTextModule, 
-  IxtDateModule, 
-  IxtTimeModule, 
+export {
+  IxtFormModule,
+  IxtInputModule,
+  IxtSelectModule,
+  IxtTextModule,
+  IxtDateModule,
+  IxtTimeModule,
   IxtBinaryModule,
+  IxtRadioModule,
   IxtFormComponent,
   IxtTextEditor,
   IxtInputEditor,
   IxtSelectEditor,
   IxtDateEditor,
   IxtTimeEditor,
+  IxtRadioEditor,
   IxtBinaryEditor,
-  FormFieldConfig
+  FormFieldConfig,
+  FormConfig,
+  FormControlType,
+  FormValidationError,
+  FormSubmitEvent,
+  FormChangeEvent,
+  FormBlurEvent,
+  FormValidationRule
 } from './components/ixt-form/ixt-form.index';
 
 //------------------------------------ Expression Builder Components ---------------------------------------
@@ -184,3 +193,11 @@ export {
   baseThemeColors,
   unitedThemeColors
 } from './components/theme/theme.colors';
+
+export {
+  TreeNode,
+  TreeNodeData,
+  TableTreeColumn,
+  IxtTableTreeComponent,
+  IxtTableTreeModule
+} from './components/ixt-table-tree/ixt-table-tree.index';

@@ -1,142 +1,159 @@
-#!/usr/bin/env python3
 import os
 import fnmatch
+import time
+import signal
+from dataclasses import dataclass
+from typing import List, Dict, Optional, Set
+from tqdm import tqdm
 from datetime import datetime
-import sys
 
-# List of folders and files to exclude, with the ability to use specific paths and wildcards
-EXCLUDE_FOLDERS = {
-    "src/app",
-    "src/components/ixt-accordianx",
-    "src/components/ixt-breadcrumbx",
-    "src/components/ixt-buttonx",
-    "src/components/ixt-calendarx",
-    "src/components/ixt-canvasx",
-    "src/components/ixt-chartx",
-    "src/components/ixt-colorpallettex",
-    "src/components/mapx",
-    "src/components/map-viewx",
+@dataclass
+class DirectoryContext:
+    path: str
+    includes: List[str]
+    excludes: List[str]
+    subdirs: Dict[str, 'DirectoryContext']
 
-    "src/components/ixt-diagramx",
-    "src/components/ixt-expression-builderx",
-    "src/components/ixt-formx",
-    "src/components/ixt-imagex",
-    "src/components/ixt-layer-managerx",
-    "src/components/ixt-mapx",
-    "src/components/ixt-menux",
-    "src/components/ixt-panelx",
-    "src/components/ixt-progressx",
-    "src/components/ixt-splitpanex",
-    "src/components/ixt-tabsetx",
-    "src/components/ixt-textrax",
-    "src/components/ixt-treex",
-    "src/components/ixt-viewportx",
-    "src/components/ixt-colorpalettex",
-    "src/components/ixt-dialogx",
-    "*.spec.ts",
-    "*.scss",
-    "*.pdf",
-    "*.js",
-    "*.json",
-    "*.geojson",
-    "*.ps1",
-    "*.py",
-    "*.bat",
-    "test",
-    "assets",
-    "tree.*.txt", 
-    "*.geojson",
-    "src/assets/110m/*.html",
-    "node_modules", 
-    ".git", 
-    ".gitignore",
-    ".editorconfig",
-    "dist", 
-    ".idea",
-    ".angular/cache/**",  # This will exclude everything under the .angular/cache directory
-    "error.txt",
-    "LICENSE",
-    ".npmrc",
-    "README.md",
-    "branding.html",
-    "editorconfig",
-    "polyfills.ts",
-    "src/fonts.html",
-    "src/colors.html",
-    "src/favicon.ico",
-    "src/polyfills.ts", 
-    "TiltedPerspective.gif", "TiltedPerspective.jpg", "TiltedPerspective.png",
-    "dist/ixtlan/fesm2022",
-    "dist/ixtlan/esm2022",
-    "*.html"
-
-}
-
-# Common image file extensions to ignore content
-IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".ico"}
-
-def show_tree(path=".", prefix="", output_file=None):
-    try:
-        items = []
-        with os.scandir(path) as it:
-            for entry in it:
-                full_path = os.path.relpath(entry.path, start=os.path.dirname(__file__))  # Get relative path from script location
-                # Check if any pattern matches the full relative path
-                if any(fnmatch.fnmatch(full_path, pattern) for pattern in EXCLUDE_FOLDERS):
-                    continue
-                items.append(entry)
+class GradleScanner:
+    def __init__(self):
+        self.interrupted = False
+        signal.signal(signal.SIGINT, self._handle_interrupt)
         
-        items.sort(key=lambda x: (not x.is_dir(), x.name))
+    def _handle_interrupt(self, signum, frame):
+        self.interrupted = True
+        print("\nGracefully shutting down...")
+
+    def _matches_any_pattern(self, path: str, patterns: List[str], base_path: str) -> bool:
+        rel_path = os.path.relpath(path, base_path)
+        return any(fnmatch.fnmatch(rel_path, pattern) for pattern in patterns)
+
+    def _should_include_file(self, path: str, context: DirectoryContext) -> bool:
+        if not context.includes and not context.excludes:
+            return True
         
-        for i, item in enumerate(items):
-            is_last = (i == len(items) - 1)
-            if item.is_file():
-                current_prefix = f"{prefix}--- "
-            elif is_last:
-                current_prefix = f"{prefix}\\-- "
-                next_prefix = f"{prefix}    "
+        if self._matches_any_pattern(path, context.excludes, context.path):
+            return False
+            
+        if context.includes:
+            return self._matches_any_pattern(path, context.includes, context.path)
+            
+        return True
+
+    def _find_matching_subcontext(self, path: str, context: DirectoryContext) -> Optional[DirectoryContext]:
+        rel_path = os.path.relpath(path, context.path)
+        parts = rel_path.split(os.sep)
+        
+        current = context
+        for part in parts[:-1]:
+            if part in current.subdirs:
+                current = current.subdirs[part]
             else:
-                current_prefix = f"{prefix}+-- "
-                next_prefix = f"{prefix}|   "
-            
-            line = current_prefix + item.name
-            
-            if item.is_file():
-                ext = os.path.splitext(item.name)[1].lower()
-                if ext in IMAGE_EXTENSIONS:
-                    line += ": <image file>"
-                else:
-                    try:
-                        with open(item.path, 'r', encoding='utf-8') as f:
-                            content = f.read()
-                            content_summary = ' '.join(content.split())
-                            line += f": {content_summary}" if content_summary else ": <empty file>"
-                    except Exception:
-                        line += ": <error reading file>"
-            
-            with open(output_file, 'a', encoding='utf-8') as f:
-                f.write(line + '\n')
-            
-            if item.is_dir():
-                show_tree(item.path, next_prefix, output_file)
-    except Exception as e:
-        print(f"Error processing path {path}: {str(e)}", file=sys.stderr)
+                return None
+        return current
 
-def main():
-    path = sys.argv[1] if len(sys.argv) > 1 else "."
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    output_file = f"tree.{timestamp}.txt"
-
-    try:
+    def scan(self, root_context: DirectoryContext, output_file: Optional[str] = None) -> Set[str]:
+        matched_files = set()
+        total_files = sum([len(files) for _, _, files in os.walk(root_context.path)])
+        
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_file = output_file or f"scan_results_{timestamp}.txt"
+        
         with open(output_file, 'w', encoding='utf-8') as f:
-            pass  # Just to ensure the file is created/emptied
+            with tqdm(total=total_files, desc="Scanning files") as pbar:
+                for root, dirs, files in os.walk(root_context.path):
+                    if self.interrupted:
+                        break
+                        
+                    context = self._find_matching_subcontext(root, root_context) or root_context
+                    
+                    for file in files:
+                        pbar.update(1)
+                        file_path = os.path.join(root, file)
+                        
+                        if self._should_include_file(file_path, context):
+                            matched_files.add(file_path)
+                            rel_path = os.path.relpath(file_path, root_context.path)
+                            depth = rel_path.count(os.sep)
+                            prefix = "|   " * depth
+                            f.write(f"{prefix}+-- {file}\n")
+                            
+                            try:
+                                with open(file_path, 'r', encoding='utf-8') as content_file:
+                                    content = content_file.read()
+                                    f.write(f"{prefix}    Content: {len(content)} bytes\n")
+                            except Exception as e:
+                                f.write(f"{prefix}    Error reading content: {str(e)}\n")
         
-        show_tree(path, "", output_file)
+        if self.interrupted:
+            print(f"\nScan interrupted. Partial results saved to {output_file}")
+        else:
+            print(f"\nScan complete. Results saved to {output_file}")
+            
+        return matched_files
+
+def create_context(config: dict) -> DirectoryContext:
+    path = config['directory']
+    includes = config.get('include', [])
+    if isinstance(includes, str):
+        includes = [includes]
+    excludes = config.get('exclude', [])
+    if isinstance(excludes, str):
+        excludes = [excludes]
         
-        print(f"Directory structure saved to {output_file}.")
-    except Exception as e:
-        print(f"Error: {str(e)}", file=sys.stderr)
-        sys.exit(1)
+    subdirs = {}
+    for subdir_name, subdir_config in config.get('directories', {}).items():
+        subdirs[subdir_name] = create_context({
+            'directory': os.path.join(path, subdir_name),
+            **subdir_config
+        })
+        
+    return DirectoryContext(path, includes, excludes, subdirs)
 
 if __name__ == "__main__":
-    main()
+    config = {
+        'directory': 'TFSProjects/MarketNet/MarketNetWeb',
+        'include': ['**/*.java'],
+        'exclude': [
+            'WebContent/**', 
+            'bin/**', 
+            'temp/**',
+            '**/BE_*.java',
+            '**/UC_*.java',
+            '**/FWTL_*.java',
+            '**/FWTLS_*.java',
+            '**/*EXE.java',
+            '**/*_BE_*.java',
+            '**/CE_*.java',
+            '**/EF_*.java',
+            '**/PV_*.java',
+            '**/SCSV_*.java',
+            '**/PVE_*.java',
+            '**/DPVC_*.java',
+            '**/BJEX_*.java',
+            '**/BJE_*.java',
+            '**/Get*.java',
+            '**/X*.java',
+            '**/Y*.java',
+            '**/Z*.java',
+            '**/D*.java',
+            '**/E*.java',
+            '**/F*.java',
+            '**/G*.java',
+            '**/H*.java',
+            '**/I*.java',
+            '**/J*.java',
+            '**/K*.java',
+            '**/L*.java',
+            '**/M*.java'
+        ],
+        'directories': {
+            'src': {
+                'exclude': '*.json',
+                'include': 'special/*.json'
+            }
+        }
+    }
+    
+    context = create_context(config)
+    scanner = GradleScanner()
+    matched_files = scanner.scan(context)

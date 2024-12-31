@@ -1,0 +1,41 @@
+.controls { 
+    margin-bottom: 8px;
+    button {
+      margin-right: 4px;
+    }
+  }
+  
+  .table-tree {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .tree-cell {
+    display: flex;
+    align-items: center;
+  }
+
+  .selected { background-color: #e6f3ff; }
+
+  .expand-icon {
+    cursor: pointer;
+    width: 24px;
+    text-align: center;
+  }
+
+  .progress-bar {
+    background: #eee;
+    div {
+      background: #4CAF50;
+      height: 20px;
+    }
+  }
+
+  .drop-indicator-top,
+  .drop-indicator-bottom {
+    height: 2px;
+    background: #2196F3;
+    position: absolute;
+    left: 0;
+    right: 0;
+  }

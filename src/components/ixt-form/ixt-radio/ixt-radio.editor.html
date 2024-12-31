@@ -1,0 +1,31 @@
+<div class="ixt-radio-editor" 
+     [class.is-disabled]="disabled"
+     [class.is-horizontal]="config.direction === 'horizontal'"
+     [class.is-vertical]="config.direction === 'vertical'"
+     [class.is-button-style]="config.useButtonStyle"
+     [id]="id">
+
+  <ng-container *ngIf="!config.useButtonStyle">
+    <label *ngFor="let option of options" 
+           class="ixt-radio-editor__option">
+      <input type="radio"
+             class="ixt-radio-editor__input"
+             [value]="option.value"
+             [checked]="currentValue === option.value"
+             [disabled]="option.disabled || disabled"
+             (change)="onSelect(option)">
+      <span class="ixt-radio-editor__label">{{option.label}}</span>
+    </label>
+  </ng-container>
+
+  <div *ngIf="config.useButtonStyle" 
+       class="ixt-radio-editor__button-group">
+    <button *ngFor="let option of options"
+            class="ixt-radio-editor__button"
+            [class.is-selected]="currentValue === option.value"
+            [disabled]="option.disabled || disabled"
+            (click)="onSelect(option)">
+      {{option.label}}
+    </button>
+  </div>
+</div>

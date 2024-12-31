@@ -1,1 +1,38 @@
-<p>ixt-text-editor works!</p>
+<div class="binary-wrapper" [class.radio-style]="useRadio">
+    <ng-container *ngIf="useRadio; else checkbox">
+      <div class="radio-group">
+        <input 
+          type="radio"
+          [id]="id + '-true'"
+          [name]="id"
+          [checked]="isTrue"
+          [disabled]="disabled"
+          (change)="setValue(true)"
+          (blur)="onTouched()"
+        >
+        <label [for]="id + '-true'">{{ config.trueLabel }}</label>
+
+        <input 
+          type="radio"
+          [id]="id + '-false'"
+          [name]="id"
+          [checked]="!isTrue"
+          [disabled]="disabled"
+          (change)="setValue(false)"
+          (blur)="onTouched()"
+        >
+        <label [for]="id + '-false'">{{ config.falseLabel }}</label>
+      </div>
+    </ng-container>
+    <ng-template #checkbox>
+      <input 
+        type="checkbox"
+        [id]="id"
+        [checked]="isTrue"
+        [disabled]="disabled"
+        (change)="onCheckboxChange($event)"
+        (blur)="onTouched()"
+      >
+      <label [for]="id">{{ isTrue ? config.trueLabel : config.falseLabel }}</label>
+    </ng-template>
+  </div>

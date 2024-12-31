@@ -1,0 +1,87 @@
+:host {
+    display: block;
+    --ixt-select-height: 2.5rem;
+    --ixt-select-border-color: var(--ixt-border-color, #ccc);
+    --ixt-select-bg: var(--ixt-bg-color, white);
+    --ixt-select-disabled-bg: var(--ixt-disabled-bg, #f5f5f5);
+    --ixt-select-hover-bg: var(--ixt-hover-bg, #f8f9fa);
+    --ixt-select-selected-bg: var(--ixt-selected-bg, #e9ecef);
+  }
+  
+  .ixt-select-editor {
+    position: relative;
+    width: 100%;
+  
+    &__select {
+      width: 100%;
+      height: var(--ixt-select-height);
+      padding: 0.5rem;
+      border: 1px solid var(--ixt-select-border-color);
+      border-radius: 4px;
+      background-color: var(--ixt-select-bg);
+      cursor: pointer;
+  
+      &:disabled {
+        background-color: var(--ixt-select-disabled-bg);
+        cursor: not-allowed;
+      }
+    }
+  
+    &__container {
+      position: relative;
+    }
+  
+    &__display {
+      height: var(--ixt-select-height);
+      padding: 0.5rem;
+      border: 1px solid var(--ixt-select-border-color);
+      border-radius: 4px;
+      background-color: var(--ixt-select-bg);
+      cursor: pointer;
+    }
+  
+    &__dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 0.25rem;
+      border: 1px solid var(--ixt-select-border-color);
+      border-radius: 4px;
+      background-color: var(--ixt-select-bg);
+      overflow-y: auto;
+      z-index: 1000;
+    }
+  
+    &__filter {
+      width: 100%;
+      padding: 0.5rem;
+      border: none;
+      border-bottom: 1px solid var(--ixt-select-border-color);
+    }
+  
+    &__option {
+      padding: 0.5rem;
+      cursor: pointer;
+  
+      &:hover:not(.is-disabled) {
+        background-color: var(--ixt-select-hover-bg);
+      }
+  
+      &.is-selected {
+        background-color: var(--ixt-select-selected-bg);
+      }
+  
+      &.is-disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  
+    &.is-disabled {
+      .ixt-select-editor__display {
+        background-color: var(--ixt-select-disabled-bg);
+        cursor: not-allowed;
+      }
+    }
+  }

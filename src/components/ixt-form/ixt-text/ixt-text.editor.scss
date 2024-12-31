@@ -1,0 +1,59 @@
+// ixt-text-editor.component.scss
+:host {
+    display: block;
+    
+    // CSS custom properties
+    --ixt-text-editor-height: 2.5rem;
+    --ixt-text-editor-padding: 0.5rem;
+    --ixt-text-editor-border-color: var(--ixt-border-color, #ccc);
+    --ixt-text-editor-focus-color: var(--ixt-primary-color, #007bff);
+    --ixt-text-editor-disabled-bg: var(--ixt-disabled-bg, #f5f5f5);
+  }
+  
+  .ixt-text-editor {
+    position: relative;
+    
+    &__input {
+      width: 100%;
+      height: var(--ixt-text-editor-height);
+      padding: var(--ixt-text-editor-padding);
+      border: 1px solid var(--ixt-text-editor-border-color);
+      border-radius: 4px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      
+      &:focus {
+        outline: none;
+        border-color: var(--ixt-text-editor-focus-color);
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+      }
+      
+      // Accessibility improvements
+      &:focus-visible {
+        outline: 2px solid var(--ixt-text-editor-focus-color);
+        outline-offset: 1px;
+      }
+    }
+    
+    // State-based styling
+    &.is-disabled {
+      .ixt-text-editor__input {
+        background-color: var(--ixt-text-editor-disabled-bg);
+        cursor: not-allowed;
+      }
+    }
+    
+    &.is-readonly {
+      .ixt-text-editor__input {
+        background-color: transparent;
+        cursor: default;
+      }
+    }
+    
+    &.is-touched:not(.is-disabled) {
+      &.ng-invalid {
+        .ixt-text-editor__input {
+          border-color: var(--ixt-error-color, #dc3545);
+        }
+      }
+    }
+  }

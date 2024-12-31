@@ -1,1 +1,17 @@
-<p>ixt-text works!</p>
+// ixt-text-editor.component.html
+<div class="ixt-text-editor" 
+     [class.is-disabled]="disabled"
+     [class.is-readonly]="readonly"
+     [id]="id">
+  <input [type]="config.type"
+         class="ixt-text-editor__input"
+         [value]="value"
+         [attr.placeholder]="config.placeholder"
+         [readonly]="readonly"
+         [disabled]="disabled"
+         [maxlength]="config.maxLength"
+         [minlength]="config.minLength"
+         [pattern]="config.pattern"
+         (input)="onInput($event)"
+         (blur)="onTouched()">
+</div>

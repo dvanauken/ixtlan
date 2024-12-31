@@ -1,1 +1,43 @@
-<p>ixt-select works!</p>
+<div class="ixt-select-editor" [class.is-disabled]="disabled" [id]="id">
+    <!-- Simple Select Mode -->
+    <select *ngIf="!config.filterEnabled" 
+            class="ixt-select-editor__select"
+            [disabled]="disabled"
+            [multiple]="config.multiple"
+            [value]="currentValue"
+            (change)="onSelect($event.target.value)">
+      <option value="" disabled selected hidden>{{config.placeholder}}</option>
+      <option *ngFor="let option of options" 
+              [value]="option.value"
+              [disabled]="option.disabled">
+        {{option.label}}
+      </option>
+    </select>
+  
+    <!-- Filterable Mode -->
+    <div *ngIf="config.filterEnabled" class="ixt-select-editor__container">
+      <div class="ixt-select-editor__display" (click)="toggleDropdown()">
+        <span>{{getSelectedLabel() || config.placeholder}}</span>
+      </div>
+      
+      <div *ngIf="showDropdown" 
+           class="ixt-select-editor__dropdown"
+           [style.maxHeight]="config.maxHeight">
+        <input type="text"
+               class="ixt-select-editor__filter"
+               [placeholder]="'Type to filter...'"
+               (input)="onFilter($event)"
+               [value]="filterText">
+        
+        <div class="ixt-select-editor__options">
+          <div *ngFor="let option of filteredOptions"
+               class="ixt-select-editor__option"
+               [class.is-selected]="isSelected(option)"
+               [class.is-disabled]="option.disabled"
+               (click)="!option.disabled && onSelect(option)">
+            {{option.label}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
